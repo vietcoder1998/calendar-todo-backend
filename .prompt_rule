@@ -1,0 +1,13 @@
+if have this file use rule inside content
+
+--------- DO NOT EDIT THIS CONTEXT --------------------
+1. import with use @ and move to head of file
+2. use this with gen code 
+3. use i18n and update i18n in public/locales/[language]/translation.json
+3. allway define type: const, let, function
+4. import type to src/types if missing
+5. allways check and update missing key in translation
+6. check error, if error, reupdate the code
+7. if  > 200 line break to multi components
+8. if loop display try to create a base component
+-------------------------------------------------------

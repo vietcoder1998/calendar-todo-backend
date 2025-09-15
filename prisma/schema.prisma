@@ -1,0 +1,106 @@
+// This file defines the Prisma schema, including the data model and database connection settings for the MySQL database.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Todo {
+  id             String      @id
+  title          String
+  description    String
+  date           String
+  deadline       String?
+  status         String      // 'todo' | 'in-progress' | 'review' | 'done'
+  createdAt      String
+  updatedAt      String
+  locationId     String?
+  relatedTaskIds String?     // store as comma separated or JSON string
+  projectId      String
+  history        Json?
+  linkedItems    Json?
+  assignedUsers  String?     // store as comma separated or JSON string
+  files          String?     // store as comma separated or JSON string
+  webhooks       String?     // store as comma separated or JSON string
+  ganttTaskIds   String?     // store as comma separated or JSON string
+}
+
+model FileItem {
+  id        String   @id
+  name      String?
+  url       String?
+  createdAt String?
+  updatedAt String?
+}
+
+model Permission {
+  id        String   @id
+  type      String   // 'view' | 'edit' | 'drag' | 'drop'
+  resource  String   // e.g. 'file:123', 'todo:456', 'user:789'
+  userId    String
+  projectId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LinkedItem {
+  id          String   @id
+  todoId      String
+  title       String
+  description String?
+  url         String
+  status      String?   // 'active' | 'archived' | 'pending'
+  createdAt   String
+  updatedAt   String
+}
+
+model GanttTask {
+  id        String   @id
+  name      String?
+  start     String?
+  end       String?
+  createdAt String?
+  updatedAt String?
+}
+
+model Webhook {
+  id         String   @id
+  name       String
+  platform   String
+  token      String?
+  chatId     String?
+  webhookUrl String?
+  enabled    Boolean
+}
+
+model Project {
+  id          String   @id
+  name        String
+  description String?
+  avatarUrl   String?
+  plan        String?
+  members     Int?
+}
+
+model History {
+  id        String   @id
+  changes   Json?
+  date      DateTime
+  type      String   // 'todo' | 'gantt-task'
+  action    String
+  payload   Json?
+  timestamp String
+  user      String?
+}

@@ -305,48 +305,69 @@ app.delete('/api/webhooks/:id', (req: Request, res: Response) => {
   }
 });
 
-// --- PROJECTS (Mock) ---
-type Project = { id: string; [key: string]: unknown };
-const projects: Project[] = [];
-app.get('/api/projects', (req: Request, res: Response) => {
+// --- PROJECTS CRUD với Prisma ---
+app.get('/api/projects', async (req: Request, res: Response) => {
   try {
+    const projects = await prisma.project.findMany();
     res.json(projects);
   } catch (e: any) {
     res.status(500).json({ error: 'Failed to fetch projects', details: e?.message || String(e) });
   }
 });
-app.post('/api/projects', (req: Request, res: Response) => {
+
+app.post('/api/projects', async (req: Request, res: Response) => {
   try {
-    const project = req.body;
-    projects.push(project);
+    const project = await prisma.project.create({
+      data: req.body, // nhớ validate trước khi save
+    });
     res.status(201).json(project);
   } catch (e: any) {
     res.status(400).json({ error: 'Project creation failed', details: e?.message || String(e) });
   }
 });
-app.put('/api/projects/:id', (req: Request, res: Response) => {
+
+app.put('/api/projects/:id', async (req: Request, res: Response) => {
   try {
-    const body = req.body;
-    const idx = projects.findIndex((p) => p.id === req.params.id);
-    if (idx !== -1 && typeof projects[idx] === 'object') {
-      projects[idx] = { ...projects[idx], ...body };
-      return res.json(projects[idx]);
-    }
-    res.status(404).json({ error: 'Not found' });
+    const id = req.params.id;
+    const project = await prisma.project.update({
+      where: { id },
+      data: req.body,
+    });
+    res.json(project);
   } catch (e: any) {
     res.status(400).json({ error: 'Project update failed', details: e?.message || String(e) });
   }
 });
-app.delete('/api/projects/:id', (req: Request, res: Response) => {
+
+app.delete('/api/projects/:id', async (req: Request, res: Response) => {
   try {
-    const idx = projects.findIndex((p) => p.id === req.params.id);
-    if (idx !== -1) {
-      projects.splice(idx, 1);
-      return res.status(204).end();
-    }
-    res.status(404).json({ error: 'Not found' });
+    const id = req.params.id;
+    await prisma.project.delete({
+      where: { id },
+    });
+    res.status(204).end();
   } catch (e: any) {
     res.status(400).json({ error: 'Project deletion failed', details: e?.message || String(e) });
+  }
+});
+
+app.get('/api/projects', async (req: Request, res: Response) => {
+  try {
+    const projects = await prisma.project.findMany();
+    res.json(projects);
+  } catch (e: any) {
+    res.status(500).json({ error: 'Failed to fetch projects', details: e?.message || String(e) });
+  }
+});
+
+app.post('/api/projects', async (req: Request, res: Response) => {
+  try {
+    const project = await prisma.project.create({
+      data: req.body, // nhớ validate trước khi save
+    });
+    res.status(201).json(project);
+  } catch (e: any) {
+    res.status(400).json({ error: 'Project creation failed', details: e?.message || String(e) });
   }
 });
 

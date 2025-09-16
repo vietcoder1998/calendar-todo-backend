@@ -2,9 +2,12 @@ import { Request, Response } from 'express';
 import * as linkedItemService from '../services/linkedItem.service';
 import logger from '../logger';
 
-export const getLinkedItems = (req: Request, res: Response) => {
+export const getLinkedItems = async (req: Request, res: Response) => {
   try {
-    const items = linkedItemService.getLinkedItems();
+    const { projectId } = req.query;
+    const items = await linkedItemService.getLinkedItems(
+      typeof projectId === 'string' ? projectId : undefined,
+    );
     logger.info('Fetched linked items');
     res.json(items);
   } catch (e: any) {
@@ -15,9 +18,9 @@ export const getLinkedItems = (req: Request, res: Response) => {
   }
 };
 
-export const createLinkedItem = (req: Request, res: Response) => {
+export const createLinkedItem = async (req: Request, res: Response) => {
   try {
-    const item = linkedItemService.createLinkedItem(req.body);
+    const item = await linkedItemService.createLinkedItem(req.body);
     logger.info('Created linked item: %o', item);
     res.status(201).json(item);
   } catch (e: any) {
@@ -26,9 +29,9 @@ export const createLinkedItem = (req: Request, res: Response) => {
   }
 };
 
-export const updateLinkedItem = (req: Request, res: Response) => {
+export const updateLinkedItem = async (req: Request, res: Response) => {
   try {
-    const item = linkedItemService.updateLinkedItem(req.params.id, req.body);
+    const item = await linkedItemService.updateLinkedItem(req.params.id, req.body);
     if (item) {
       logger.info('Updated linked item: %o', item);
       return res.json(item);
@@ -40,9 +43,9 @@ export const updateLinkedItem = (req: Request, res: Response) => {
   }
 };
 
-export const deleteLinkedItem = (req: Request, res: Response) => {
+export const deleteLinkedItem = async (req: Request, res: Response) => {
   try {
-    const ok = linkedItemService.deleteLinkedItem(req.params.id);
+    const ok = await linkedItemService.deleteLinkedItem(req.params.id);
     if (ok) {
       logger.info('Deleted linked item: %s', req.params.id);
       return res.status(204).end();

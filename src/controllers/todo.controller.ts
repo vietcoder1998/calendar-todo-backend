@@ -19,9 +19,7 @@ export const getTodos = async (req: Request, res: Response) => {
 
 export const createTodo = async (req: Request, res: Response) => {
   try {
-    // Ensure typing and required fields for Todo
     const {
-      id,
       title,
       description,
       date,
@@ -37,21 +35,22 @@ export const createTodo = async (req: Request, res: Response) => {
       relatedTaskIds,
       history,
       locationId,
+      deadline,
     } = req.body;
     if (!title || !date || !status || !projectId) {
       return res.status(400).json({ error: 'Missing required todo fields' });
     }
-    // Ensure relationships are arrays of strings if present
     const todo: Todo = {
-      id: randomUUID(),
+      id: req.body.id || String(Date.now()),
       title,
       description,
       date,
       status,
-      createdAt,
-      updatedAt,
+      createdAt: createdAt || new Date().toISOString(),
+      updatedAt: updatedAt || new Date().toISOString(),
       projectId,
       locationId,
+      deadline,
       history,
       linkedItems: Array.isArray(linkedItems) ? linkedItems.map(String) : [],
       assignedUsers: Array.isArray(assignedUsers) ? assignedUsers.map(String) : [],
@@ -60,13 +59,10 @@ export const createTodo = async (req: Request, res: Response) => {
       ganttTaskIds: Array.isArray(ganttTaskIds) ? ganttTaskIds.map(String) : [],
       relatedTaskIds: Array.isArray(relatedTaskIds) ? relatedTaskIds.map(String) : [],
     };
-
-    // Before creating the todo
     const project = await projectService.getProjectById(projectId);
     if (!project) {
       return res.status(400).json({ error: 'Project not found for given projectId' });
     }
-
     const created = await todoService.createTodo(todo);
     logger.info('Created todo: %o', created);
     res.status(201).json(created);

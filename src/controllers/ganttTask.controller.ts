@@ -1,7 +1,10 @@
-export const getGanttTaskById = (req: Request, res: Response) => {
+import { Request, Response } from 'express';
+import * as ganttTaskService from '../services/ganttTask.service';
+import logger from '../logger';
+
+export const getGanttTaskById = async (req: Request, res: Response) => {
   try {
-    const tasks = ganttTaskService.getGanttTasks();
-    const task = tasks.find((t: any) => t.id === req.params.id);
+    const task = await ganttTaskService.getGanttTaskById(req.params.id);
     if (task) {
       logger.info('Fetched gantt task by id: %s', req.params.id);
       return res.json(task);
@@ -13,10 +16,10 @@ export const getGanttTaskById = (req: Request, res: Response) => {
   }
 };
 
-export const getGanttTasksByProjectId = (req: Request, res: Response) => {
+export const getGanttTasksByProjectId = async (req: Request, res: Response) => {
   try {
     const projectId = req.params.projectId;
-    const tasks = ganttTaskService.getGanttTasksByProjectId(projectId);
+    const tasks = await ganttTaskService.getGanttTasks(projectId);
     logger.info('Fetched gantt tasks by projectId: %s', projectId);
     res.json(tasks);
   } catch (e: any) {
@@ -27,13 +30,13 @@ export const getGanttTasksByProjectId = (req: Request, res: Response) => {
     });
   }
 };
-import { Request, Response } from 'express';
-import * as ganttTaskService from '../services/ganttTask.service';
-import logger from '../logger';
 
-export const getGanttTasks = (req: Request, res: Response) => {
+export const getGanttTasks = async (req: Request, res: Response) => {
   try {
-    const tasks = ganttTaskService.getGanttTasks();
+    const { projectId } = req.query;
+    const tasks = await ganttTaskService.getGanttTasks(
+      typeof projectId === 'string' ? projectId : undefined,
+    );
     logger.info('Fetched gantt tasks');
     res.json(tasks);
   } catch (e: any) {
@@ -44,9 +47,9 @@ export const getGanttTasks = (req: Request, res: Response) => {
   }
 };
 
-export const createGanttTask = (req: Request, res: Response) => {
+export const createGanttTask = async (req: Request, res: Response) => {
   try {
-    const task = ganttTaskService.createGanttTask(req.body);
+    const task = await ganttTaskService.createGanttTask(req.body);
     logger.info('Created gantt task: %o', task);
     res.status(201).json(task);
   } catch (e: any) {
@@ -55,9 +58,9 @@ export const createGanttTask = (req: Request, res: Response) => {
   }
 };
 
-export const updateGanttTask = (req: Request, res: Response) => {
+export const updateGanttTask = async (req: Request, res: Response) => {
   try {
-    const task = ganttTaskService.updateGanttTask(req.params.id, req.body);
+    const task = await ganttTaskService.updateGanttTask(req.params.id, req.body);
     if (task) {
       logger.info('Updated gantt task: %o', task);
       return res.json(task);
@@ -69,9 +72,9 @@ export const updateGanttTask = (req: Request, res: Response) => {
   }
 };
 
-export const deleteGanttTask = (req: Request, res: Response) => {
+export const deleteGanttTask = async (req: Request, res: Response) => {
   try {
-    const ok = ganttTaskService.deleteGanttTask(req.params.id);
+    const ok = await ganttTaskService.deleteGanttTask(req.params.id);
     if (ok) {
       logger.info('Deleted gantt task: %s', req.params.id);
       return res.status(204).end();

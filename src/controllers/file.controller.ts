@@ -2,9 +2,10 @@ import { Request, Response } from 'express';
 import * as fileService from '../services/file.service';
 import logger from '../logger';
 
-export const getFiles = (req: Request, res: Response) => {
+export const getFiles = async (req: Request, res: Response) => {
   try {
-    const files = fileService.getFiles();
+    const { projectId } = req.query;
+    const files = await fileService.getFiles(typeof projectId === 'string' ? projectId : undefined);
     logger.info('Fetched files');
     res.json(files);
   } catch (e: any) {
@@ -13,9 +14,9 @@ export const getFiles = (req: Request, res: Response) => {
   }
 };
 
-export const createFile = (req: Request, res: Response) => {
+export const createFile = async (req: Request, res: Response) => {
   try {
-    const file = fileService.createFile(req.body);
+    const file = await fileService.createFile(req.body);
     logger.info('Created file: %o', file);
     res.status(201).json(file);
   } catch (e: any) {
@@ -24,9 +25,9 @@ export const createFile = (req: Request, res: Response) => {
   }
 };
 
-export const updateFile = (req: Request, res: Response) => {
+export const updateFile = async (req: Request, res: Response) => {
   try {
-    const file = fileService.updateFile(req.params.id, req.body);
+    const file = await fileService.updateFile(req.params.id, req.body);
     if (file) {
       logger.info('Updated file: %o', file);
       return res.json(file);
@@ -38,9 +39,9 @@ export const updateFile = (req: Request, res: Response) => {
   }
 };
 
-export const deleteFile = (req: Request, res: Response) => {
+export const deleteFile = async (req: Request, res: Response) => {
   try {
-    const ok = fileService.deleteFile(req.params.id);
+    const ok = await fileService.deleteFile(req.params.id);
     if (ok) {
       logger.info('Deleted file: %s', req.params.id);
       return res.status(204).end();

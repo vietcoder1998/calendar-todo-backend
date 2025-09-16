@@ -1,25 +1,30 @@
-type GanttTask = { id: string; [key: string]: unknown };
-let ganttTasks: GanttTask[] = [];
+import { PrismaClient, GanttTask as PrismaGanttTask } from '@prisma/client';
+const prisma = new PrismaClient();
 
-export const getGanttTasks = () => ganttTasks;
-
-export const getGanttTasksByProjectId = (projectId: string) => {
-  return ganttTasks.filter((t) => t.projectId === projectId);
-};
-export const createGanttTask = (task: GanttTask) => {
-  ganttTasks.push(task);
-  return task;
-};
-export const updateGanttTask = (id: string, updates: Partial<GanttTask>) => {
-  const idx = ganttTasks.findIndex((t) => t.id === id);
-  if (idx !== -1) {
-    ganttTasks[idx] = { ...ganttTasks[idx], ...updates };
-    return ganttTasks[idx];
+export const getGanttTasks = async (projectId?: string) => {
+  if (projectId) {
+    return prisma.ganttTask.findMany({ where: { projectId } });
   }
-  return null;
+  return prisma.ganttTask.findMany();
 };
-export const deleteGanttTask = (id: string) => {
-  const prevLen = ganttTasks.length;
-  ganttTasks = ganttTasks.filter((t) => t.id !== id);
-  return ganttTasks.length < prevLen;
+export const getGanttTaskById = async (id: string) => {
+  return prisma.ganttTask.findUnique({ where: { id } });
+};
+export const createGanttTask = async (task: PrismaGanttTask) => {
+  return prisma.ganttTask.create({ data: task });
+};
+export const updateGanttTask = async (id: string, updates: Partial<PrismaGanttTask>) => {
+  try {
+    return await prisma.ganttTask.update({ where: { id }, data: updates });
+  } catch {
+    return null;
+  }
+};
+export const deleteGanttTask = async (id: string) => {
+  try {
+    await prisma.ganttTask.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
 };

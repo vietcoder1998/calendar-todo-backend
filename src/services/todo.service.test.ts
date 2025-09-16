@@ -41,8 +41,14 @@ describe('todo.service (prisma)', () => {
   });
 
   afterAll(async () => {
-    // Clean up the test project
+    // Clean up all related records before deleting the project
     await prisma.todo.deleteMany({ where: { projectId: testProject.id } });
+    await prisma.ganttTask.deleteMany({ where: { projectId: testProject.id } });
+    await prisma.fileItem.deleteMany({ where: { projectId: testProject.id } });
+    await prisma.permission.deleteMany({ where: { projectId: testProject.id } });
+    await prisma.webhook.deleteMany({ where: { projectId: testProject.id } });
+    await prisma.linkedItem.deleteMany({ where: { projectId: testProject.id } });
+    // Now you can safely delete the project
     await prisma.project.delete({ where: { id: testProject.id } });
     await prisma.$disconnect();
   });

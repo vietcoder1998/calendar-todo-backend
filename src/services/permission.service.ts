@@ -1,21 +1,27 @@
-type Permission = { id: string; [key: string]: unknown };
-let permissions: Permission[] = [];
+import { PrismaClient, Permission as PrismaPermission } from '@prisma/client';
+const prisma = new PrismaClient();
 
-export const getPermissions = () => permissions;
-export const createPermission = (permission: Permission) => {
-  permissions.push(permission);
-  return permission;
-};
-export const updatePermission = (id: string, updates: Partial<Permission>) => {
-  const idx = permissions.findIndex((p) => p.id === id);
-  if (idx !== -1) {
-    permissions[idx] = { ...permissions[idx], ...updates };
-    return permissions[idx];
+export const getPermissions = async (projectId?: string) => {
+  if (projectId) {
+    return prisma.permission.findMany({ where: { projectId: { equals: projectId } } });
   }
-  return null;
+  return prisma.permission.findMany();
 };
-export const deletePermission = (id: string) => {
-  const prevLen = permissions.length;
-  permissions = permissions.filter((p) => p.id !== id);
-  return permissions.length < prevLen;
+export const createPermission = async (permission: PrismaPermission) => {
+  return prisma.permission.create({ data: permission });
+};
+export const updatePermission = async (id: string, updates: Partial<PrismaPermission>) => {
+  try {
+    return await prisma.permission.update({ where: { id }, data: updates });
+  } catch {
+    return null;
+  }
+};
+export const deletePermission = async (id: string) => {
+  try {
+    await prisma.permission.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
 };

@@ -1,41 +1,84 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { beforeEach, describe, expect, it } from '@jest/globals';
+import { FileItem } from '../types';
 import * as fileService from './file.service';
 
 describe('file.service', () => {
+  let files: FileItem[];
+
   beforeEach(() => {
-    // @ts-ignore
-    fileService['files'] = [];
+    files = [];
+    jest.spyOn(fileService, 'getFiles').mockImplementation(async () => files);
+    jest.spyOn(fileService, 'createFile').mockImplementation(async (file: FileItem) => {
+      files.push(file);
+      return file;
+    });
+    jest
+      .spyOn(fileService, 'updateFile')
+      .mockImplementation(async (id: string, updates: Partial<FileItem>) => {
+        const idx = files.findIndex((f) => f.id === id);
+        if (idx !== -1) {
+          files[idx] = { ...files[idx], ...updates };
+          return files[idx];
+        }
+        return null;
+      });
+    jest.spyOn(fileService, 'deleteFile').mockImplementation(async (id: string) => {
+      const prevLen = files.length;
+      files = files.filter((f) => f.id !== id);
+      return files.length < prevLen;
+    });
   });
 
-  it('should create a file', () => {
-    const file = { id: '1', name: 'test.txt' };
-    const created = fileService.createFile(file);
-    expect(created).toEqual(file);
-    expect(fileService.getFiles()).toContainEqual(file);
+  it('should create a file', async () => {
+    const file: FileItem = {
+      id: '1',
+      name: 'test.txt',
+      projectId: 'p1',
+      createdAt: null,
+      updatedAt: null,
+      url: null,
+    };
+    const created = await fileService.createFile(file);
+    expect(created.name).toEqual(file.name);
+    expect(await fileService.getFiles()).toContainEqual(file);
   });
 
-  it('should update a file', () => {
-    const file = { id: '1', name: 'test.txt' };
-    fileService.createFile(file);
-    const updated = fileService.updateFile('1', { name: 'updated.txt' });
+  it('should update a file', async () => {
+    const file: FileItem = {
+      id: '1',
+      name: 'test.txt',
+      projectId: 'p1',
+      createdAt: null,
+      updatedAt: null,
+      url: null,
+    };
+    await fileService.createFile(file);
+    const updated = await fileService.updateFile('1', { name: 'updated.txt' });
     expect(updated).toMatchObject({ id: '1', name: 'updated.txt' });
   });
 
-  it('should delete a file', () => {
-    const file = { id: '1', name: 'test.txt' };
-    fileService.createFile(file);
-    const deleted = fileService.deleteFile('1');
+  it('should delete a file', async () => {
+    const file: FileItem = {
+      id: '1',
+      name: 'test.txt',
+      projectId: 'p1',
+      createdAt: null,
+      updatedAt: null,
+      url: null,
+    };
+    await fileService.createFile(file);
+    const deleted = await fileService.deleteFile('1');
     expect(deleted).toBe(true);
-    expect(fileService.getFiles()).toHaveLength(0);
+    expect(await fileService.getFiles()).toHaveLength(0);
   });
 
-  it('should return null when updating non-existent file', () => {
-    const updated = fileService.updateFile('not-exist', { name: 'fail.txt' });
+  it('should return null when updating non-existent file', async () => {
+    const updated = await fileService.updateFile('not-exist', { name: 'fail.txt' });
     expect(updated).toBeNull();
   });
 
-  it('should return false when deleting non-existent file', () => {
-    const deleted = fileService.deleteFile('not-exist');
+  it('should return false when deleting non-existent file', async () => {
+    const deleted = await fileService.deleteFile('not-exist');
     expect(deleted).toBe(false);
   });
 });

@@ -1,21 +1,27 @@
-type LinkedItem = { id: string; [key: string]: unknown };
-let linkedItems: LinkedItem[] = [];
+import { PrismaClient, LinkedItem as PrismaLinkedItem } from '@prisma/client';
+const prisma = new PrismaClient();
 
-export const getLinkedItems = () => linkedItems;
-export const createLinkedItem = (item: LinkedItem) => {
-  linkedItems.push(item);
-  return item;
-};
-export const updateLinkedItem = (id: string, updates: Partial<LinkedItem>) => {
-  const idx = linkedItems.findIndex((i) => i.id === id);
-  if (idx !== -1) {
-    linkedItems[idx] = { ...linkedItems[idx], ...updates };
-    return linkedItems[idx];
+export const getLinkedItems = async (projectId?: string) => {
+  if (projectId) {
+    return prisma.linkedItem.findMany({ where: { projectId: projectId } });
   }
-  return null;
+  return prisma.linkedItem.findMany();
 };
-export const deleteLinkedItem = (id: string) => {
-  const prevLen = linkedItems.length;
-  linkedItems = linkedItems.filter((i) => i.id !== id);
-  return linkedItems.length < prevLen;
+export const createLinkedItem = async (item: PrismaLinkedItem) => {
+  return prisma.linkedItem.create({ data: item });
+};
+export const updateLinkedItem = async (id: string, updates: Partial<PrismaLinkedItem>) => {
+  try {
+    return await prisma.linkedItem.update({ where: { id }, data: updates });
+  } catch {
+    return null;
+  }
+};
+export const deleteLinkedItem = async (id: string) => {
+  try {
+    await prisma.linkedItem.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
 };

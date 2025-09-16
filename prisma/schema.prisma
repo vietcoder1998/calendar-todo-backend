@@ -44,6 +44,8 @@ model FileItem {
   url       String?
   createdAt String?
   updatedAt String?
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
 }
 
 model Permission {
@@ -52,6 +54,7 @@ model Permission {
   resource  String   // e.g. 'file:123', 'todo:456', 'user:789'
   userId    String
   projectId String
+  project   Project @relation(fields: [projectId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -65,6 +68,8 @@ model LinkedItem {
   status      String?   // 'active' | 'archived' | 'pending'
   createdAt   String
   updatedAt   String
+  projectId   String
+  project     Project @relation(fields: [projectId], references: [id])
 }
 
 model GanttTask {
@@ -74,6 +79,8 @@ model GanttTask {
   end       String?
   createdAt String?
   updatedAt String?
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
 }
 
 model Webhook {
@@ -84,6 +91,8 @@ model Webhook {
   chatId     String?
   webhookUrl String?
   enabled    Boolean
+  projectId  String
+  project    Project @relation(fields: [projectId], references: [id])
 }
 
 model Project {
@@ -94,6 +103,11 @@ model Project {
   plan        String?
   members     Int?
   todos       Todo[]
+  files       FileItem[]
+  permissions Permission[]
+  linkedItems LinkedItem[]
+  ganttTasks  GanttTask[]
+  webhooks    Webhook[]
 }
 
 model History {

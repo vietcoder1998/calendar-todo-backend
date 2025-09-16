@@ -2,9 +2,12 @@ import { Request, Response } from 'express';
 import * as permissionService from '../services/permission.service';
 import logger from '../logger';
 
-export const getPermissions = (req: Request, res: Response) => {
+export const getPermissions = async (req: Request, res: Response) => {
   try {
-    const permissions = permissionService.getPermissions();
+    const { projectId } = req.query;
+    const permissions = await permissionService.getPermissions(
+      typeof projectId === 'string' ? projectId : undefined,
+    );
     logger.info('Fetched permissions');
     res.json(permissions);
   } catch (e: any) {
@@ -15,9 +18,9 @@ export const getPermissions = (req: Request, res: Response) => {
   }
 };
 
-export const createPermission = (req: Request, res: Response) => {
+export const createPermission = async (req: Request, res: Response) => {
   try {
-    const permission = permissionService.createPermission(req.body);
+    const permission = await permissionService.createPermission(req.body);
     logger.info('Created permission: %o', permission);
     res.status(201).json(permission);
   } catch (e: any) {
@@ -26,9 +29,9 @@ export const createPermission = (req: Request, res: Response) => {
   }
 };
 
-export const updatePermission = (req: Request, res: Response) => {
+export const updatePermission = async (req: Request, res: Response) => {
   try {
-    const permission = permissionService.updatePermission(req.params.id, req.body);
+    const permission = await permissionService.updatePermission(req.params.id, req.body);
     if (permission) {
       logger.info('Updated permission: %o', permission);
       return res.json(permission);
@@ -40,9 +43,9 @@ export const updatePermission = (req: Request, res: Response) => {
   }
 };
 
-export const deletePermission = (req: Request, res: Response) => {
+export const deletePermission = async (req: Request, res: Response) => {
   try {
-    const ok = permissionService.deletePermission(req.params.id);
+    const ok = await permissionService.deletePermission(req.params.id);
     if (ok) {
       logger.info('Deleted permission: %s', req.params.id);
       return res.status(204).end();

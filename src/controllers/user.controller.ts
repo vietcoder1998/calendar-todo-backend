@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as userService from '../services/user.service';
 import logger from '../logger';
+
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await userService.getUsers();

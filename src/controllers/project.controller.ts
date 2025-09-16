@@ -1,9 +1,12 @@
+import { Request, Response } from 'express';
+import * as projectService from '../services/project.service';
+import logger from '../logger';
+
 export const getProjectById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
     const project = await projectService.getProjectById(id);
     if (!project) {
-      logger.warn('Project not found: %s', id);
       return res.status(404).json({ error: 'Project not found' });
     }
     logger.info('Fetched project detail: %s', id);
@@ -15,9 +18,6 @@ export const getProjectById = async (req: Request, res: Response) => {
       .json({ error: 'Failed to fetch project detail', details: e?.message || String(e) });
   }
 };
-import logger from '../logger';
-import * as projectService from '../services/project.service';
-import { Request, Response } from 'express';
 
 export const getProjects = async (req: Request, res: Response) => {
   try {
@@ -43,8 +43,7 @@ export const createProject = async (req: Request, res: Response) => {
 
 export const updateProject = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id;
-    const project = await projectService.updateProject(id, req.body);
+    const project = await projectService.updateProject(req.params.id, req.body);
     logger.info('Updated project: %o', project);
     res.json(project);
   } catch (e: any) {
@@ -55,9 +54,8 @@ export const updateProject = async (req: Request, res: Response) => {
 
 export const deleteProject = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id;
-    await projectService.deleteProject(id);
-    logger.info('Deleted project: %s', id);
+    await projectService.deleteProject(req.params.id);
+    logger.info('Deleted project: %s', req.params.id);
     res.status(204).end();
   } catch (e: any) {
     logger.error('Project deletion failed: %s', e?.message || e);

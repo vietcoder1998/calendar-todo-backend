@@ -29,6 +29,7 @@ model Todo {
   locationId     String?
   relatedTaskIds String?     // store as comma separated or JSON string
   projectId      String
+  project        Project   @relation(fields: [projectId], references: [id])
   history        Json?
   linkedItems    Json?
   assignedUsers  String?     // store as comma separated or JSON string
@@ -92,6 +93,7 @@ model Project {
   avatarUrl   String?
   plan        String?
   members     Int?
+  todos       Todo[]
 }
 
 model History {

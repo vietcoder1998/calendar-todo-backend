@@ -1,9 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
+import { randomUUID } from 'crypto';
 
 export const validateTodo = (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.body;
+  let { id, title, date } = req.body;
+  if (!title || typeof title !== 'string' || !title.trim()) {
+    return res
+      .status(400)
+      .json({ error: 'Todo title is required and must be a non-empty string.' });
+  }
+  if (!date || typeof date !== 'string' || !/\d{4}-\d{2}-\d{2}/.test(date)) {
+    return res
+      .status(400)
+      .json({ error: 'Todo date is required and must be in YYYY-MM-DD format.' });
+  }
   if (!id || typeof id !== 'string') {
-    return res.status(400).json({ error: 'Todo id is required and must be a string.' });
+    id = randomUUID();
+    req.body.id = id;
   }
   next();
 };

@@ -2,6 +2,10 @@ type GanttTask = { id: string; [key: string]: unknown };
 let ganttTasks: GanttTask[] = [];
 
 export const getGanttTasks = () => ganttTasks;
+
+export const getGanttTasksByProjectId = (projectId: string) => {
+  return ganttTasks.filter((t) => t.projectId === projectId);
+};
 export const createGanttTask = (task: GanttTask) => {
   ganttTasks.push(task);
   return task;

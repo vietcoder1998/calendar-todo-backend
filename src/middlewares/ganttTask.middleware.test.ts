@@ -3,8 +3,16 @@ import { validateGanttTask } from './ganttTask.middleware';
 
 describe('validateGanttTask middleware', () => {
   it('should call next if id is valid', () => {
-    const req = { body: { id: 'abc' } } as any;
-    const res = {} as any;
+    const req = {
+      body: {
+        id: 'abc',
+        color: 'blue',
+        startDate: '2025-09-16',
+        endDate: '2025-09-17',
+        name: 'Task',
+      },
+    } as any;
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as any;
     const next = jest.fn();
     validateGanttTask(req, res, next);
     expect(next).toHaveBeenCalled();

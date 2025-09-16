@@ -1,3 +1,32 @@
+export const getGanttTaskById = (req: Request, res: Response) => {
+  try {
+    const tasks = ganttTaskService.getGanttTasks();
+    const task = tasks.find((t: any) => t.id === req.params.id);
+    if (task) {
+      logger.info('Fetched gantt task by id: %s', req.params.id);
+      return res.json(task);
+    }
+    res.status(404).json({ error: 'Not found' });
+  } catch (e: any) {
+    logger.error('Failed to fetch gantt task by id: %s', e?.message || e);
+    res.status(500).json({ error: 'Failed to fetch gantt task', details: e?.message || String(e) });
+  }
+};
+
+export const getGanttTasksByProjectId = (req: Request, res: Response) => {
+  try {
+    const projectId = req.params.projectId;
+    const tasks = ganttTaskService.getGanttTasksByProjectId(projectId);
+    logger.info('Fetched gantt tasks by projectId: %s', projectId);
+    res.json(tasks);
+  } catch (e: any) {
+    logger.error('Failed to fetch gantt tasks by projectId: %s', e?.message || e);
+    res.status(500).json({
+      error: 'Failed to fetch gantt tasks by projectId',
+      details: e?.message || String(e),
+    });
+  }
+};
 import { Request, Response } from 'express';
 import * as ganttTaskService from '../services/ganttTask.service';
 import logger from '../logger';

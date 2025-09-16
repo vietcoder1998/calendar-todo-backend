@@ -11,7 +11,8 @@
     "generate": "prisma generate",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "docker:local": "docker-compose -f docker-compose.local.yml up -d --build"
   },
   "dependencies": {
     "@prisma/client": "^4.0.0",

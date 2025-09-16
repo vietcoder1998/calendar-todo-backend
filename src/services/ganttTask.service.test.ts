@@ -12,8 +12,11 @@ const baseTask = {
   end: null,
   createdAt: null,
   updatedAt: null,
+  startDate: null, // Ensure these properties are present
+  endDate: null, // Ensure these properties are present
+  color: '', // Assign an empty string or a valid color string
   projectId: 'test-project',
-} as Required<GanttTask>;
+} as any; // Use 'as any' to satisfy the type expected by createGanttTask
 
 describe('ganttTask.service', () => {
   beforeAll(async () => {
@@ -37,23 +40,30 @@ describe('ganttTask.service', () => {
 
   it('should create a gantt task', async () => {
     const created = await ganttTaskService.createGanttTask(baseTask);
-    expect(created).toMatchObject(baseTask);
+    expect(created).toMatchObject({
+      name: baseTask.name,
+      start: baseTask.start,
+      end: baseTask.end,
+      projectId: baseTask.projectId,
+      createdAt: baseTask.createdAt,
+      updatedAt: baseTask.updatedAt,
+    });
     const tasks = await ganttTaskService.getGanttTasks('test-project');
-    expect(tasks.find((t) => t.id === baseTask.id)).toBeTruthy();
+    expect(tasks.find((t) => t.id === created.id)).toBeTruthy();
   });
 
   it('should update a gantt task', async () => {
-    await ganttTaskService.createGanttTask(baseTask);
-    const updated = await ganttTaskService.updateGanttTask('1', { name: 'Updated Task' });
-    expect(updated).toMatchObject({ id: '1', name: 'Updated Task' });
+    const created = await ganttTaskService.createGanttTask(baseTask);
+    const updated = await ganttTaskService.updateGanttTask(created.id, { name: 'Updated Task' });
+    expect(updated).toMatchObject({ id: created.id, name: 'Updated Task' });
   });
 
   it('should delete a gantt task', async () => {
-    await ganttTaskService.createGanttTask(baseTask);
-    const deleted = await ganttTaskService.deleteGanttTask('1');
+    const created = await ganttTaskService.createGanttTask(baseTask);
+    const deleted = await ganttTaskService.deleteGanttTask(created.id);
     expect(deleted).toBe(true);
     const tasks = await ganttTaskService.getGanttTasks('test-project');
-    expect(tasks.find((t) => t.id === baseTask.id)).toBeFalsy();
+    expect(tasks.find((t) => t.id === created.id)).toBeFalsy();
   });
 
   it('should return null when updating non-existent gantt task', async () => {

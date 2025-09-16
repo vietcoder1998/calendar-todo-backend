@@ -70,6 +70,7 @@ export type GanttTask = {
   createdAt?: string | null;
   updatedAt?: string | null;
   projectId: string;
+  color: string;
 };
 
 export type Webhook = {

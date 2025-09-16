@@ -1,3 +1,9 @@
+export const getProjectById = async (id: string): Promise<ProjectWithTodos | null> => {
+  return prisma.project.findUnique({
+    where: { id },
+    include: { todos: true },
+  });
+};
 import { PrismaClient, Project, Todo } from '@prisma/client';
 
 const prisma = new PrismaClient();

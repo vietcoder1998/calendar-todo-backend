@@ -36,7 +36,7 @@ export const createTodo = async (req: Request, res: Response) => {
       history,
       locationId,
     } = req.body;
-    if (!id || !title || !date || !status || !createdAt || !updatedAt || !projectId) {
+    if (!id || !title || !date || !status || !projectId) {
       return res.status(400).json({ error: 'Missing required todo fields' });
     }
     // Ensure relationships are arrays of strings if present

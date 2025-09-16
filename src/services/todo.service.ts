@@ -45,7 +45,16 @@ export async function getTodos(projectId?: string): Promise<Todo[]> {
 }
 
 export async function createTodo(todo: Omit<Todo, 'id'> & { id?: string }): Promise<Todo> {
-  const created = await prisma.todo.create({ data: toPrismaTodoInput(todo) });
+  const { projectId, ...rest } = toPrismaTodoInput(todo);
+  const created = await prisma.todo.create({
+    data: {
+      ...rest,
+      project: { connect: { id: todo.projectId } },
+      createdAt: rest.createdAt || new Date().toISOString(),
+      updatedAt: rest.updatedAt || new Date().toISOString(),
+    },
+  });
+
   return fromPrismaTodo(created);
 }
 

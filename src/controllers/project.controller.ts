@@ -1,3 +1,20 @@
+export const getProjectById = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const project = await projectService.getProjectById(id);
+    if (!project) {
+      logger.warn('Project not found: %s', id);
+      return res.status(404).json({ error: 'Project not found' });
+    }
+    logger.info('Fetched project detail: %s', id);
+    res.json(project);
+  } catch (e: any) {
+    logger.error('Failed to fetch project detail: %s', e?.message || e);
+    res
+      .status(500)
+      .json({ error: 'Failed to fetch project detail', details: e?.message || String(e) });
+  }
+};
 import logger from '../logger';
 import * as projectService from '../services/project.service';
 import { Request, Response } from 'express';

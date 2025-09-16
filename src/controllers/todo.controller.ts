@@ -1,3 +1,10 @@
+import { randomUUID } from 'crypto';
+import { Request, Response } from 'express';
+import logger from '../logger';
+import * as projectService from '../services/project.service';
+import * as todoService from '../services/todo.service';
+import { Todo } from '../types/index';
+
 export const getTodos = async (req: Request, res: Response) => {
   try {
     const { projectId } = req.query;
@@ -9,11 +16,6 @@ export const getTodos = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch todos', details: e?.message || String(e) });
   }
 };
-import { Request, Response } from 'express';
-
-import * as todoService from '../services/todo.service';
-import logger from '../logger';
-import { Todo } from '../types/index';
 
 export const createTodo = async (req: Request, res: Response) => {
   try {
@@ -36,12 +38,12 @@ export const createTodo = async (req: Request, res: Response) => {
       history,
       locationId,
     } = req.body;
-    if (!id || !title || !date || !status || !projectId) {
+    if (!title || !date || !status || !projectId) {
       return res.status(400).json({ error: 'Missing required todo fields' });
     }
     // Ensure relationships are arrays of strings if present
     const todo: Todo = {
-      id,
+      id: randomUUID(),
       title,
       description,
       date,
@@ -58,6 +60,13 @@ export const createTodo = async (req: Request, res: Response) => {
       ganttTaskIds: Array.isArray(ganttTaskIds) ? ganttTaskIds.map(String) : [],
       relatedTaskIds: Array.isArray(relatedTaskIds) ? relatedTaskIds.map(String) : [],
     };
+
+    // Before creating the todo
+    const project = await projectService.getProjectById(projectId);
+    if (!project) {
+      return res.status(400).json({ error: 'Project not found for given projectId' });
+    }
+
     const created = await todoService.createTodo(todo);
     logger.info('Created todo: %o', created);
     res.status(201).json(created);
@@ -92,5 +101,21 @@ export const deleteTodo = async (req: Request, res: Response) => {
   } catch (e: any) {
     logger.error('Todo deletion failed: %s', e?.message || e);
     res.status(400).json({ error: 'Todo deletion failed', details: e?.message || String(e) });
+  }
+};
+
+export const getTodoDetail = async (req: Request, res: Response) => {
+  try {
+    const todo = await todoService.getTodoDetail(req.params.id);
+    if (todo) {
+      logger.info('Fetched todo detail: %o', todo);
+      return res.json(todo);
+    }
+    res.status(404).json({ error: 'Todo not found' });
+  } catch (e: any) {
+    logger.error('Failed to fetch todo detail: %s', e?.message || e);
+    res
+      .status(500)
+      .json({ error: 'Failed to fetch todo detail', details: e?.message || String(e) });
   }
 };

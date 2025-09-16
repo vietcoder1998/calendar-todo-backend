@@ -4700,3 +4700,137 @@
 {"level":"info","message":"Fetched project detail: 0sxifadi641","service":"api-service","timestamp":"2025-09-16 17:40:26"}
 {"level":"info","message":"Fetched project detail: 0sxifadi641","service":"api-service","timestamp":"2025-09-16 17:40:26"}
 {"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 17:40:29"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:06:18"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:06:18"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:06:18"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:06:18"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:07:28"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:07:28"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:07:28"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:07:28"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:07:50"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:07:50"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:07:50"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:07:50"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:08:03"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:08:03"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:08:03"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:08:03"}
+{"level":"info","message":"Created project: {\n  id: 'fpxkcwrvw4v',\n  name: 'Test',\n  description: '11',\n  avatarUrl: '222',\n  plan: '1222',\n  members: 1\n}","service":"api-service","timestamp":"2025-09-16 20:08:09"}
+{"level":"info","message":"Created project: {\n  id: '1758028089340',\n  name: 'Test',\n  description: '11',\n  avatarUrl: '222',\n  plan: '1222',\n  members: 1\n}","service":"api-service","timestamp":"2025-09-16 20:08:09"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:08:09"}
+{"level":"info","message":"Created todo: {\n  id: '89056e03-280c-4b45-b06f-badf31c67764',\n  title: 'Test',\n  description: '',\n  date: '2025-09-16',\n  deadline: undefined,\n  status: 'todo',\n  createdAt: '2025-09-16T13:08:14.232Z',\n  updatedAt: '2025-09-16T13:08:14.232Z',\n  locationId: undefined,\n  relatedTaskIds: [ [length]: 0 ],\n  projectId: '1758028089340',\n  history: [ [length]: 0 ],\n  linkedItems: [ [length]: 0 ],\n  assignedUsers: [ [length]: 0 ],\n  files: [ [length]: 0 ],\n  webhooks: [ [length]: 0 ],\n  ganttTaskIds: [ [length]: 0 ]\n}","service":"api-service","timestamp":"2025-09-16 20:08:14"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:08:28"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:08:28"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:08:28"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:08:28"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:08:28"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:08:28"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:08:28"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:08:28"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:08:28"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:08:28"}
+{"level":"info","message":"Updated todo: {\n  id: 'f5556383-7adc-4cbf-9b8b-369804f38fd5',\n  title: 'Test',\n  description: '',\n  date: '2025-09-17',\n  deadline: undefined,\n  status: 'todo',\n  createdAt: '2025-09-16T13:08:14.232Z',\n  updatedAt: '2025-09-16T13:08:14.232Z',\n  locationId: undefined,\n  relatedTaskIds: [ [length]: 0 ],\n  projectId: '1758028089340',\n  history: [ [length]: 0 ],\n  linkedItems: [ [length]: 0 ],\n  assignedUsers: [ [length]: 0 ],\n  files: [ [length]: 0 ],\n  webhooks: [ [length]: 0 ],\n  ganttTaskIds: [ [length]: 0 ]\n}","service":"api-service","timestamp":"2025-09-16 20:08:30"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:08:30"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:10:47"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:10:48"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:10:48"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:10:48"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:10:48"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:10:48"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:10:48"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:10:48"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:10:48"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:10:48"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:15:56"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:15:56"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:15:56"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:15:56"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:15:56"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:15:56"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:15:56"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:15:56"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:15:57"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:15:57"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:16:25"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:16:25"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:16:25"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:16:25"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:16:25"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:16:25"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:16:25"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:16:25"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:16:26"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:16:26"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:17:19"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:19"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:17:19"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:17:19"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:17:19"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:19"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:19"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:20"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:20"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:20"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:17:26"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:26"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:17:26"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:17:26"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:17:26"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:26"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:26"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:26"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:26"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:26"}
+{"level":"info","message":"Updated todo: {\n  id: '00485922-f403-453b-bc57-e451a8fa0be4',\n  title: 'Test',\n  description: '',\n  date: '2025-09-16',\n  deadline: undefined,\n  status: 'todo',\n  createdAt: '2025-09-16T13:08:14.232Z',\n  updatedAt: '2025-09-16T13:08:14.232Z',\n  locationId: undefined,\n  relatedTaskIds: [ [length]: 0 ],\n  projectId: '1758028089340',\n  history: [ [length]: 0 ],\n  linkedItems: [ [length]: 0 ],\n  assignedUsers: [ [length]: 0 ],\n  files: [ [length]: 0 ],\n  webhooks: [ [length]: 0 ],\n  ganttTaskIds: [ [length]: 0 ]\n}","service":"api-service","timestamp":"2025-09-16 20:17:30"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:17:30"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:19:39"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:19:39"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:19:39"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:19:39"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:19:39"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:19:39"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:19:39"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:19:39"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:19:39"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:19:39"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:20:00"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:20:00"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:20:00"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:20:00"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:20:00"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:20:00"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:20:00"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:20:00"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:20:01"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:20:01"}
+{"level":"info","message":"Updated todo: {\n  id: '0b8a511e-4e05-4f3b-bca7-eeb119fd549f',\n  title: 'Test',\n  description: '',\n  date: '2025-09-18',\n  deadline: undefined,\n  status: 'todo',\n  createdAt: '2025-09-16T13:08:14.232Z',\n  updatedAt: '2025-09-16T13:08:14.232Z',\n  locationId: undefined,\n  relatedTaskIds: [ [length]: 0 ],\n  projectId: '1758028089340',\n  history: [ [length]: 0 ],\n  linkedItems: [ [length]: 0 ],\n  assignedUsers: [ [length]: 0 ],\n  files: [ [length]: 0 ],\n  webhooks: [ [length]: 0 ],\n  ganttTaskIds: [ [length]: 0 ]\n}","service":"api-service","timestamp":"2025-09-16 20:20:25"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:20:25"}
+{"level":"info","message":"Updated todo: {\n  id: '0b8a511e-4e05-4f3b-bca7-eeb119fd549f',\n  title: 'Test',\n  description: '',\n  date: '2025-09-17',\n  deadline: undefined,\n  status: 'todo',\n  createdAt: '2025-09-16T13:08:14.232Z',\n  updatedAt: '2025-09-16T13:08:14.232Z',\n  locationId: undefined,\n  relatedTaskIds: [ [length]: 0 ],\n  projectId: '1758028089340',\n  history: [ [length]: 0 ],\n  linkedItems: [ [length]: 0 ],\n  assignedUsers: [ [length]: 0 ],\n  files: [ [length]: 0 ],\n  webhooks: [ [length]: 0 ],\n  ganttTaskIds: [ [length]: 0 ]\n}","service":"api-service","timestamp":"2025-09-16 20:23:00"}
+{"level":"info","message":"Updated todo: {\n  id: '0b8a511e-4e05-4f3b-bca7-eeb119fd549f',\n  title: 'Test',\n  description: '',\n  date: '2025-09-18',\n  deadline: undefined,\n  status: 'todo',\n  createdAt: '2025-09-16T13:08:14.232Z',\n  updatedAt: '2025-09-16T13:08:14.232Z',\n  locationId: undefined,\n  relatedTaskIds: [ [length]: 0 ],\n  projectId: '1758028089340',\n  history: [ [length]: 0 ],\n  linkedItems: [ [length]: 0 ],\n  assignedUsers: [ [length]: 0 ],\n  files: [ [length]: 0 ],\n  webhooks: [ [length]: 0 ],\n  ganttTaskIds: [ [length]: 0 ]\n}","service":"api-service","timestamp":"2025-09-16 20:23:00"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:23:00"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:23:00"}
+{"level":"info","message":"Updated todo: {\n  id: '0b8a511e-4e05-4f3b-bca7-eeb119fd549f',\n  title: 'Test',\n  description: '',\n  date: '2025-09-19',\n  deadline: undefined,\n  status: 'todo',\n  createdAt: '2025-09-16T13:08:14.232Z',\n  updatedAt: '2025-09-16T13:08:14.232Z',\n  locationId: undefined,\n  relatedTaskIds: [ [length]: 0 ],\n  projectId: '1758028089340',\n  history: [ [length]: 0 ],\n  linkedItems: [ [length]: 0 ],\n  assignedUsers: [ [length]: 0 ],\n  files: [ [length]: 0 ],\n  webhooks: [ [length]: 0 ],\n  ganttTaskIds: [ [length]: 0 ]\n}","service":"api-service","timestamp":"2025-09-16 20:23:03"}
+{"level":"info","message":"Updated todo: {\n  id: '0b8a511e-4e05-4f3b-bca7-eeb119fd549f',\n  title: 'Test',\n  description: '',\n  date: '2025-09-17',\n  deadline: undefined,\n  status: 'todo',\n  createdAt: '2025-09-16T13:08:14.232Z',\n  updatedAt: '2025-09-16T13:08:14.232Z',\n  locationId: undefined,\n  relatedTaskIds: [ [length]: 0 ],\n  projectId: '1758028089340',\n  history: [ [length]: 0 ],\n  linkedItems: [ [length]: 0 ],\n  assignedUsers: [ [length]: 0 ],\n  files: [ [length]: 0 ],\n  webhooks: [ [length]: 0 ],\n  ganttTaskIds: [ [length]: 0 ]\n}","service":"api-service","timestamp":"2025-09-16 20:23:03"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:23:03"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:23:03"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:27:01"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:27:01"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:27:01"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:27:01"}
+{"level":"error","message":"Todo creation failed: \nInvalid `prisma.todo.create()` invocation in\nD:\\COMPANY\\Freelancer\\todo-app\\calendar-be\\src\\services\\todo.service.ts:49:37\n\n  46 \n  47 export async function createTodo(todo: Omit<Todo, 'id'> & { id?: string }): Promise<Todo> {\n  48   const { projectId, ...rest } = toPrismaTodoInput(todo);\n→ 49   const created = await prisma.todo.create(\nAn operation failed because it depends on one or more records that were required but not found. No 'Project' record(s) (needed to inline the relation on 'Todo' record(s)) was found for a nested connect on one-to-many relation 'ProjectToTodo'.","service":"api-service","timestamp":"2025-09-16 20:27:08"}
+{"level":"error","message":"Todo creation failed: \nInvalid `prisma.todo.create()` invocation in\nD:\\COMPANY\\Freelancer\\todo-app\\calendar-be\\src\\services\\todo.service.ts:49:37\n\n  46 \n  47 export async function createTodo(todo: Omit<Todo, 'id'> & { id?: string }): Promise<Todo> {\n  48   const { projectId, ...rest } = toPrismaTodoInput(todo);\n→ 49   const created = await prisma.todo.create(\nAn operation failed because it depends on one or more records that were required but not found. No 'Project' record(s) (needed to inline the relation on 'Todo' record(s)) was found for a nested connect on one-to-many relation 'ProjectToTodo'.","service":"api-service","timestamp":"2025-09-16 20:27:12"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:27:21"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:27:21"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:27:21"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:27:21"}
+{"level":"error","message":"Todo creation failed: \nInvalid `prisma.todo.create()` invocation in\nD:\\COMPANY\\Freelancer\\todo-app\\calendar-be\\src\\services\\todo.service.ts:49:37\n\n  46 \n  47 export async function createTodo(todo: Omit<Todo, 'id'> & { id?: string }): Promise<Todo> {\n  48   const { projectId, ...rest } = toPrismaTodoInput(todo);\n→ 49   const created = await prisma.todo.create(\nAn operation failed because it depends on one or more records that were required but not found. No 'Project' record(s) (needed to inline the relation on 'Todo' record(s)) was found for a nested connect on one-to-many relation 'ProjectToTodo'.","service":"api-service","timestamp":"2025-09-16 20:27:25"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:32:42"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:32:42"}
+{"level":"info","message":"Fetched gantt tasks","service":"api-service","timestamp":"2025-09-16 20:32:42"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 20:32:42"}
+{"level":"info","message":"Fetched project detail: fpxkcwrvw4v","service":"api-service","timestamp":"2025-09-16 20:32:47"}
+{"level":"info","message":"Fetched project detail: fpxkcwrvw4v","service":"api-service","timestamp":"2025-09-16 20:32:48"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:32:51"}
+{"level":"info","message":"Fetched project detail: 1758028089340","service":"api-service","timestamp":"2025-09-16 20:32:51"}
+{"level":"error","message":"Todo creation failed: \nInvalid `prisma.todo.create()` invocation in\nD:\\COMPANY\\Freelancer\\todo-app\\calendar-be\\src\\services\\todo.service.ts:49:37\n\n  46 \n  47 export async function createTodo(todo: Omit<Todo, 'id'> & { id?: string }): Promise<Todo> {\n  48   const { projectId, ...rest } = toPrismaTodoInput(todo);\n→ 49   const created = await prisma.todo.create({\n         data: {\n       +   id: String,\n           title: 'Testttt',\n           description: '',\n           date: '2025-09-16',\n           status: 'todo',\n           createdAt: '2025-09-16T13:33:45.342Z',\n           updatedAt: '2025-09-16T13:33:45.342Z',\n       ?   locationId?: String | null,\n       ?   history?: NullableJsonNullValueInput | Json,\n           linkedItems: '[]',\n           assignedUsers: '[]',\n           files: '[]',\n           webhooks: '[]',\n           ganttTaskIds: '[]',\n           relatedTaskIds: '[]',\n           project: {\n             connect: {\n               id: '1758028089340'\n             }\n           },\n       ?   deadline?: String | null\n         }\n       })\n\nArgument id for data.id is missing.\n\nNote: Lines with + are required, lines with ? are optional.\n","service":"api-service","timestamp":"2025-09-16 20:33:45"}

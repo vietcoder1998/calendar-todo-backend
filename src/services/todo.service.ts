@@ -78,3 +78,8 @@ export async function deleteTodo(id: string): Promise<boolean> {
     return false;
   }
 }
+
+export async function getTodoDetail(id: string): Promise<Todo | null> {
+  const todo = await prisma.todo.findUnique({ where: { id } });
+  return todo ? fromPrismaTodo(todo) : null;
+}

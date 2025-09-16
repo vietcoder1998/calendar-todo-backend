@@ -8,5 +8,6 @@ router.get('/', todoController.getTodos);
 router.post('/', validateTodo, todoController.createTodo);
 router.put('/:id', validateTodo, todoController.updateTodo);
 router.delete('/:id', todoController.deleteTodo);
+router.get('/:id', todoController.getTodoDetail);
 
 export default router;

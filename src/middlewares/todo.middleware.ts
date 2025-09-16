@@ -4,6 +4,10 @@ import { NextFunction, Request, Response } from 'express';
 export const validateTodo = (req: Request, res: Response, next: NextFunction) => {
   let { title, date } = req.body;
   if (req.method === 'POST') {
+    if (!req.body.id) {
+      req.body.id = randomUUID();
+    }
+
     if (!title || typeof title !== 'string' || !title.trim()) {
       return res
         .status(400)

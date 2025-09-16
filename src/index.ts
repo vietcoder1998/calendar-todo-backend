@@ -10,10 +10,15 @@ import linkedItemRouter from './routes/linkedItem.routes';
 import ganttTaskRouter from './routes/ganttTask.routes';
 import webhookRouter from './routes/webhook.routes';
 import historyRouter from './routes/history.routes';
+import { createServer } from 'http';
+import { setupSocket } from './socket';
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+
+const httpServer = createServer(app);
+setupSocket(httpServer);
 
 // --- PROJECTS ROUTES ---
 
@@ -79,6 +84,6 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`API server running on http://localhost:${PORT}`);
 });

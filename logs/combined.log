@@ -1,0 +1,4 @@
+{"level":"info","message":"Created project: {\n  id: '0sxifadi641',\n  name: 'Tesst',\n  description: '1222',\n  avatarUrl: 'Test',\n  plan: '1',\n  members: 3\n}","service":"api-service","timestamp":"2025-09-16 11:05:02"}
+{"level":"info","message":"Created project: {\n  id: '1757995502703',\n  name: 'Tesst',\n  description: '1222',\n  avatarUrl: 'Test',\n  plan: '1',\n  members: 3\n}","service":"api-service","timestamp":"2025-09-16 11:05:02"}
+{"level":"info","message":"Created project: {\n  id: 'ddpcyakklsw',\n  name: 'Tesstt',\n  description: '122',\n  avatarUrl: '22',\n  plan: '122',\n  members: 1\n}","service":"api-service","timestamp":"2025-09-16 11:05:17"}
+{"level":"info","message":"Created project: {\n  id: '1757995517405',\n  name: 'Tesstt',\n  description: '122',\n  avatarUrl: '22',\n  plan: '122',\n  members: 1\n}","service":"api-service","timestamp":"2025-09-16 11:05:17"}

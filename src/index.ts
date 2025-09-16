@@ -12,6 +12,10 @@ import webhookRouter from './routes/webhook.routes';
 import historyRouter from './routes/history.routes';
 
 const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+// --- PROJECTS ROUTES ---
 
 app.use('/api/projects', projectRouter);
 app.use('/api/users', userRouter);

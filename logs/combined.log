@@ -2715,3 +2715,14 @@
 {"level":"info","message":"Fetched todos","service":"api-service","timestamp":"2025-09-16 12:07:27"}
 {"level":"info","message":"Fetched todos","service":"api-service","timestamp":"2025-09-16 12:07:27"}
 {"level":"info","message":"Fetched todos","service":"api-service","timestamp":"2025-09-16 12:07:27"}
+{"level":"info","message":"Created todo: {\n  title: 'Test',\n  description: '',\n  deadline: '2025-09-16',\n  status: 'todo',\n  locationId: '',\n  relatedTaskIds: [ [length]: 0 ],\n  date: '2025-09-16',\n  projectId: '0sxifadi641',\n  createdAt: '2025-09-16T05:30:12.639Z',\n  updatedAt: '2025-09-16T05:30:12.639Z',\n  id: 'd13a4b48-965e-4fd2-862a-6140c2901da4'\n}","service":"api-service","timestamp":"2025-09-16 12:30:12"}
+{"level":"info","message":"Fetched todos","service":"api-service","timestamp":"2025-09-16 12:30:12"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 12:31:52"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 12:31:52"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 12:34:13"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 12:34:13"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 12:34:27"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 12:34:27"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 12:42:02"}
+{"level":"info","message":"Fetched projects","service":"api-service","timestamp":"2025-09-16 12:42:02"}
+{"level":"info","message":"Created todo: {\n  title: 'Test',\n  description: '',\n  deadline: '2025-09-16',\n  status: 'todo',\n  date: '2025-09-16',\n  projectId: '0sxifadi641',\n  id: 'ec412e02-c708-4ddf-8773-b55e2e3d0760'\n}","service":"api-service","timestamp":"2025-09-16 12:42:10"}

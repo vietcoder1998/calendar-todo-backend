@@ -27,15 +27,15 @@ model Todo {
   createdAt      String
   updatedAt      String
   locationId     String?
-  relatedTaskIds String?     // store as comma separated or JSON string
+  relatedTaskIds Json?
   projectId      String
   project        Project   @relation(fields: [projectId], references: [id])
   history        Json?
   linkedItems    Json?
-  assignedUsers  String?     // store as comma separated or JSON string
-  files          String?     // store as comma separated or JSON string
-  webhooks       String?     // store as comma separated or JSON string
-  ganttTaskIds   String?     // store as comma separated or JSON string
+  assignedUsers  Json?
+  files          Json?
+  webhooks       Json?
+  ganttTaskIds   Json?
 }
 
 model FileItem {

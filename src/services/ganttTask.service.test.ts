@@ -45,11 +45,11 @@ describe('ganttTask.service', () => {
       start: baseTask.start,
       end: baseTask.end,
       projectId: baseTask.projectId,
-      createdAt: baseTask.createdAt,
-      updatedAt: baseTask.updatedAt,
+      createdAt: baseTask.end,
+      updatedAt: baseTask.end,
     });
     const tasks = await ganttTaskService.getGanttTasks('test-project');
-    expect(tasks.find((t) => t.id === created.id)).toBeTruthy();
+    expect(tasks.find((t: { id: string }) => t.id === created.id)).toBeTruthy();
   });
 
   it('should update a gantt task', async () => {
@@ -63,7 +63,7 @@ describe('ganttTask.service', () => {
     const deleted = await ganttTaskService.deleteGanttTask(created.id);
     expect(deleted).toBe(true);
     const tasks = await ganttTaskService.getGanttTasks('test-project');
-    expect(tasks.find((t) => t.id === created.id)).toBeFalsy();
+    expect(tasks.find((t: { id: string }) => t.id === created.id)).toBeFalsy();
   });
 
   it('should return null when updating non-existent gantt task', async () => {

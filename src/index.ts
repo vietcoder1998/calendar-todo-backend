@@ -11,6 +11,7 @@ import ganttTaskRouter from './routes/ganttTask.routes';
 import webhookRouter from './routes/webhook.routes';
 import historyRouter from './routes/history.routes';
 import locationRouter from './routes/location.routes';
+import assetRoutes from './routes/asset.routes';
 import { createServer } from 'http';
 import { setupSocket } from './socket';
 import { parseQueryParams } from './middlewares/query.middleware';
@@ -45,6 +46,7 @@ app.use('/api/gantt-tasks', ganttTaskRouter);
 app.use('/api/webhooks', webhookRouter);
 app.use('/api/histories', historyRouter);
 app.use('/api/locations', locationRouter);
+app.use('/api/assets', assetRoutes);
 type HistoryEntry = {
   changes?: HistoryEntry[];
   date: string | number | Date;

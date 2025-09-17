@@ -10,10 +10,10 @@ export const createUser = async (data: any): Promise<User> => {
   return prisma.user.create({ data });
 };
 
-export const updateUser = async (id: number, data: any): Promise<User> => {
-  return prisma.user.update({ where: { id }, data });
+export const updateUser = async (id: string, data: any): Promise<User> => {
+  return prisma.user.update({ where: { id: id }, data });
 };
 
-export const deleteUser = async (id: number): Promise<void> => {
-  await prisma.user.delete({ where: { id } });
+export const deleteUser = async (id: string): Promise<void> => {
+  await prisma.user.delete({ where: { id: id } });
 };

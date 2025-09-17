@@ -107,7 +107,7 @@ model Project {
   id          String   @id
   name        String
   description String?
-  avatarUrl   String?
+  avatarUrl String? @db.Text  
   plan        String?
   members     Int?
   todos       Todo[]

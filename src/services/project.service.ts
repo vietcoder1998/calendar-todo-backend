@@ -2,17 +2,41 @@ import { PrismaClient, Project, Todo } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const getProjectById = async (id: string): Promise<ProjectWithTodos | null> => {
+// Adjust the type to include all related entities you want to return
+type ProjectWithAll = Project & {
+  todos: Todo[];
+  files: any[];
+  permissions: any[];
+  linkedItems: any[];
+  ganttTasks: any[];
+  webhooks: any[];
+};
+
+export const getProjectById = async (id: string): Promise<ProjectWithAll | null> => {
   return prisma.project.findUnique({
     where: { id },
-    include: { todos: true },
+    include: {
+      todos: true,
+      files: true,
+      permissions: true,
+      linkedItems: true,
+      ganttTasks: true,
+      webhooks: true,
+    },
   });
 };
 
-type ProjectWithTodos = Project & { todos: Todo[] };
-
-export const getProjects = async (): Promise<ProjectWithTodos[]> => {
-  return prisma.project.findMany({ include: { todos: true } });
+export const getProjects = async (): Promise<ProjectWithAll[]> => {
+  return prisma.project.findMany({
+    include: {
+      todos: true,
+      files: true,
+      permissions: true,
+      linkedItems: true,
+      ganttTasks: true,
+      webhooks: true,
+    },
+  });
 };
 
 export const createProject = async (data: any): Promise<Project> => {

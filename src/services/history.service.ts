@@ -1,7 +1,12 @@
 type History = { id: string; [key: string]: unknown };
 let histories: History[] = [];
 
-export const getHistories = () => histories;
+export const getHistories = (projectId?: string) => {
+  if (projectId) {
+    return histories.filter((h) => h.projectId === projectId);
+  }
+  return histories;
+};
 export const createHistory = (history: History) => {
   histories.push(history);
   return history;

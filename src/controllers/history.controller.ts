@@ -4,7 +4,10 @@ import logger from '../logger';
 
 export const getHistories = (req: Request, res: Response) => {
   try {
-    const histories = historyService.getHistories();
+    const { projectId } = req.query;
+    const histories = historyService.getHistories(
+      typeof projectId === 'string' ? projectId : undefined,
+    );
     logger.info('Fetched histories');
     res.json(histories);
   } catch (e: any) {

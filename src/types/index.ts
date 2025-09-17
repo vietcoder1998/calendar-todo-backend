@@ -1,3 +1,13 @@
+export type Location = {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  googleMapsLink?: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
+};
 // --- Shared with frontend ---
 export type TodoHistoryEntry = {
   type: 'created' | 'updated' | 'deleted';

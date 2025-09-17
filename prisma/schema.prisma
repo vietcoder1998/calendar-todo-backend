@@ -1,3 +1,14 @@
+model Location {
+  id             String   @id @default(uuid())
+  name           String
+  latitude       Float
+  longitude      Float
+  googleMapsLink String?
+  projectId      String
+  project        Project  @relation(fields: [projectId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
 // This file defines the Prisma schema, including the data model and database connection settings for the MySQL database.
 
 generator client {
@@ -117,6 +128,7 @@ model Project {
   ganttTasks  GanttTask[]
   webhooks    Webhook[]
   users       User[]
+  locations   Location[]
 }
 
 model History {

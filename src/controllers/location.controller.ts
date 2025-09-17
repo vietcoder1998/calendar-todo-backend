@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import * as locationService from '../services/location.service';
+import logger from '../logger';
 
 // GET /projects/:id/locations
 export async function getLocations(req: Request, res: Response, next: NextFunction) {
   try {
     const projectId = req.params.id;
+    logger.info('Fetching locations for projectId: %s', projectId);
     const locations = await locationService.getLocationsByProjectId(projectId);
     res.json(locations);
   } catch (err) {

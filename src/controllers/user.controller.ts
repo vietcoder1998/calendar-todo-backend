@@ -5,8 +5,17 @@ import logger from '../logger';
 export const getUsersByProjectId = async (req: Request, res: Response): Promise<void> => {
   try {
     const projectId: string = req.params.id;
+    const q = req.query.q as string | undefined;
     logger.debug('Getting users for project: %s', projectId);
-    const users = await userService.getUsersByProject(projectId);
+    let users = await userService.getUsersByProject(projectId);
+    if (q) {
+      const query = q.toLowerCase();
+      users = users.filter(
+        (u: any) =>
+          (u.name && u.name.toLowerCase().includes(query)) ||
+          (u.email && u.email.toLowerCase().includes(query)),
+      );
+    }
     logger.info('Fetched users for project: %s', projectId);
     res.json(users);
   } catch (e: any) {

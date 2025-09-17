@@ -10,12 +10,14 @@ import linkedItemRouter from './routes/linkedItem.routes';
 import ganttTaskRouter from './routes/ganttTask.routes';
 import webhookRouter from './routes/webhook.routes';
 import historyRouter from './routes/history.routes';
+import locationRouter from './routes/location.routes';
 import { createServer } from 'http';
 import { setupSocket } from './socket';
+import { parseQueryParams } from './middlewares/query.middleware';
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json()).use(parseQueryParams);
 
 const httpServer = createServer(app);
 setupSocket(httpServer);
@@ -42,6 +44,7 @@ app.use('/api/linked-items', linkedItemRouter);
 app.use('/api/gantt-tasks', ganttTaskRouter);
 app.use('/api/webhooks', webhookRouter);
 app.use('/api/histories', historyRouter);
+app.use('/api/locations', locationRouter);
 type HistoryEntry = {
   changes?: HistoryEntry[];
   date: string | number | Date;

@@ -13,7 +13,11 @@
     "format": "prettier --write .",
     "prepare": "husky install",
     "docker:local": "docker-compose -f docker-compose.local.yml up -d --build",
-    "test": "jest --config jest.config.cjs --coverage"
+    "test": "jest --config jest.config.cjs --coverage",
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.0.0",

@@ -1,4 +1,5 @@
 import { PrismaClient, LinkedItem as PrismaLinkedItem } from '@prisma/client';
+import { createAsset } from './asset.util';
 const prisma = new PrismaClient();
 
 export const getLinkedItems = async (projectId?: string) => {
@@ -8,7 +9,12 @@ export const getLinkedItems = async (projectId?: string) => {
   return prisma.linkedItem.findMany();
 };
 export const createLinkedItem = async (item: PrismaLinkedItem) => {
-  return prisma.linkedItem.create({ data: item });
+  // Create asset and link
+  let assetId: string | null = null;
+  if (item.title) {
+    assetId = await createAsset(item.title, 'linkedItem');
+  }
+  return prisma.linkedItem.create({ data: { ...item, assetId, projectId: item.projectId } });
 };
 export const updateLinkedItem = async (id: string, updates: Partial<PrismaLinkedItem>) => {
   try {

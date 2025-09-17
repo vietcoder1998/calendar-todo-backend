@@ -1,5 +1,6 @@
 import { PrismaClient, GanttTask as PrismaGanttTask } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import { createAsset } from './asset.util';
 const prisma = new PrismaClient();
 
 // Get only Gantt tasks by projectId
@@ -29,6 +30,12 @@ export const createGanttTask = async (
     throw new Error('Project not found');
   }
 
+  // Create asset and link
+  let assetId: string | null = null;
+  if (task.name) {
+    assetId = await createAsset(task.name, 'ganttTask');
+  }
+
   const data = {
     ...rest,
     id: randomUUID(),
@@ -37,7 +44,8 @@ export const createGanttTask = async (
     startDate: startDate ?? rest.start,
     endDate: endDate ?? rest.end,
     color: color || 'bg-blue-500',
-    project: { connect: { id: projectId } },
+    assetId,
+    projectId,
   };
   return prisma.ganttTask.create({ data });
 };

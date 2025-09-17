@@ -1,5 +1,6 @@
 import { Location } from '@/types';
 import { PrismaClient } from '@prisma/client';
+import { createAsset } from './asset.util';
 
 const prisma = new PrismaClient();
 
@@ -17,10 +18,16 @@ export async function createLocation(
   projectId: string,
   data: Omit<Location, 'id' | 'createdAt' | 'updatedAt' | 'projectId'>,
 ): Promise<Location> {
+  // Create asset and link
+  let assetId: string | null = null;
+  if (data.name) {
+    assetId = await createAsset(data.name, 'location');
+  }
   const loc = await prisma.location.create({
     data: {
       ...data,
       projectId,
+      assetId,
     },
   });
   return {

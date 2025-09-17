@@ -48,6 +48,7 @@ export type FileItem = {
   createdAt: string | null;
   updatedAt: string | null;
   projectId: string;
+  assetId: string | null;
 };
 
 export type Permission = {
@@ -66,10 +67,11 @@ export type LinkedItem = {
   title: string;
   description: string | null;
   url: string;
-  status: 'active' | 'archived' | 'pending' | null;
+  status: string | null;
   createdAt: string;
   updatedAt: string;
   projectId: string;
+  assetId: string | null;
 };
 
 export type GanttTask = {
@@ -81,6 +83,7 @@ export type GanttTask = {
   updatedAt?: string | null;
   projectId: string;
   color: string;
+  assetId?: string | null;
 };
 
 export type Webhook = {

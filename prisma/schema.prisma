@@ -8,6 +8,8 @@ model Location {
   project        Project  @relation(fields: [projectId], references: [id])
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  assetId        String?
+  asset          Asset?   @relation(fields: [assetId], references: [id])
 }
 // This file defines the Prisma schema, including the data model and database connection settings for the MySQL database.
 
@@ -51,6 +53,8 @@ model Todo {
   files          Json?
   webhooks       Json?
   ganttTaskIds   Json?
+  assetId        String?
+  asset          Asset?    @relation(fields: [assetId], references: [id])
 }
 
 model FileItem {
@@ -61,6 +65,8 @@ model FileItem {
   updatedAt String?
   projectId String
   project   Project @relation(fields: [projectId], references: [id])
+  assetId   String?
+  asset     Asset?  @relation(fields: [assetId], references: [id])
 }
 
 model Permission {
@@ -86,6 +92,8 @@ model LinkedItem {
   updatedAt   String
   projectId   String
   project     Project @relation(fields: [projectId], references: [id])
+  assetId     String?
+  asset       Asset?  @relation(fields: [assetId], references: [id])
 }
 
 model GanttTask {
@@ -96,10 +104,12 @@ model GanttTask {
   createdAt String?
   updatedAt String?
   startDate String?
-  endDate String?
-  color String?
+  endDate   String?
+  color     String?
   projectId String
   project   Project @relation(fields: [projectId], references: [id])
+  assetId   String?
+  asset     Asset?  @relation(fields: [assetId], references: [id])
 }
 
 model Webhook {
@@ -140,4 +150,26 @@ model History {
   payload   Json?
   timestamp String
   user      String?
+}
+
+model AssetType {
+  id    String  @id @default(uuid())
+  name  String  @unique
+  assets Asset[]
+}
+
+model Asset {
+  id         String     @id @default(uuid())
+  name       String
+  typeId     String
+  type       AssetType  @relation(fields: [typeId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  // Relations to all asset-using models
+  todos      Todo[]
+  files      FileItem[]
+  locations  Location[]
+  ganttTasks GanttTask[]
+  linkedItems LinkedItem[]
 }

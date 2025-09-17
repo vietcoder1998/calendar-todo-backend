@@ -1,5 +1,6 @@
 import { PrismaClient, Todo as PrismaTodo } from '@prisma/client';
 import type { Todo } from '@/types';
+import { createAsset } from './asset.util';
 
 const prisma = new PrismaClient();
 
@@ -41,12 +42,18 @@ export const getTodos = async (projectId?: string): Promise<Todo[]> => {
 
 export const createTodo = async (todo: Omit<Todo, 'id'> & { id?: string }): Promise<Todo> => {
   const { projectId, ...rest } = toPrismaTodoInput(todo);
+  // Create asset and link
+  let assetId: string | null = null;
+  if (todo.title) {
+    assetId = await createAsset(todo.title, 'todo');
+  }
   const created = await prisma.todo.create({
     data: {
       ...rest,
-      project: { connect: { id: todo.projectId } },
       createdAt: rest.createdAt || new Date().toISOString(),
       updatedAt: rest.updatedAt || new Date().toISOString(),
+      assetId,
+      projectId: todo.projectId,
     },
   });
   return fromPrismaTodo(created);

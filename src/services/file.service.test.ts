@@ -9,8 +9,9 @@ describe('file.service', () => {
     files = [];
     jest.spyOn(fileService, 'getFiles').mockImplementation(async () => files);
     jest.spyOn(fileService, 'createFile').mockImplementation(async (file: FileItem) => {
-      files.push(file);
-      return file;
+      const created = { ...file, assetId: file.assetId ?? 'mock-asset-id' };
+      files.push(created);
+      return created;
     });
     jest
       .spyOn(fileService, 'updateFile')
@@ -37,10 +38,12 @@ describe('file.service', () => {
       createdAt: null,
       updatedAt: null,
       url: null,
+      assetId: null,
     };
     const created = await fileService.createFile(file);
     expect(created.name).toEqual(file.name);
-    expect(await fileService.getFiles()).toContainEqual(file);
+    expect(created.assetId).not.toBeNull(); // assetId should be set
+    expect(await fileService.getFiles()).toContainEqual(created);
   });
 
   it('should update a file', async () => {
@@ -51,6 +54,7 @@ describe('file.service', () => {
       createdAt: null,
       updatedAt: null,
       url: null,
+      assetId: null,
     };
     await fileService.createFile(file);
     const updated = await fileService.updateFile('1', { name: 'updated.txt' });
@@ -65,6 +69,7 @@ describe('file.service', () => {
       createdAt: null,
       updatedAt: null,
       url: null,
+      assetId: null,
     };
     await fileService.createFile(file);
     const deleted = await fileService.deleteFile('1');

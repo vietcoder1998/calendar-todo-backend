@@ -4,26 +4,46 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function getLocationsByProjectId(projectId: string): Promise<Location[]> {
-  return prisma.location.findMany({ where: { projectId } });
+  const results = await prisma.location.findMany({ where: { projectId } });
+  return results.map((loc) => ({
+    ...loc,
+    googleMapsLink: loc.googleMapsLink ?? undefined,
+    createdAt: loc.createdAt instanceof Date ? loc.createdAt.toISOString() : loc.createdAt,
+    updatedAt: loc.updatedAt instanceof Date ? loc.updatedAt.toISOString() : loc.updatedAt,
+  }));
 }
 
 export async function createLocation(
   projectId: string,
-  data: Partial<Location>,
+  data: Omit<Location, 'id' | 'createdAt' | 'updatedAt' | 'projectId'>,
 ): Promise<Location> {
-  return prisma.location.create({
+  const loc = await prisma.location.create({
     data: {
       ...data,
       projectId,
-    } as any,
+    },
   });
+  return {
+    ...loc,
+    googleMapsLink: loc.googleMapsLink ?? undefined,
+    createdAt: loc.createdAt.toISOString(),
+    updatedAt: loc.updatedAt.toISOString(),
+  };
 }
 
 export async function getLocationById(
   projectId: string,
   locationId: string,
 ): Promise<Location | null> {
-  return prisma.location.findFirst({ where: { id: locationId, projectId } });
+  const loc = await prisma.location.findFirst({ where: { id: locationId, projectId } });
+  return loc
+    ? {
+        ...loc,
+        googleMapsLink: loc.googleMapsLink ?? undefined,
+        createdAt: loc.createdAt.toISOString(),
+        updatedAt: loc.updatedAt.toISOString(),
+      }
+    : null;
 }
 
 export async function updateLocation(
@@ -31,10 +51,18 @@ export async function updateLocation(
   locationId: string,
   data: Partial<Location>,
 ): Promise<Location | null> {
-  return prisma.location.update({
+  const loc = await prisma.location.update({
     where: { id: locationId },
     data,
   });
+  return loc
+    ? {
+        ...loc,
+        googleMapsLink: loc.googleMapsLink ?? undefined,
+        createdAt: loc.createdAt instanceof Date ? loc.createdAt.toISOString() : loc.createdAt,
+        updatedAt: loc.updatedAt instanceof Date ? loc.updatedAt.toISOString() : loc.updatedAt,
+      }
+    : null;
 }
 
 export async function deleteLocation(projectId: string, locationId: string): Promise<void> {

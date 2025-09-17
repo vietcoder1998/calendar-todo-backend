@@ -19,6 +19,7 @@ router.get('/:id/files', fileController.getFiles);
 router.get('/:id/permissions', permissionController.getPermissions);
 router.get('/:id/webhooks', webhookController.getWebhooks);
 router.get('/:id/histories', historyController.getHistories);
+router.get('/:id/locations', locationController.getLocations);
 
 router.post('/', validateProject, projectController.createProject);
 router.put('/:id', validateProject, projectController.updateProject);

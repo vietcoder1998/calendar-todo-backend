@@ -10,6 +10,7 @@ type ProjectWithAll = Project & {
   linkedItems: any[];
   ganttTasks: any[];
   webhooks: any[];
+  users: any[];
 };
 
 export const getProjectById = async (id: string): Promise<ProjectWithAll | null> => {
@@ -22,6 +23,7 @@ export const getProjectById = async (id: string): Promise<ProjectWithAll | null>
       linkedItems: true,
       ganttTasks: true,
       webhooks: true,
+      users: true,
     },
   });
 };
@@ -35,6 +37,7 @@ export const getProjects = async (): Promise<ProjectWithAll[]> => {
       linkedItems: true,
       ganttTasks: true,
       webhooks: true,
+      users: true,
     },
   });
 };

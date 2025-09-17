@@ -11,7 +11,10 @@
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"],
-      "@": ["."]
+      "@/controllers/*": ["./src/controllers/*"],
+      "@/middlewares/*": ["./src/middlewares/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/utils/*": ["./src/utils/*"]
     }
   },
   "include": ["src/**/*.ts"],

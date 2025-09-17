@@ -1,9 +1,12 @@
 import { PrismaClient, User } from '@prisma/client';
-
-const prisma = new PrismaClient();
+const prisma: PrismaClient = new PrismaClient();
 
 export const getUsers = async (): Promise<User[]> => {
   return prisma.user.findMany();
+};
+
+export const getUsersByProject = async (projectId: string): Promise<User[]> => {
+  return prisma.user.findMany({ where: { projectId } });
 };
 
 export const createUser = async (data: any): Promise<User> => {

@@ -10,4 +10,5 @@ if defined file use rule inside content for generate or edit code
 6. check error, if error, reupdate the code
 7. if  > 200 line break to multi components
 8. if loop display try to create a base component
+9. all variable need todo define type ( before ) and return type for function
 -------------------------------------------------------

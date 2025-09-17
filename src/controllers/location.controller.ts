@@ -15,7 +15,7 @@ export async function getLocations(req: Request, res: Response, next: NextFuncti
 // POST /projects/:id/locations
 export async function createLocation(req: Request, res: Response, next: NextFunction) {
   try {
-    const projectId = req.params.id;
+    const projectId = req.body.projectId;
     const location = await locationService.createLocation(projectId, req.body);
     res.status(201).json(location);
   } catch (err) {

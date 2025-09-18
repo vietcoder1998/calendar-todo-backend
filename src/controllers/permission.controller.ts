@@ -5,6 +5,7 @@ import logger from '../logger';
 export const getPermissions = async (req: Request, res: Response) => {
   try {
     const { projectId } = req.query;
+    console.log(req.query);
     const permissions = await permissionService.getPermissions(
       typeof projectId === 'string' ? projectId : undefined,
     );

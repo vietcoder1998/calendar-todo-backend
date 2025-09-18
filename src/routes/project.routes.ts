@@ -16,7 +16,7 @@ router.get('/:id', projectController.getProjectById);
 router.get('/:id/users', userController.getUsersByProjectId);
 router.get('/:id/linked-items', linkedItemController.getLinkedItems);
 router.get('/:id/files', fileController.getFiles);
-router.get('/:id/permissions', permissionController.getPermissions);
+router.get('/:projectId/permissions', permissionController.getPermissions);
 router.get('/:id/webhooks', webhookController.getWebhooks);
 router.get('/:id/histories', historyController.getHistories);
 router.get('/:id/locations', locationController.getLocations);

@@ -15,10 +15,11 @@ import assetRoutes from './routes/asset.routes';
 import { createServer } from 'http';
 import { setupSocket } from './socket';
 import { parseQueryParams } from './middlewares/query.middleware';
+import { boundaryResponse } from './middlewares/response.middleware';
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json()).use(parseQueryParams);
+app.use(bodyParser.json()).use(parseQueryParams).use(boundaryResponse);
 
 const httpServer = createServer(app);
 setupSocket(httpServer);

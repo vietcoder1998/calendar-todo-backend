@@ -1,4 +1,4 @@
-import { PrismaClient, Todo as PrismaTodo } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import type { Todo } from '@/types';
 import { createAsset } from './asset.util';
 
@@ -17,7 +17,7 @@ const toPrismaTodoInput = (todo: Omit<Todo, 'id'> & { id?: string }): any => ({
 });
 
 // Utility: Convert Prisma Todo to app Todo type
-const fromPrismaTodo = (prismaTodo: PrismaTodo): Todo => ({
+const fromPrismaTodo = (prismaTodo: any): Todo => ({
   ...prismaTodo,
   status: prismaTodo.status as 'todo' | 'in-progress' | 'review' | 'done',
   relatedTaskIds: prismaTodo.relatedTaskIds ? JSON.parse(prismaTodo.relatedTaskIds as any) : [],
@@ -27,8 +27,8 @@ const fromPrismaTodo = (prismaTodo: PrismaTodo): Todo => ({
   webhooks: prismaTodo.webhooks ? JSON.parse(prismaTodo.webhooks as any) : [],
   ganttTaskIds: prismaTodo.ganttTaskIds ? JSON.parse(prismaTodo.ganttTaskIds as any) : [],
   history: prismaTodo.history ? JSON.parse(prismaTodo.history as any) : [],
-  deadline: prismaTodo.deadline === null ? undefined : prismaTodo.deadline,
-  locationId: prismaTodo.locationId === null ? undefined : prismaTodo.locationId,
+  deadline: prismaTodo.deadline ?? null,
+  locationId: prismaTodo.locationId ?? null,
 });
 
 export const getTodos = async (projectId?: string): Promise<Todo[]> => {

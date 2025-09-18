@@ -1,18 +1,34 @@
-import { PrismaClient, Webhook as PrismaWebhook } from '@prisma/client';
+import { Webhook as WebhookType } from '../types';
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
+
+const fromPrismaWebhook = (prismaWebhook: any): WebhookType => ({
+  id: prismaWebhook.id,
+  name: prismaWebhook.name,
+  platform: prismaWebhook.platform,
+  token: prismaWebhook.token ?? null,
+  chatId: prismaWebhook.chatId ?? null,
+  webhookUrl: prismaWebhook.webhookUrl ?? null,
+  enabled: prismaWebhook.enabled,
+  projectId: prismaWebhook.projectId,
+});
 
 export const getWebhooks = async (projectId?: string) => {
   if (projectId) {
-    return prisma.webhook.findMany({ where: { projectId } });
+    const webhooks = await prisma.webhook.findMany({ where: { projectId } });
+    return webhooks.map(fromPrismaWebhook);
   }
-  return prisma.webhook.findMany();
+  const webhooks = await prisma.webhook.findMany();
+  return webhooks.map(fromPrismaWebhook);
 };
-export const createWebhook = async (webhook: PrismaWebhook) => {
-  return prisma.webhook.create({ data: webhook });
+export const createWebhook = async (webhook: WebhookType) => {
+  const created = await prisma.webhook.create({ data: webhook });
+  return fromPrismaWebhook(created);
 };
-export const updateWebhook = async (id: string, updates: Partial<PrismaWebhook>) => {
+export const updateWebhook = async (id: string, updates: Partial<WebhookType>) => {
   try {
-    return await prisma.webhook.update({ where: { id }, data: updates });
+    const updated = await prisma.webhook.update({ where: { id }, data: updates });
+    return fromPrismaWebhook(updated);
   } catch {
     return null;
   }

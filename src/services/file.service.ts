@@ -1,30 +1,49 @@
-import { FileItem, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { FileItem as FileItemType } from '../types';
 import { createAsset } from './asset.util';
 const prisma = new PrismaClient();
 
+const fromPrismaFile = (prismaFile: any): FileItemType => ({
+  id: prismaFile.id,
+  name: prismaFile.name ?? null,
+  url: prismaFile.url ?? null,
+  createdAt: prismaFile.createdAt
+    ? (prismaFile.createdAt.toISOString?.() ?? prismaFile.createdAt)
+    : null,
+  updatedAt: prismaFile.updatedAt
+    ? (prismaFile.updatedAt.toISOString?.() ?? prismaFile.updatedAt)
+    : null,
+  projectId: prismaFile.projectId,
+  assetId: prismaFile.assetId ?? null,
+});
+
 export const getFiles = async (projectId?: string) => {
   if (projectId) {
-    return prisma.fileItem.findMany({ where: { projectId: { equals: projectId } } });
+    const files = await prisma.fileItem.findMany({ where: { projectId: { equals: projectId } } });
+    return files.map(fromPrismaFile);
   }
-  return prisma.fileItem.findMany();
+  const files = await prisma.fileItem.findMany();
+  return files.map(fromPrismaFile);
 };
-export const createFile = async (file: FileItem) => {
+export const createFile = async (file: FileItemType) => {
   // Create asset and link if name is present
   let assetId: string | null = null;
   if (file.name) {
     assetId = await createAsset(file.name, 'file');
   }
-  return prisma.fileItem.create({
+  const created = await prisma.fileItem.create({
     data: {
       ...file,
       assetId,
       projectId: file.projectId,
     },
   });
+  return fromPrismaFile(created);
 };
-export const updateFile = async (id: string, updates: Partial<FileItem>) => {
+export const updateFile = async (id: string, updates: Partial<FileItemType>) => {
   try {
-    return await prisma.fileItem.update({ where: { id }, data: updates });
+    const updated = await prisma.fileItem.update({ where: { id }, data: updates });
+    return fromPrismaFile(updated);
   } catch {
     return null;
   }

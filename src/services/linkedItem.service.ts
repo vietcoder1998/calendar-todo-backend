@@ -1,24 +1,60 @@
-import { PrismaClient, LinkedItem as PrismaLinkedItem } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { createAsset } from './asset.util';
+import { LinkedItem } from '@/types';
 const prisma = new PrismaClient();
 
 export const getLinkedItems = async (projectId?: string) => {
   if (projectId) {
-    return prisma.linkedItem.findMany({ where: { projectId: projectId } });
+    const items = await prisma.linkedItem.findMany({ where: { projectId: projectId } });
+    return items.map((i: LinkedItem) => ({
+      ...i,
+      description: i.description ?? null,
+      status: i.status ?? null,
+      assetId: i.assetId ?? null,
+    }));
   }
-  return prisma.linkedItem.findMany();
+  const items = await prisma.linkedItem.findMany();
+  return items.map((i: LinkedItem) => ({
+    ...i,
+    description: i.description ?? null,
+    status: i.status ?? null,
+    assetId: i.assetId ?? null,
+  }));
 };
-export const createLinkedItem = async (item: PrismaLinkedItem) => {
+export const createLinkedItem = async (item: LinkedItem) => {
   // Create asset and link
   let assetId: string | null = null;
   if (item.title) {
     assetId = await createAsset(item.title, 'linkedItem');
   }
-  return prisma.linkedItem.create({ data: { ...item, assetId, projectId: item.projectId } });
+
+  if (!assetId) {
+    assetId = 'default-asset-id'; // Fallback asset ID
+  }
+
+  // Ensure projectId is set
+  if (!item.projectId) {
+    throw new Error('projectId is required to create a linked item');
+  }
+  const i = await prisma.linkedItem.create({
+    data: { ...item, assetId, projectId: item.projectId },
+  });
+  return {
+    ...i,
+    description: i.description ?? null,
+    status: i.status ?? null,
+    assetId: i.assetId ?? null,
+  };
 };
-export const updateLinkedItem = async (id: string, updates: Partial<PrismaLinkedItem>) => {
+export const updateLinkedItem = async (id: string, updates: Partial<LinkedItem>) => {
   try {
-    return await prisma.linkedItem.update({ where: { id }, data: updates });
+    const i = await prisma.linkedItem.update({ where: { id }, data: updates });
+    return {
+      ...i,
+      description: i.description ?? null,
+      status: i.status ?? null,
+      assetId: i.assetId ?? null,
+    };
   } catch {
     return null;
   }

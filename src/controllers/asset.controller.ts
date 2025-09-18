@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import * as assetService from '../services/asset.service';
 
 export const getAssets = async (req: Request, res: Response) => {
-  const { projectId } = req.query;
-  const assets = await assetService.getAssets(projectId as string | undefined);
+  const { id } = req.query;
+  const assets = await assetService.getAssets(id as string | undefined);
   res.json(assets);
 };
 

@@ -57,6 +57,8 @@ export type Permission = {
   resource: string;
   userId: string;
   projectId: string;
+  assetId?: string | null;
+  asset?: any;
   createdAt: Date;
   updatedAt: Date;
 };

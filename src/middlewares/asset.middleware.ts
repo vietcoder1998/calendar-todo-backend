@@ -18,7 +18,6 @@ export async function attachAssetOnCreate(req: Request, res: Response, next: Nex
       const assetId = await createAsset(assetName, typeNameWithPath, projectId);
       if (assetId) {
         req.body.assetId = assetId;
-        console.log('assetId', assetId);
         // Also ensure permissions for admin (redundant if createAsset already does this, but safe)
         const adminUser = await prisma.user.findFirst({ where: { name: 'Admin', projectId } });
         const finalOwnerId = adminUser ? adminUser.id : 'admin';
@@ -26,6 +25,7 @@ export async function attachAssetOnCreate(req: Request, res: Response, next: Nex
         const permissionData = actions.map((type) => ({
           id: `${type}:asset:${assetId}:${finalOwnerId}`,
           type,
+          assetId: assetId,
           resource: `asset:${assetId}`,
           userId: finalOwnerId,
           projectId,
@@ -34,7 +34,7 @@ export async function attachAssetOnCreate(req: Request, res: Response, next: Nex
           data: permissionData,
           skipDuplicates: true,
         });
-        logger.info('Pemssiion created:', JSON.stringify(data));
+        logger.info('Pemssiion created:', data);
         // No direct return here, let controller/middleware handle response
       }
 

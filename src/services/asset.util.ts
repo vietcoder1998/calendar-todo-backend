@@ -21,12 +21,7 @@ export async function getOrCreateAssetType(name: string) {
  * @param projectId Project id to link permission
  * @param ownerId User id of the project owner
  */
-export async function createAsset(
-  name: string,
-  typeName: string,
-  projectId?: string,
-  ownerId?: string,
-) {
+export async function createAsset(name: string, typeName: string, projectId?: string) {
   try {
     const assetType = await getOrCreateAssetType(typeName);
     const asset = await prisma.asset.create({
@@ -36,17 +31,22 @@ export async function createAsset(
       },
     });
 
-    // Create default permissions if projectId and ownerId are provided
+    // Find the admin user in the database
+    let finalOwnerId = 'admin';
+    const adminUser = await prisma.user.findFirst({ where: { name: 'Admin', projectId } });
+    if (adminUser) {
+      finalOwnerId = adminUser.id;
+    }
     if (projectId) {
       const actions = ['edit', 'view', 'comment', 'delete'];
       await Promise.all(
         actions.map((type) =>
           prisma.permission.create({
             data: {
-              id: `${type}:asset:${asset.id}:${ownerId}`,
+              id: `${type}:asset:${asset.id}:${finalOwnerId}`,
               type,
               resource: `asset:${asset.id}`,
-              userId: ownerId ?? 'admin',
+              userId: finalOwnerId,
               projectId,
             },
           }),

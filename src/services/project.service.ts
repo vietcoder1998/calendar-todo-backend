@@ -44,7 +44,22 @@ export const getProjects = async (): Promise<ProjectWithAll[]> => {
 
 export const createProject = async (data: any): Promise<Project> => {
   // TODO: validate data
-  return prisma.project.create({ data });
+  const project = await prisma.project.create({ data });
+
+  // Create an admin user for the project if not already present
+  const adminId = `admin-${project.id}`;
+  await prisma.user.upsert({
+    where: { id: adminId },
+    update: {},
+    create: {
+      id: adminId,
+      name: 'Admin',
+      email: `admin-${project.id}@example.com`,
+      projectId: project.id,
+    },
+  });
+
+  return project;
 };
 
 export const updateProject = async (id: string, data: any): Promise<Project> => {

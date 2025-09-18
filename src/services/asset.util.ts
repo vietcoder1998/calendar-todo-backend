@@ -39,19 +39,14 @@ export async function createAsset(name: string, typeName: string, projectId?: st
     }
     if (projectId) {
       const actions = ['edit', 'view', 'comment', 'delete'];
-      await Promise.all(
-        actions.map((type) =>
-          prisma.permission.create({
-            data: {
-              id: `${type}:asset:${asset.id}:${finalOwnerId}`,
-              type,
-              resource: `asset:${asset.id}`,
-              userId: finalOwnerId,
-              projectId,
-            },
-          }),
-        ),
-      );
+      const permissionData = actions.map((type) => ({
+        id: `${type}:asset:${asset.id}:${finalOwnerId}`,
+        type,
+        resource: `asset:${asset.id}`,
+        userId: finalOwnerId,
+        projectId,
+      }));
+      await prisma.permission.createMany({ data: permissionData });
     }
     return asset.id;
   } catch (e) {

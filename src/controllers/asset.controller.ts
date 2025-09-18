@@ -15,8 +15,8 @@ export const getAssetById = async (req: Request, res: Response) => {
 };
 
 export const createAsset = async (req: Request, res: Response) => {
-  const asset = await assetService.createAsset(req.body);
-  res.status(201).json(asset);
+  // Asset is created in middleware, just return assetId
+  res.status(201).json({ assetId: req.body.assetId });
 };
 
 export const updateAsset = async (req: Request, res: Response) => {

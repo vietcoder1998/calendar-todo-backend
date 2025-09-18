@@ -46,3 +46,13 @@ export const deletePermission = async (id: string) => {
     return false;
   }
 };
+export const getPermissionsByResourceType = async (projectId: string, resourceType: string) => {
+  // resourceType: 'user', 'file', 'linked-item', 'webhook', 'history', 'location', etc.
+  const permissions = await prisma.permission.findMany({
+    where: {
+      projectId,
+      resource: { contains: resourceType },
+    },
+  });
+  return permissions.map(fromPrismaPermission);
+};

@@ -8,21 +8,36 @@ import * as projectController from '../controllers/project.controller';
 import * as userController from '../controllers/user.controller';
 import * as webhookController from '../controllers/webhook.controller';
 import { validateProject } from '../middlewares/project.middleware';
+import {
+  getPermissionsByProjectUsers,
+  getPermissionsByProjectLinkedItems,
+  getPermissionsByProjectFiles,
+  getPermissionsByProjectWebhooks,
+  getPermissionsByProjectHistories,
+  getPermissionsByProjectLocations,
+} from '../controllers/permission.controller';
 
 const router = Router();
 
 router.get('/', projectController.getProjects);
-router.get('/:id', projectController.getProjectById);
-router.get('/:id/users', userController.getUsersByProjectId);
-router.get('/:id/linked-items', linkedItemController.getLinkedItems);
-router.get('/:id/files', fileController.getFiles);
+router.get('/:projectId', projectController.getProjectById);
+router.get('/:projectId/users', userController.getUsersByProjectId);
+router.get('/:projectId/linked-items', linkedItemController.getLinkedItems);
+router.get('/:projectId/files', fileController.getFiles);
+router.get('/:projectId/webhooks', webhookController.getWebhooks);
+router.get('/:projectId/histories', historyController.getHistories);
+router.get('/:projectId/locations', locationController.getLocations);
+
 router.get('/:projectId/permissions', permissionController.getPermissions);
-router.get('/:id/webhooks', webhookController.getWebhooks);
-router.get('/:id/histories', historyController.getHistories);
-router.get('/:id/locations', locationController.getLocations);
+router.get('/:projectId/permissions/users', getPermissionsByProjectUsers);
+router.get('/:projectId/permissions/linked-items', getPermissionsByProjectLinkedItems);
+router.get('/:projectId/permissions/files', getPermissionsByProjectFiles);
+router.get('/:projectId/permissions/webhooks', getPermissionsByProjectWebhooks);
+router.get('/:projectId/permissions/histories', getPermissionsByProjectHistories);
+router.get('/:projectId/permissions/locations', getPermissionsByProjectLocations);
 
 router.post('/', validateProject, projectController.createProject);
-router.put('/:id', validateProject, projectController.updateProject);
-router.delete('/:id', projectController.deleteProject);
+router.put('/:projectId', validateProject, projectController.updateProject);
+router.delete('/:projectId', projectController.deleteProject);
 
 export default router;

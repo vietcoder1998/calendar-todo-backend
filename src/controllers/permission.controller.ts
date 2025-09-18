@@ -4,8 +4,7 @@ import * as permissionService from '../services/permission.service';
 
 export const getPermissions = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const projectId = String(id);
+    const { projectId } = req.params;
     const permissions = await permissionService.getPermissions(projectId);
     logger.info('Fetched permissions');
     res.json(permissions);

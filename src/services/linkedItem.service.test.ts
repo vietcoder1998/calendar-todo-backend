@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { LinkedItem } from '../types';
 import * as linkedItemService from './linkedItem.service';
-import { PrismaClient } from '@prisma/client';
 
 describe('linkedItem.service', () => {
   let linkedItems: LinkedItem[];
@@ -9,16 +8,17 @@ describe('linkedItem.service', () => {
   beforeEach(() => {
     linkedItems = [];
     jest.spyOn(linkedItemService, 'getLinkedItems').mockImplementation(async () => linkedItems);
-    jest
-      .spyOn(linkedItemService, 'createLinkedItem')
-      .mockImplementation(async (item: LinkedItem) => {
-        const created = { ...item, assetId: item.assetId ?? 'mock-asset-id' };
-        linkedItems.push(created);
-        return created;
-      });
+    jest.spyOn(linkedItemService, 'createLinkedItem').mockImplementation(async (item: any) => {
+      const created: LinkedItem = {
+        ...item,
+        assetId: item.assetId ?? 'mock-asset-id',
+      } as LinkedItem;
+      linkedItems.push(created);
+      return created;
+    });
     jest
       .spyOn(linkedItemService, 'updateLinkedItem')
-      .mockImplementation(async (id: string, updates: any) => {
+      .mockImplementation(async (id: string, updates) => {
         const idx = linkedItems.findIndex((l: LinkedItem) => l.id === id);
         if (idx !== -1) {
           linkedItems[idx] = { ...linkedItems[idx], ...updates };

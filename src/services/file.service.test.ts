@@ -8,7 +8,7 @@ describe('file.service', () => {
   beforeEach(() => {
     files = [];
     jest.spyOn(fileService, 'getFiles').mockImplementation(async () => files);
-    jest.spyOn(fileService, 'createFile').mockImplementation(async (file: FileItem) => {
+    jest.spyOn(fileService, 'createFile').mockImplementation(async (file) => {
       const created = { ...file, assetId: file.assetId ?? 'mock-asset-id' };
       files.push(created);
       return created;

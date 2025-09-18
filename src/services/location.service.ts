@@ -1,17 +1,20 @@
-import { Location } from '@/types';
+import { Location } from '../types';
 import { PrismaClient } from '@prisma/client';
 import { createAsset } from './asset.util';
-
 const prisma = new PrismaClient();
+
+function fromPrismaLocation(loc: any): Location {
+  return {
+    ...loc,
+    googleMapsLink: loc.googleMapsLink ?? null,
+    createdAt: loc.createdAt instanceof Date ? loc.createdAt.toISOString() : loc.createdAt,
+    updatedAt: loc.updatedAt instanceof Date ? loc.updatedAt.toISOString() : loc.updatedAt,
+  };
+}
 
 export async function getLocationsByProjectId(projectId: string): Promise<Location[]> {
   const results = await prisma.location.findMany({ where: { projectId } });
-  return results.map((loc) => ({
-    ...loc,
-    googleMapsLink: loc.googleMapsLink ?? undefined,
-    createdAt: loc.createdAt instanceof Date ? loc.createdAt.toISOString() : loc.createdAt,
-    updatedAt: loc.updatedAt instanceof Date ? loc.updatedAt.toISOString() : loc.updatedAt,
-  }));
+  return results.map(fromPrismaLocation);
 }
 
 export async function createLocation(
@@ -30,12 +33,7 @@ export async function createLocation(
       assetId,
     },
   });
-  return {
-    ...loc,
-    googleMapsLink: loc.googleMapsLink ?? undefined,
-    createdAt: loc.createdAt.toISOString(),
-    updatedAt: loc.updatedAt.toISOString(),
-  };
+  return fromPrismaLocation(loc);
 }
 
 export async function getLocationById(
@@ -43,14 +41,7 @@ export async function getLocationById(
   locationId: string,
 ): Promise<Location | null> {
   const loc = await prisma.location.findFirst({ where: { id: locationId, projectId } });
-  return loc
-    ? {
-        ...loc,
-        googleMapsLink: loc.googleMapsLink ?? undefined,
-        createdAt: loc.createdAt.toISOString(),
-        updatedAt: loc.updatedAt.toISOString(),
-      }
-    : null;
+  return loc ? fromPrismaLocation(loc) : null;
 }
 
 export async function updateLocation(
@@ -62,14 +53,7 @@ export async function updateLocation(
     where: { id: locationId },
     data,
   });
-  return loc
-    ? {
-        ...loc,
-        googleMapsLink: loc.googleMapsLink ?? undefined,
-        createdAt: loc.createdAt instanceof Date ? loc.createdAt.toISOString() : loc.createdAt,
-        updatedAt: loc.updatedAt instanceof Date ? loc.updatedAt.toISOString() : loc.updatedAt,
-      }
-    : null;
+  return loc ? fromPrismaLocation(loc) : null;
 }
 
 export async function deleteLocation(projectId: string, locationId: string): Promise<void> {

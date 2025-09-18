@@ -3,7 +3,7 @@ export type Location = {
   name: string;
   latitude: number;
   longitude: number;
-  googleMapsLink?: string;
+  googleMapsLink: string | null;
   projectId: string;
   createdAt: string;
   updatedAt: string;
@@ -76,14 +76,16 @@ export type LinkedItem = {
 
 export type GanttTask = {
   id: string;
-  name?: string | null;
-  start?: string | null;
-  end?: string | null;
-  createdAt?: string | null;
-  updatedAt?: string | null;
+  name: string | null;
+  start: string | null;
+  end: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  color: string | null;
   projectId: string;
-  color: string;
-  assetId?: string | null;
+  assetId: string | null;
 };
 
 export type Webhook = {

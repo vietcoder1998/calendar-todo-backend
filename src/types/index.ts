@@ -41,12 +41,12 @@ export type Todo = {
   label?: string | null;
   description: string;
   date: string;
-  deadline?: string;
+  deadline?: string | null;
   status: 'todo' | 'in-progress' | 'review' | 'done' | number; // string for legacy, number for new status
   createdAt: string;
   updatedAt: string;
-  locationId?: string;
-  relatedTaskIds?: string[];
+  locationId?: string | null;
+  relatedTaskIds?: string[] | null;
   projectId: string;
   history?: TodoHistoryEntry[];
   linkedItems?: string[];
@@ -86,7 +86,6 @@ export type Permission = {
   asset?: Record<string, unknown>;
   label?: string | null;
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
-
   createdAt: Date;
   updatedAt: Date;
 };
@@ -138,10 +137,10 @@ export type Project = {
   id: string;
   name: string;
   label?: string | null;
-  description?: string;
-  avatarUrl?: string;
-  plan?: string;
-  members?: number;
+  description?: string | null;
+  avatarUrl?: string | null;
+  plan?: string | null;
+  members?: number | null;
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
 };
 

@@ -15,7 +15,7 @@ type ProjectWithAll = Project & {
 };
 
 export const getProjectById = async (id: string): Promise<ProjectWithAll | null> => {
-  return prisma.project.findUnique({
+  const project = await prisma.project.findUnique({
     where: { id },
     include: {
       todos: true,
@@ -27,10 +27,23 @@ export const getProjectById = async (id: string): Promise<ProjectWithAll | null>
       users: true,
     },
   });
+  if (!project) return null;
+  // Map todos[].relatedTaskIds from JsonValue to string[] | null
+  return {
+    ...project,
+    todos: project.todos.map((todo: any) => ({
+      ...todo,
+      relatedTaskIds: Array.isArray(todo.relatedTaskIds)
+        ? todo.relatedTaskIds
+        : typeof todo.relatedTaskIds === 'string'
+          ? JSON.parse(todo.relatedTaskIds)
+          : null,
+    })),
+  };
 };
 
 export const getProjects = async (): Promise<ProjectWithAll[]> => {
-  return prisma.project.findMany({
+  const projects = await prisma.project.findMany({
     include: {
       todos: true,
       files: true,
@@ -41,6 +54,18 @@ export const getProjects = async (): Promise<ProjectWithAll[]> => {
       users: true,
     },
   });
+  // Map todos[].relatedTaskIds from JsonValue to string[] | null
+  return projects.map((project: any) => ({
+    ...project,
+    todos: project.todos.map((todo: any) => ({
+      ...todo,
+      relatedTaskIds: Array.isArray(todo.relatedTaskIds)
+        ? todo.relatedTaskIds
+        : typeof todo.relatedTaskIds === 'string'
+          ? JSON.parse(todo.relatedTaskIds)
+          : null,
+    })),
+  }));
 };
 
 export const createProject = async (data: any): Promise<Project> => {

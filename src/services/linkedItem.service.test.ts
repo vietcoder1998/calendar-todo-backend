@@ -8,20 +8,31 @@ describe('linkedItem.service', () => {
   beforeEach(() => {
     linkedItems = [];
     jest.spyOn(linkedItemService, 'getLinkedItems').mockImplementation(async () => linkedItems);
-    jest.spyOn(linkedItemService, 'createLinkedItem').mockImplementation(async (item: any) => {
-      const created: LinkedItem = {
-        ...item,
-        assetId: item.assetId ?? 'mock-asset-id',
-      } as LinkedItem;
-      linkedItems.push(created);
-      return created;
-    });
+    jest
+      .spyOn(linkedItemService, 'createLinkedItem')
+      .mockImplementation(async (item: LinkedItem) => {
+        const created = {
+          ...item,
+          assetId: item.assetId ?? 'mock-asset-id',
+        };
+        linkedItems.push(created);
+        return created;
+      });
     jest
       .spyOn(linkedItemService, 'updateLinkedItem')
-      .mockImplementation(async (id: string, updates) => {
+      .mockImplementation(async (id: string, updates: Partial<LinkedItem>) => {
         const idx = linkedItems.findIndex((l: LinkedItem) => l.id === id);
         if (idx !== -1) {
-          linkedItems[idx] = { ...linkedItems[idx], ...updates };
+          linkedItems[idx] = {
+            ...linkedItems[idx],
+            ...updates,
+            assetId:
+              updates.assetId !== undefined
+                ? updates.assetId
+                : linkedItems[idx].assetId !== undefined
+                  ? linkedItems[idx].assetId
+                  : null,
+          };
           return linkedItems[idx];
         }
         return null;
@@ -40,11 +51,12 @@ describe('linkedItem.service', () => {
       title: 'Test Linked',
       description: null,
       url: 'http://example.com',
-      status: 'active',
+      label: 'active',
       createdAt: '2025-09-17',
       updatedAt: '2025-09-17',
       projectId: 'p1',
       assetId: null,
+      status: 0,
     };
     const created = await linkedItemService.createLinkedItem(item);
     expect(created.title).toEqual(item.title);
@@ -59,11 +71,12 @@ describe('linkedItem.service', () => {
       title: 'Test Linked',
       description: null,
       url: 'http://example.com',
-      status: 'active',
+      label: 'active',
       createdAt: '2025-09-17',
       updatedAt: '2025-09-17',
       projectId: 'p1',
       assetId: null,
+      status: 0,
     };
     await linkedItemService.createLinkedItem(item);
     const updated = await linkedItemService.updateLinkedItem('1', { title: 'Updated' });
@@ -77,11 +90,12 @@ describe('linkedItem.service', () => {
       title: 'Test Linked',
       description: null,
       url: 'http://example.com',
-      status: 'active',
+      label: 'active',
       createdAt: '2025-09-17',
       updatedAt: '2025-09-17',
       projectId: 'p1',
       assetId: null,
+      status: 0,
     };
     await linkedItemService.createLinkedItem(item);
     const deleted = await linkedItemService.deleteLinkedItem('1');

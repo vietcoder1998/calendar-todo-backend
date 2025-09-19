@@ -38,7 +38,7 @@ describe('file.service', () => {
       createdAt: null,
       updatedAt: null,
       url: null,
-      assetId: null,
+      assetId: undefined,
     };
     const created = await fileService.createFile(file);
     expect(created.name).toEqual(file.name);
@@ -54,7 +54,7 @@ describe('file.service', () => {
       createdAt: null,
       updatedAt: null,
       url: null,
-      assetId: null,
+      assetId: undefined,
     };
     await fileService.createFile(file);
     const updated = await fileService.updateFile('1', { name: 'updated.txt' });

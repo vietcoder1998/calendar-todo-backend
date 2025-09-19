@@ -1,8 +1,8 @@
 import { Location } from '../types';
 import { PrismaClient } from '@prisma/client';
 import { createAsset } from './asset.util';
-const prisma = new PrismaClient();
 
+const prisma = new PrismaClient();
 function fromPrismaLocation(loc: any): Location {
   return {
     ...loc,
@@ -31,6 +31,7 @@ export async function createLocation(
       ...data,
       projectId,
       assetId,
+      // Fix config typing for Prisma
     },
   });
   return fromPrismaLocation(loc);
@@ -49,9 +50,14 @@ export async function updateLocation(
   locationId: string,
   data: Partial<Location>,
 ): Promise<Location | null> {
+  // Remove projectId from data if present
+  const { projectId: _ignore, ...updateData } = data;
   const loc = await prisma.location.update({
     where: { id: locationId },
-    data,
+    data: {
+      ...updateData,
+      // Fix config typing for Prisma
+    },
   });
   return loc ? fromPrismaLocation(loc) : null;
 }

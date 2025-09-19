@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
 import { createAsset } from '../services/asset.util';
 import logger from '../logger';
+import { History } from '@/types';
 
 const prisma = new PrismaClient();
 
@@ -29,6 +30,7 @@ export async function attachAssetOnCreate(req: Request, res: Response, next: Nex
           resource: `asset:${assetId}`,
           userId: finalOwnerId,
           projectId,
+          status: 1,
         }));
         const data = await prisma.permission.createMany({
           data: permissionData,
@@ -76,6 +78,8 @@ export async function addHistoryOnUpdate(req: Request, res: Response, next: Next
               date: new Date(),
               timestamp: Date.now().toString(),
               user: 'system',
+              status: 1,
+              projectId: projectId,
             },
           });
           logger.info(history);

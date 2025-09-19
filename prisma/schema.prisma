@@ -15,6 +15,7 @@ model User {
   projectId   String?
   project     Project?     @relation(fields: [projectId], references: [id])
   permissions Permission[] @relation("UserPermissions")
+  status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -27,7 +28,7 @@ model Todo {
   description    String
   date           String
   deadline       String?
-  status         String // 'todo' | 'in-progress' | 'review' | 'done'
+  label          String // 'todo' | 'in-progress' | 'review' | 'done'
   createdAt      String
   updatedAt      String
   locationId     String?
@@ -42,6 +43,7 @@ model Todo {
   ganttTaskIds   Json?
   assetId        String?
   asset          Asset?  @relation(fields: [assetId], references: [id])
+  status         Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
 
   @@map("todo")
 }
@@ -55,8 +57,9 @@ model FileItem {
   projectId String
   project   Project @relation(fields: [projectId], references: [id])
   assetId   String?
+  label     String?
   asset     Asset?  @relation(fields: [assetId], references: [id])
-
+  status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   @@map("fileitem")
 }
 
@@ -70,6 +73,7 @@ model Permission {
   project   Project  @relation(fields: [projectId], references: [id])
   asset     Asset?   @relation(fields: [assetId], references: [id])
   users     User[]   @relation("UserPermissions")
+  status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -82,13 +86,14 @@ model LinkedItem {
   title       String
   description String?
   url         String
-  status      String? // 'active' | 'archived' | 'pending'
+  label       String? // 'active' | 'archived' | 'pending'
   createdAt   String
   updatedAt   String
   projectId   String
   project     Project @relation(fields: [projectId], references: [id])
   assetId     String?
   asset       Asset?  @relation(fields: [assetId], references: [id])
+  status      Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
 
   @@map("linkeditem")
 }
@@ -107,6 +112,8 @@ model GanttTask {
   project   Project @relation(fields: [projectId], references: [id])
   assetId   String?
   asset     Asset?  @relation(fields: [assetId], references: [id])
+  status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  
 
   @@map("gantttask")
 }
@@ -121,6 +128,7 @@ model Webhook {
   enabled    Boolean
   projectId  String
   project    Project @relation(fields: [projectId], references: [id])
+  status     Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
 
   @@map("webhook")
 }
@@ -140,6 +148,8 @@ model Project {
   webhooks    Webhook[]
   users       User[]
   locations   Location[]
+  status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  History     History[]
 
   @@map("project")
 }
@@ -153,6 +163,10 @@ model History {
   payload   Json?
   timestamp String
   user      String?
+  status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
 
   @@map("history")
 }
@@ -161,7 +175,7 @@ model AssetType {
   id     String  @id @default(uuid())
   name   String  @unique
   assets Asset[]
-
+  status Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   @@map("assettype")
 }
 
@@ -180,7 +194,7 @@ model Asset {
   ganttTasks  GanttTask[]
   linkedItems LinkedItem[]
   Permission  Permission[]
-
+  status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   @@map("asset")
 }
 
@@ -196,7 +210,7 @@ model Location {
   updatedAt      DateTime @updatedAt
   assetId        String?
   asset          Asset?   @relation(fields: [assetId], references: [id])
-
+  status         Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   @@map("location")
 }
 

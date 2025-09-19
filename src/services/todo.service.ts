@@ -41,19 +41,44 @@ export const getTodos = async (projectId?: string): Promise<Todo[]> => {
 };
 
 export const createTodo = async (todo: Omit<Todo, 'id'> & { id?: string }): Promise<Todo> => {
-  const { projectId, ...rest } = toPrismaTodoInput(todo);
   // Create asset and link
   let assetId: string | null = null;
   if (todo.title) {
     assetId = await createAsset(todo.title, 'todo');
   }
+  // Convert status to int if string
+  let status: number = 1;
+  if (typeof todo.status === 'string') {
+    switch (todo.status) {
+      case 'todo':
+        status = 1;
+        break;
+      case 'in-progress':
+        status = 2;
+        break;
+      case 'review':
+        status = 3;
+        break;
+      case 'done':
+        status = 4;
+        break;
+      default:
+        status = 1;
+    }
+  } else if (typeof todo.status === 'number') {
+    status = todo.status;
+  }
+  // Prisma expects relation connects, not direct ids
+  const { projectId, assetId: _assetId, ...rest } = toPrismaTodoInput(todo);
   const created = await prisma.todo.create({
     data: {
       ...rest,
+      status,
+      label: todo.label || 'todo',
       createdAt: rest.createdAt || new Date().toISOString(),
       updatedAt: rest.updatedAt || new Date().toISOString(),
-      assetId,
-      projectId: todo.projectId,
+      project: { connect: { id: todo.projectId } },
+      ...(assetId ? { asset: { connect: { id: assetId } } } : {}),
     },
   });
   return fromPrismaTodo(created);

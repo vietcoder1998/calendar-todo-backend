@@ -6,26 +6,26 @@ const prisma = new PrismaClient();
 export const getLinkedItems = async (projectId?: string) => {
   if (projectId) {
     const items = await prisma.linkedItem.findMany({ where: { projectId: projectId } });
-    return items.map((i: LinkedItem) => ({
-      ...i,
-      description: i.description ?? null,
-      status: i.status ?? null,
-      assetId: i.assetId ?? null,
+    return items.map((item: LinkedItem) => ({
+      ...item,
+      description: item.description ?? null,
+      status: item.status ?? null,
+      assetId: item.assetId ?? null,
     }));
   }
   const items = await prisma.linkedItem.findMany();
-  return items.map((i: LinkedItem) => ({
-    ...i,
-    description: i.description ?? null,
-    status: i.status ?? null,
-    assetId: i.assetId ?? null,
+  return items.map((item: LinkedItem) => ({
+    ...item,
+    description: item.description ?? null,
+    status: item.status ?? null,
+    assetId: item.assetId ?? null,
   }));
 };
-export const createLinkedItem = async (item: LinkedItem) => {
+export const createLinkedItem = async (linkedItem: LinkedItem) => {
   // Create asset and link
   let assetId: string | null = null;
-  if (item.title) {
-    assetId = await createAsset(item.title, 'linkedItem');
+  if (linkedItem.title) {
+    assetId = await createAsset(linkedItem.title, 'linkedItem');
   }
 
   if (!assetId) {
@@ -33,27 +33,28 @@ export const createLinkedItem = async (item: LinkedItem) => {
   }
 
   // Ensure projectId is set
-  if (!item.projectId) {
-    throw new Error('projectId is required to create a linked item');
+  if (!linkedItem.projectId) {
+    throw new Error('projectId is required to create a linked linkedItem');
   }
-  const i = await prisma.linkedItem.create({
-    data: { ...item, assetId, projectId: item.projectId },
+  const item = await prisma.linkedItem.create({
+    data: { ...linkedItem, assetId, projectId: linkedItem.projectId } as LinkedItem,
   });
   return {
-    ...i,
-    description: i.description ?? null,
-    status: i.status ?? null,
-    assetId: i.assetId ?? null,
+    ...item,
+    description: item.description ?? null,
+    status: item.status ?? null,
+    assetId: item.assetId ?? null,
   };
 };
 export const updateLinkedItem = async (id: string, updates: Partial<LinkedItem>) => {
   try {
-    const i = await prisma.linkedItem.update({ where: { id }, data: updates });
+    // Remove projectId from updates to satisfy Prisma's type requirements
+    const { projectId, ...restUpdates } = updates;
+    const item = await prisma.linkedItem.update({ where: { id }, data: restUpdates });
     return {
-      ...i,
-      description: i.description ?? null,
-      status: i.status ?? null,
-      assetId: i.assetId ?? null,
+      ...item,
+      description: item.description ?? null,
+      assetId: item.assetId ?? null,
     };
   } catch {
     return null;

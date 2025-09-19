@@ -76,7 +76,16 @@ export const createGanttTask = async (
 
 export const updateGanttTask = async (id: string, updates: Partial<GanttTaskType>) => {
   try {
-    const updated = await prisma.ganttTask.update({ where: { id }, data: updates });
+    // Remove projectId if it's undefined to satisfy Prisma's type requirements
+    const { projectId, assetId, ...rest } = updates;
+    const data: any = projectId === undefined ? rest : { ...rest, projectId };
+
+    // Only include assetId if it is not undefined
+    if (assetId !== undefined) {
+      data.assetId = assetId;
+    }
+
+    const updated = await prisma.ganttTask.update({ where: { id }, data });
     return fromPrismaGanttTask(updated);
   } catch {
     return null;

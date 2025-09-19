@@ -39,15 +39,18 @@ export const getAssetById = async (id: string): Promise<(Asset & { type: any }) 
   return prisma.asset.findUnique({ where: { id }, include: { type: true } });
 };
 
-export const createAsset = async (
-  data: Omit<Asset, 'id' | 'createdAt' | 'updatedAt'>,
-): Promise<Asset> => {
+import { Prisma } from '@prisma/client';
+
+export const createAsset = async (data: Prisma.AssetCreateInput): Promise<Asset> => {
   return prisma.asset.create({
     data,
   });
 };
 
-export const updateAsset = async (id: string, updates: Partial<Asset>): Promise<Asset | null> => {
+export const updateAsset = async (
+  id: string,
+  updates: Prisma.AssetUpdateInput,
+): Promise<Asset | null> => {
   try {
     return await prisma.asset.update({ where: { id }, data: updates });
   } catch {

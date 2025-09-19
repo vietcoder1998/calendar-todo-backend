@@ -1,12 +1,32 @@
+export interface Asset {
+  id: string;
+  name: string;
+  label?: string | null;
+  typeId: string;
+  type?: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+
+  todos?: Todo[];
+  files?: FileItem[];
+  locations?: Location[];
+  ganttTasks?: GanttTask[];
+  linkedItems?: LinkedItem[];
+  permissions?: Permission[];
+}
 export type Location = {
   id: string;
   name: string;
+  label?: string | null;
   latitude: number;
   longitude: number;
   googleMapsLink: string | null;
   projectId: string;
   createdAt: string;
   updatedAt: string;
+  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  //  (removed)
 };
 // --- Shared with frontend ---
 export type TodoHistoryEntry = {
@@ -18,10 +38,11 @@ export type TodoHistoryEntry = {
 export type Todo = {
   id: string;
   title: string;
+  label?: string | null;
   description: string;
   date: string;
   deadline?: string;
-  status: 'todo' | 'in-progress' | 'review' | 'done';
+  status: 'todo' | 'in-progress' | 'review' | 'done' | number; // string for legacy, number for new status
   createdAt: string;
   updatedAt: string;
   locationId?: string;
@@ -36,19 +57,23 @@ export type Todo = {
 };
 
 export type User = {
-  id: number;
+  id: string;
   name: string;
   email: string;
+  label?: string | null;
+  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
 };
 
 export type FileItem = {
   id: string;
   name: string | null;
+  label?: string | null;
   url: string | null;
   createdAt: string | null;
   updatedAt: string | null;
   projectId: string;
-  assetId: string | null;
+  assetId?: string | null;
+  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
 };
 
 export type Permission = {
@@ -57,8 +82,11 @@ export type Permission = {
   resource: string;
   userId: string;
   projectId: string;
-  assetId?: string | null;
-  asset?: any;
+  assetId: string | null;
+  asset?: Record<string, unknown>;
+  label?: string | null;
+  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+
   createdAt: Date;
   updatedAt: Date;
 };
@@ -67,9 +95,10 @@ export type LinkedItem = {
   id: string;
   todoId: string;
   title: string;
+  label: string | null;
   description: string | null;
   url: string;
-  status: string | null;
+  status: number;
   createdAt: string;
   updatedAt: string;
   projectId: string;
@@ -79,6 +108,7 @@ export type LinkedItem = {
 export type GanttTask = {
   id: string;
   name: string | null;
+  label?: string | null;
   start: string | null;
   end: string | null;
   createdAt: string | null;
@@ -88,35 +118,43 @@ export type GanttTask = {
   color: string | null;
   projectId: string;
   assetId: string | null;
+  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
 };
 
 export type Webhook = {
   id: string;
   name: string;
+  label?: string | null;
   platform: string;
   token: string | null;
   chatId: string | null;
   webhookUrl: string | null;
   enabled: boolean;
   projectId: string;
+  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
 };
 
 export type Project = {
   id: string;
   name: string;
+  label?: string | null;
   description?: string;
   avatarUrl?: string;
   plan?: string;
   members?: number;
+  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
 };
 
 export type History = {
   id: string;
-  changes?: any;
+  changes?: Record<string, unknown>;
   date: string;
   type: string;
   action: string;
-  payload?: any;
+  payload?: Record<string, unknown>;
   timestamp: string;
   user?: string;
+  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+
+  projectId: string;
 };

@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import * as permissionService from './permission.service';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { Permission } from '../types';
+import * as permissionService from './permission.service';
 
 const basePermission: Permission = {
   id: '1',
@@ -10,6 +10,7 @@ const basePermission: Permission = {
   projectId: 'test-project',
   createdAt: new Date(),
   updatedAt: new Date(),
+  assetId: null,
 };
 
 describe('permission.service', () => {

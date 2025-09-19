@@ -1,3 +1,14 @@
+// Project with all relations for backend service use
+export type ProjectWithAll = Project & {
+  todos: Todo[];
+  files: FileItem[];
+  permissions: Permission[];
+  linkedItems: LinkedItem[];
+  ganttTasks: GanttTask[];
+  webhooks: Webhook[];
+  users: User[];
+};
+
 export interface Asset {
   id: string;
   name: string;

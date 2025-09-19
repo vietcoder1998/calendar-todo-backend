@@ -1,18 +1,7 @@
-import { Project, Todo } from '@/types';
+import { Project, ProjectWithAll, Todo } from '@/types';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
-
-// Adjust the type to include all related entities you want to return
-type ProjectWithAll = Project & {
-  todos: Todo[];
-  files: any[];
-  permissions: any[];
-  linkedItems: any[];
-  ganttTasks: any[];
-  webhooks: any[];
-  users: any[];
-};
 
 export const getProjectById = async (id: string): Promise<ProjectWithAll | null> => {
   const project = await prisma.project.findUnique({

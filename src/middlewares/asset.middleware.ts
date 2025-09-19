@@ -23,11 +23,12 @@ export async function attachAssetOnCreate(req: Request, res: Response, next: Nex
         const adminUser = await prisma.user.findFirst({ where: { name: 'Admin', projectId } });
         const finalOwnerId = adminUser ? adminUser.id : 'admin';
         const actions = ['edit', 'view', 'comment', 'delete'];
+        logger.debug('Ensuring permissions for asset %s and user %s', assetId, finalOwnerId);
         const permissionData = actions.map((type) => ({
           id: `${type}:asset:${assetId}:${finalOwnerId}`,
           type,
-          assetId: assetId,
           resource: `asset:${assetId}`,
+          assetId: assetId,
           userId: finalOwnerId,
           projectId,
           status: 1,
@@ -60,7 +61,6 @@ export async function attachAssetOnCreate(req: Request, res: Response, next: Nex
 
 // Middleware: On PATCH/PUT, add a history entry after update
 export async function addHistoryOnUpdate(req: Request, res: Response, next: NextFunction) {
-  console.log(req.method);
   if (req.method === 'PATCH' || req.method === 'PUT') {
     // Wait for the controller to finish
     res.on('finish', async () => {
@@ -82,7 +82,7 @@ export async function addHistoryOnUpdate(req: Request, res: Response, next: Next
               projectId: projectId,
             },
           });
-          logger.info(history);
+          logger.info('Updated history entry created: %o', history);
           if (!res.headersSent) {
             res.setHeader('x-history-id', history.id);
           }

@@ -1,26 +1,30 @@
-type History = { id: string; [key: string]: unknown };
-let histories: History[] = [];
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
-export const getHistories = (projectId?: string) => {
+export const getHistories = async (projectId?: string) => {
   if (projectId) {
-    return histories.filter((h) => h.projectId === projectId);
+    return prisma.history.findMany({ where: { projectId } });
   }
-  return histories;
+  return prisma.history.findMany();
 };
-export const createHistory = (history: History) => {
-  histories.push(history);
-  return history;
+
+export const createHistory = async (history: any) => {
+  return prisma.history.create({ data: history });
 };
-export const updateHistory = (id: string, updates: Partial<History>) => {
-  const idx = histories.findIndex((h) => h.id === id);
-  if (idx !== -1) {
-    histories[idx] = { ...histories[idx], ...updates };
-    return histories[idx];
+
+export const updateHistory = async (id: string, updates: any) => {
+  try {
+    return await prisma.history.update({ where: { id }, data: updates });
+  } catch {
+    return null;
   }
-  return null;
 };
-export const deleteHistory = (id: string) => {
-  const prevLen = histories.length;
-  histories = histories.filter((h) => h.id !== id);
-  return histories.length < prevLen;
+
+export const deleteHistory = async (id: string) => {
+  try {
+    await prisma.history.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
 };

@@ -10,7 +10,14 @@ const fromPrismaPermission = (prismaPermission: any): Permission => ({
   userId: prismaPermission.userId,
   projectId: prismaPermission.projectId,
   assetId: prismaPermission.assetId ?? null,
-  asset: prismaPermission.asset ?? undefined,
+  asset: prismaPermission.asset
+    ? {
+        id: prismaPermission.asset.id,
+        name: prismaPermission.asset.name,
+        type: prismaPermission.asset.type,
+        url: prismaPermission.asset.url,
+      }
+    : undefined,
   label: prismaPermission.label ?? null,
   status: typeof prismaPermission.status === 'number' ? prismaPermission.status : undefined,
   createdAt: prismaPermission.createdAt

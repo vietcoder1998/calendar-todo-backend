@@ -6,7 +6,8 @@ export const getPermissions = async (req: Request, res: Response) => {
   try {
     const { projectId } = req.params;
     const permissions = await permissionService.getPermissions(projectId);
-    logger.info('Fetched permissions');
+
+    logger.info('Fetched permissions', projectId);
     res.json(permissions);
   } catch (e: any) {
     logger.error('Failed to fetch permissions: %s', e?.message || e);

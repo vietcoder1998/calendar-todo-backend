@@ -2,13 +2,14 @@ import { Request, Response } from 'express';
 import * as historyService from '../services/history.service';
 import logger from '../logger';
 
-export const getHistories = (req: Request, res: Response) => {
+export const getHistories = async (req: Request, res: Response) => {
   try {
     const { projectId } = req.query;
-    const histories = historyService.getHistories(
+    const histories = await historyService.getHistories(
       typeof projectId === 'string' ? projectId : undefined,
     );
-    logger.info('Fetched histories');
+
+    logger.info('Fetched histories', histories);
     res.json(histories);
   } catch (e: any) {
     logger.error('Failed to fetch histories: %s', e?.message || e);
@@ -16,9 +17,9 @@ export const getHistories = (req: Request, res: Response) => {
   }
 };
 
-export const createHistory = (req: Request, res: Response) => {
+export const createHistory = async (req: Request, res: Response) => {
   try {
-    const history = historyService.createHistory(req.body);
+    const history = await historyService.createHistory(req.body);
     logger.info('Created history: %o', history);
     res.status(201).json(history);
   } catch (e: any) {
@@ -27,9 +28,9 @@ export const createHistory = (req: Request, res: Response) => {
   }
 };
 
-export const updateHistory = (req: Request, res: Response) => {
+export const updateHistory = async (req: Request, res: Response) => {
   try {
-    const history = historyService.updateHistory(req.params.id, req.body);
+    const history = await historyService.updateHistory(req.params.id, req.body);
     if (history) {
       logger.info('Updated history: %o', history);
       return res.json(history);
@@ -41,9 +42,9 @@ export const updateHistory = (req: Request, res: Response) => {
   }
 };
 
-export const deleteHistory = (req: Request, res: Response) => {
+export const deleteHistory = async (req: Request, res: Response) => {
   try {
-    const ok = historyService.deleteHistory(req.params.id);
+    const ok = await historyService.deleteHistory(req.params.id);
     if (ok) {
       logger.info('Deleted history: %s', req.params.id);
       return res.status(204).end();

@@ -1,41 +1,77 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import * as historyService from './history.service';
+import { PrismaClient } from '@prisma/client';
 
-describe('history.service', () => {
-  beforeEach(() => {
-    // @ts-ignore
-    historyService['histories'] = [];
+const prisma = new PrismaClient();
+
+describe('history.service (Prisma)', () => {
+  let project: any;
+
+  beforeAll(async () => {
+    // Create a minimal project for relation
+    project = await prisma.project.create({
+      data: {
+        id: 'test-project',
+        name: 'Test Project',
+        status: 1,
+      },
+    });
   });
 
-  it('should create a history', () => {
-    const history = { id: '1', action: 'create' };
-    const created = historyService.createHistory(history);
-    expect(created).toEqual(history);
-    expect(historyService.getHistories()).toContainEqual(history);
+  afterAll(async () => {
+    await prisma.history.deleteMany({ where: { projectId: project.id } });
+    await prisma.project.delete({ where: { id: project.id } });
+    await prisma.$disconnect();
   });
 
-  it('should update a history', () => {
-    const history = { id: '1', action: 'create' };
-    historyService.createHistory(history);
-    const updated = historyService.updateHistory('1', { action: 'update' });
-    expect(updated).toMatchObject({ id: '1', action: 'update' });
+  function getValidHistory(overrides = {}) {
+    return {
+      id: 'test-history',
+      action: 'create',
+      date: new Date(),
+      type: 'test',
+      timestamp: new Date().toISOString(),
+      projectId: project.id,
+      ...overrides,
+    };
+  }
+
+  it('should create a history', async () => {
+    const history = getValidHistory();
+    const created = await historyService.createHistory(history);
+    expect(created).toMatchObject({
+      id: history.id,
+      action: history.action,
+      type: history.type,
+      projectId: project.id,
+    });
+    const all = await historyService.getHistories();
+    expect(all.map((h) => h.id)).toContain(history.id);
   });
 
-  it('should delete a history', () => {
-    const history = { id: '1', action: 'create' };
-    historyService.createHistory(history);
-    const deleted = historyService.deleteHistory('1');
+  it('should update a history', async () => {
+    const history = getValidHistory({ id: 'update-history', action: 'create' });
+    await historyService.createHistory(history);
+    const updated = await historyService.updateHistory('update-history', { action: 'update' });
+    expect(updated).toMatchObject({ id: 'update-history', action: 'update' });
+  });
+
+  it('should delete a history', async () => {
+    const history = getValidHistory({ id: 'delete-history' });
+    await historyService.createHistory(history);
+    const deleted = await historyService.deleteHistory('delete-history');
     expect(deleted).toBe(true);
-    expect(historyService.getHistories()).toHaveLength(0);
+    const all = await historyService.getHistories();
+    expect(all.find((h) => h.id === 'delete-history')).toBeUndefined();
   });
 
-  it('should return null when updating non-existent history', () => {
-    const updated = historyService.updateHistory('not-exist', { action: 'fail' });
+  it('should return null when updating non-existent history', async () => {
+    const updated = await historyService.updateHistory('not-exist', { action: 'fail' });
     expect(updated).toBeNull();
   });
 
-  it('should return false when deleting non-existent history', () => {
-    const deleted = historyService.deleteHistory('not-exist');
+  it('should return false when deleting non-existent history', async () => {
+    const deleted = await historyService.deleteHistory('not-exist');
     expect(deleted).toBe(false);
   });
 });

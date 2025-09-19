@@ -1,9 +1,9 @@
-import type { Permission as LocalPermission } from '../types';
-import { PrismaClient, Permission as PrismaPermission } from '@prisma/client';
+import { Permission } from '@/types';
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Map Prisma Permission to local Permission type, handling new fields
-const fromPrismaPermission = (prismaPermission: any): LocalPermission => ({
+const fromPrismaPermission = (prismaPermission: any): Permission => ({
   id: prismaPermission.id,
   type: prismaPermission.type,
   resource: prismaPermission.resource,
@@ -25,7 +25,7 @@ const fromPrismaPermission = (prismaPermission: any): LocalPermission => ({
     : null,
 });
 
-export const getPermissions = async (projectId?: string): Promise<LocalPermission[]> => {
+export const getPermissions = async (projectId?: string): Promise<Permission[]> => {
   const where = projectId ? { projectId: { equals: projectId } } : undefined;
   const permissions = await prisma.permission.findMany({
     where,
@@ -34,7 +34,7 @@ export const getPermissions = async (projectId?: string): Promise<LocalPermissio
   return permissions.map(fromPrismaPermission);
 };
 
-export const createPermission = async (permission: LocalPermission): Promise<LocalPermission> => {
+export const createPermission = async (permission: Permission): Promise<Permission> => {
   // Only send fields that exist in Prisma schema
   const { id, asset, ...data } = permission;
   const created = await prisma.permission.create({ data: data as any, include: { asset: true } });
@@ -42,8 +42,8 @@ export const createPermission = async (permission: LocalPermission): Promise<Loc
 };
 export const updatePermission = async (
   id: string,
-  updates: Partial<LocalPermission>,
-): Promise<LocalPermission | null> => {
+  updates: Partial<Permission>,
+): Promise<Permission | null> => {
   try {
     const { asset, ...data } = updates;
     const updated = await prisma.permission.update({
@@ -67,7 +67,7 @@ export const deletePermission = async (id: string): Promise<boolean> => {
 export const getPermissionsByResourceType = async (
   projectId: string,
   resourceType: string,
-): Promise<LocalPermission[]> => {
+): Promise<Permission[]> => {
   // resourceType: 'user', 'file', 'linked-item', 'webhook', 'history', 'location', etc.
   const permissions = await prisma.permission.findMany({
     where: {

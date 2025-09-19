@@ -1,4 +1,5 @@
-import { PrismaClient, User } from '@prisma/client';
+import { User } from '@/types';
+import { PrismaClient } from '@prisma/client';
 const prisma: PrismaClient = new PrismaClient();
 
 export const getUsers = async (): Promise<User[]> => {

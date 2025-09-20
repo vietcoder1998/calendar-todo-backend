@@ -19,7 +19,16 @@ describe('history.service (Prisma)', () => {
   });
 
   afterAll(async () => {
+    // Delete all related records first
     await prisma.history.deleteMany({ where: { projectId: project.id } });
+    await prisma.permission.deleteMany({ where: { projectId: project.id } });
+    await prisma.user.deleteMany({ where: { projectId: project.id } });
+    await prisma.fileItem.deleteMany({ where: { projectId: project.id } });
+    await prisma.linkedItem.deleteMany({ where: { projectId: project.id } });
+    await prisma.ganttTask.deleteMany({ where: { projectId: project.id } });
+    await prisma.webhook.deleteMany({ where: { projectId: project.id } });
+    await prisma.location.deleteMany({ where: { projectId: project.id } });
+    // Now you can safely delete the project
     await prisma.project.delete({ where: { id: project.id } });
     await prisma.$disconnect();
   });

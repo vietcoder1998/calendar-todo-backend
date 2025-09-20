@@ -18,7 +18,19 @@ describe('permission.service', () => {
 
   beforeEach(() => {
     permissions = [];
-    jest.spyOn(permissionService, 'getPermissions').mockImplementation(async () => permissions);
+    jest
+      .spyOn(permissionService, 'getPermissions')
+      .mockImplementation(async (_projectId, page, size, q) => {
+        let filtered = permissions;
+        if (q)
+          filtered = filtered.filter(
+            (p) => p.type.includes(q) || p.resource.includes(q) || p.userId.includes(q),
+          );
+        const pageIndex = typeof page === 'number' ? page : 0;
+        const pageSize = typeof size === 'number' ? size : 50;
+        const start = pageIndex * pageSize;
+        return filtered.slice(start, start + pageSize);
+      });
     jest
       .spyOn(permissionService, 'createPermission')
       .mockImplementation(async (perm: Permission) => {
@@ -45,7 +57,9 @@ describe('permission.service', () => {
   it('should create a permission', async () => {
     const created = await permissionService.createPermission(basePermission);
     expect(created).toEqual(basePermission);
-    expect(await permissionService.getPermissions()).toContainEqual(basePermission);
+    expect(await permissionService.getPermissions(undefined, 0, 50, '')).toContainEqual(
+      basePermission,
+    );
   });
 
   it('should update a permission', async () => {
@@ -58,7 +72,7 @@ describe('permission.service', () => {
     await permissionService.createPermission(basePermission);
     const deleted = await permissionService.deletePermission('1');
     expect(deleted).toBe(true);
-    expect(await permissionService.getPermissions()).toHaveLength(0);
+    expect(await permissionService.getPermissions(undefined, 0, 50, '')).toHaveLength(0);
   });
 
   it('should return null when updating non-existent permission', async () => {
@@ -69,5 +83,32 @@ describe('permission.service', () => {
   it('should return false when deleting non-existent permission', async () => {
     const deleted = await permissionService.deletePermission('not-exist');
     expect(deleted).toBe(false);
+  });
+
+  it('should support pagination', async () => {
+    for (let i = 0; i < 60; i++) {
+      await permissionService.createPermission({
+        ...basePermission,
+        id: String(i),
+        userId: `user-${i}`,
+      });
+    }
+    const page1 = await permissionService.getPermissions(undefined, 0, 10, '');
+    const page2 = await permissionService.getPermissions(undefined, 1, 10, '');
+    expect(page1).toHaveLength(10);
+    expect(page2).toHaveLength(10);
+    expect(page1[0].id).not.toEqual(page2[0].id);
+  });
+
+  it('should support search (q)', async () => {
+    await permissionService.createPermission({
+      ...basePermission,
+      id: 'search-1',
+      type: 'special',
+    });
+    await permissionService.createPermission({ ...basePermission, id: 'search-2', type: 'normal' });
+    const found = await permissionService.getPermissions(undefined, 0, 50, 'special');
+    expect(found.some((p) => p.type === 'special')).toBe(true);
+    expect(found.some((p) => p.type === 'normal')).toBe(false);
   });
 });

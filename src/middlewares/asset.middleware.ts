@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { createAsset } from '../services/asset.util';
 import logger from '../logger';
 import { History } from '@/types';
+import * as permissionService from '../services/permission.service';
 
 const prisma = new PrismaClient();
 
@@ -33,11 +34,9 @@ export async function attachAssetOnCreate(req: Request, res: Response, next: Nex
           projectId,
           status: 1,
         }));
-        const data = await prisma.permission.createMany({
-          data: permissionData,
-          skipDuplicates: true,
-        });
-        logger.info('Pemssiion created:', data);
+        // Use permissionService to create permissions
+        await permissionService.createManyPermissions(permissionData);
+        logger.info('Permission created for asset %s and user %s', assetId, finalOwnerId);
         // No direct return here, let controller/middleware handle response
       }
 

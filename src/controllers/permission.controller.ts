@@ -5,8 +5,10 @@ import * as permissionService from '../services/permission.service';
 export const getPermissions = async (req: Request, res: Response) => {
   try {
     const { projectId } = req.params;
-    const permissions = await permissionService.getPermissions(projectId);
-
+    const pageIndex = req.query.pageIndex ? Number(req.query.pageIndex) : 0;
+    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 50;
+    const q = typeof req.query.q === 'string' ? req.query.q : '';
+    const permissions = await permissionService.getPermissions(projectId, pageIndex, pageSize, q);
     logger.info('Fetched permissions', projectId);
     res.json(permissions);
   } catch (e: any) {
@@ -59,7 +61,16 @@ export const deletePermission = async (req: Request, res: Response) => {
 export const getPermissionsByProjectUsers = async (req: Request, res: Response) => {
   try {
     const { projectId } = req.params;
-    const permissions = await permissionService.getPermissionsByResourceType(projectId, 'user');
+    const pageIndex = req.query.pageIndex ? Number(req.query.pageIndex) : 0;
+    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 50;
+    const q = typeof req.query.q === 'string' ? req.query.q : '';
+    const permissions = await permissionService.getPermissionsByResourceType(
+      projectId,
+      'user',
+      pageIndex,
+      pageSize,
+      q,
+    );
     res.json(permissions);
   } catch (e: any) {
     res
@@ -71,9 +82,15 @@ export const getPermissionsByProjectUsers = async (req: Request, res: Response) 
 export const getPermissionsByProjectLinkedItems = async (req: Request, res: Response) => {
   try {
     const { projectId } = req.params;
+    const pageIndex = req.query.pageIndex ? Number(req.query.pageIndex) : 0;
+    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 50;
+    const q = typeof req.query.q === 'string' ? req.query.q : '';
     const permissions = await permissionService.getPermissionsByResourceType(
       projectId,
       'linked-item',
+      pageIndex,
+      pageSize,
+      q,
     );
     res.json(permissions);
   } catch (e: any) {
@@ -86,7 +103,16 @@ export const getPermissionsByProjectLinkedItems = async (req: Request, res: Resp
 export const getPermissionsByProjectFiles = async (req: Request, res: Response) => {
   try {
     const { projectId } = req.params;
-    const permissions = await permissionService.getPermissionsByResourceType(projectId, 'file');
+    const pageIndex = req.query.pageIndex ? Number(req.query.pageIndex) : 0;
+    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 50;
+    const q = typeof req.query.q === 'string' ? req.query.q : '';
+    const permissions = await permissionService.getPermissionsByResourceType(
+      projectId,
+      'file',
+      pageIndex,
+      pageSize,
+      q,
+    );
     res.json(permissions);
   } catch (e: any) {
     res
@@ -98,7 +124,16 @@ export const getPermissionsByProjectFiles = async (req: Request, res: Response) 
 export const getPermissionsByProjectWebhooks = async (req: Request, res: Response) => {
   try {
     const { projectId } = req.params;
-    const permissions = await permissionService.getPermissionsByResourceType(projectId, 'webhook');
+    const pageIndex = req.query.pageIndex ? Number(req.query.pageIndex) : 0;
+    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 50;
+    const q = typeof req.query.q === 'string' ? req.query.q : '';
+    const permissions = await permissionService.getPermissionsByResourceType(
+      projectId,
+      'webhook',
+      pageIndex,
+      pageSize,
+      q,
+    );
     res.json(permissions);
   } catch (e: any) {
     res

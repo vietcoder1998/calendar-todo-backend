@@ -11,4 +11,6 @@ if defined file use rule inside content for generate or edit code
 7. if  > 200 line break to multi components
 8. if loop display try to create a base component
 9. all variable need todo define type ( before ) and return type for function
+10. only use class with tailwind, do not use inline style
+11. use layout/Protected.tsx for hide component with condition
 -------------------------------------------------------

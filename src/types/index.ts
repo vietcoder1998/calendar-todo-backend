@@ -99,6 +99,7 @@ export type Permission = {
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt: Date;
   updatedAt: Date;
+  users?: User[]; // Add users relation for many-to-many mapping
 };
 
 export type LinkedItem = {

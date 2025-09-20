@@ -30,23 +30,84 @@ const fromPrismaPermission = (prismaPermission: any): Permission => ({
       ? prismaPermission.updatedAt
       : (prismaPermission.updatedAt.toISOString?.() ?? prismaPermission.updatedAt)
     : null,
+  users: prismaPermission.users ?? undefined,
 });
 
-export const getPermissions = async (projectId?: string): Promise<Permission[]> => {
-  const where = projectId ? { projectId: { equals: projectId } } : undefined;
+export const getPermissions = async (
+  projectId?: string,
+  pageIndex: number = 0,
+  pageSize: number = 50,
+  q: string = '',
+): Promise<Permission[]> => {
+  const where: any = { status: { not: -2 } };
+  if (projectId) where.projectId = { equals: projectId };
+  if (q) {
+    where.OR = [
+      { type: { contains: q, mode: 'insensitive' } },
+      { resource: { contains: q, mode: 'insensitive' } },
+      { userId: { contains: q, mode: 'insensitive' } },
+    ];
+  }
   const permissions = await prisma.permission.findMany({
     where,
-    include: { asset: true },
+    include: { asset: true, users: true },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+    orderBy: { createdAt: 'desc' },
   });
   return permissions.map(fromPrismaPermission);
 };
 
 export const createPermission = async (permission: Permission): Promise<Permission> => {
   // Only send fields that exist in Prisma schema
-  const { id, asset, ...data } = permission;
-  const created = await prisma.permission.create({ data: data as any, include: { asset: true } });
+  const { asset, ...data } = permission;
+  const created = await prisma.permission.create({
+    data: {
+      ...data,
+      users: { connect: { id: permission.userId } },
+    },
+    include: { asset: true, users: true },
+  });
   return fromPrismaPermission(created);
 };
+
+export const createManyPermissions = async (
+  permissions: Array<{
+    id: string;
+    type: string;
+    resource: string;
+    userId: string;
+    projectId: string;
+    assetId?: string | null;
+    label?: string | null;
+    status?: number;
+  }>,
+): Promise<void> => {
+  // Create all permissions in batch (without users relation)
+  await prisma.permission.createMany({
+    data: permissions.map(({ id, type, resource, userId, projectId, assetId, label, status }) => ({
+      id,
+      type,
+      resource,
+      userId,
+      projectId,
+      assetId,
+      label,
+      status,
+    })),
+    skipDuplicates: true,
+  });
+  // Connect users relation for each permission
+  await Promise.all(
+    permissions.map(async (perm) => {
+      await prisma.permission.update({
+        where: { id: perm.id },
+        data: { users: { connect: { id: perm.userId } } },
+      });
+    }),
+  );
+};
+
 export const updatePermission = async (
   id: string,
   updates: Partial<Permission>,
@@ -56,32 +117,51 @@ export const updatePermission = async (
     const updated = await prisma.permission.update({
       where: { id },
       data: data as any,
-      include: { asset: true },
+      include: { asset: true, users: true },
     });
     return fromPrismaPermission(updated);
   } catch {
     return null;
   }
 };
+
 export const deletePermission = async (id: string): Promise<boolean> => {
   try {
-    await prisma.permission.delete({ where: { id } });
+    await prisma.permission.update({
+      where: { id },
+      data: { status: -1 },
+    });
     return true;
   } catch {
     return false;
   }
 };
+
 export const getPermissionsByResourceType = async (
   projectId: string,
   resourceType: string,
+  pageIndex: number = 0,
+  pageSize: number = 50,
+  q: string = '',
 ): Promise<Permission[]> => {
-  // resourceType: 'user', 'file', 'linked-item', 'webhook', 'history', 'location', etc.
+  const where: any = {
+    projectId,
+    resource: { contains: resourceType },
+    status: { not: -2 },
+  };
+  if (q) {
+    where.OR = [
+      { type: { contains: q, mode: 'insensitive' } },
+      { resource: { contains: q, mode: 'insensitive' } },
+      { userId: { contains: q, mode: 'insensitive' } },
+    ];
+  }
   const permissions = await prisma.permission.findMany({
-    where: {
-      projectId,
-      resource: { contains: resourceType },
-    },
-    include: { asset: true },
+    where,
+    include: { asset: true, users: true },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+    orderBy: { createdAt: 'desc' },
   });
   return permissions.map(fromPrismaPermission);
 };

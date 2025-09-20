@@ -2,7 +2,7 @@
   "name": "calendar-be",
   "version": "1.0.0",
   "description": "Node.js backend for calendar-todo-app using Express and Prisma (MySQL).",
-  "main": "dist/index.js",
+  "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon src/index.ts",
     "start": "node dist/index.js",

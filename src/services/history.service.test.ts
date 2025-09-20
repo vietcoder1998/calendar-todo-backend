@@ -10,6 +10,11 @@ describe('history.service (Prisma)', () => {
   beforeAll(async () => {
     // Ensure no existing project with the same id
     await prisma.project.deleteMany({ where: { id: 'test-project' } });
+    // Double check and force delete if still exists (paranoid safety)
+    const found = await prisma.project.findUnique({ where: { id: 'test-project' } });
+    if (found) {
+      await prisma.project.delete({ where: { id: 'test-project' } });
+    }
     project = await prisma.project.create({
       data: {
         id: 'test-project',
@@ -30,8 +35,11 @@ describe('history.service (Prisma)', () => {
       await prisma.ganttTask.deleteMany({ where: { projectId: project.id } });
       await prisma.webhook.deleteMany({ where: { projectId: project.id } });
       await prisma.location.deleteMany({ where: { projectId: project.id } });
-      // Now you can safely delete the project
-      await prisma.project.delete({ where: { id: project.id } });
+      // Now you can safely delete the project if it still exists
+      const found = await prisma.project.findUnique({ where: { id: project.id } });
+      if (found) {
+        await prisma.project.delete({ where: { id: project.id } });
+      }
     }
     await prisma.$disconnect();
   });

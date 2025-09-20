@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import * as linkedItemService from '../services/linkedItem.service';
 import logger from '../logger';
+import * as linkedItemService from '../services/linkedItem.service';
 
 export const getLinkedItems = async (req: Request, res: Response) => {
   try {
@@ -20,7 +20,7 @@ export const getLinkedItems = async (req: Request, res: Response) => {
 
 export const createLinkedItem = async (req: Request, res: Response) => {
   try {
-    const item = await linkedItemService.createLinkedItem(req.body);
+    const item = await linkedItemService.createLinkedItem({ ...req.body });
     logger.info('Created linked item: %o', item);
     res.status(201).json(item);
   } catch (e: any) {

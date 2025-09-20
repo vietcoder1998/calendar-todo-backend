@@ -23,21 +23,13 @@ export const getLinkedItems = async (projectId?: string) => {
 };
 export const createLinkedItem = async (linkedItem: LinkedItem) => {
   // Create asset and link
-  let assetId: string | null = null;
-  if (linkedItem.title) {
-    assetId = await createAsset(linkedItem.title, 'linkedItem');
-  }
-
-  if (!assetId) {
-    assetId = 'default-asset-id'; // Fallback asset ID
-  }
 
   // Ensure projectId is set
   if (!linkedItem.projectId) {
     throw new Error('projectId is required to create a linked linkedItem');
   }
   const item = await prisma.linkedItem.create({
-    data: { ...linkedItem, assetId, projectId: linkedItem.projectId } as LinkedItem,
+    data: linkedItem,
   });
   return {
     ...item,

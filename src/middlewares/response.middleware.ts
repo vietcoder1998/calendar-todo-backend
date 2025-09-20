@@ -19,6 +19,12 @@ declare module 'express-serve-static-core' {
  * Usage: Place after all routes, before error handler.
  */
 export function boundaryResponse(req: Request, res: Response, next: NextFunction) {
+  // If x-project-id header is present, add projectId to req.params
+  const projectIdHeader = req.headers['x-project-id'];
+  if (projectIdHeader) {
+    req.params = { ...req.params, projectId: String(projectIdHeader) };
+  }
+
   // Mock all query and params into req.meta
   req.meta = {
     ...req.meta,

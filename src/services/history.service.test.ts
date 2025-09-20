@@ -8,9 +8,11 @@ describe('history.service (Prisma)', () => {
   let project: any;
 
   beforeAll(async () => {
-    // Create a minimal project for relation
-    project = await prisma.project.create({
-      data: {
+    // Create a minimal project for relation (use upsert to avoid unique constraint error)
+    project = await prisma.project.upsert({
+      where: { id: 'test-project' },
+      update: {},
+      create: {
         id: 'test-project',
         name: 'Test Project',
         status: 1,
@@ -19,17 +21,19 @@ describe('history.service (Prisma)', () => {
   });
 
   afterAll(async () => {
-    // Delete all related records first
-    await prisma.history.deleteMany({ where: { projectId: project.id } });
-    await prisma.permission.deleteMany({ where: { projectId: project.id } });
-    await prisma.user.deleteMany({ where: { projectId: project.id } });
-    await prisma.fileItem.deleteMany({ where: { projectId: project.id } });
-    await prisma.linkedItem.deleteMany({ where: { projectId: project.id } });
-    await prisma.ganttTask.deleteMany({ where: { projectId: project.id } });
-    await prisma.webhook.deleteMany({ where: { projectId: project.id } });
-    await prisma.location.deleteMany({ where: { projectId: project.id } });
-    // Now you can safely delete the project
-    await prisma.project.delete({ where: { id: project.id } });
+    if (project) {
+      // Delete all related records first
+      await prisma.history.deleteMany({ where: { projectId: project.id } });
+      await prisma.permission.deleteMany({ where: { projectId: project.id } });
+      await prisma.user.deleteMany({ where: { projectId: project.id } });
+      await prisma.fileItem.deleteMany({ where: { projectId: project.id } });
+      await prisma.linkedItem.deleteMany({ where: { projectId: project.id } });
+      await prisma.ganttTask.deleteMany({ where: { projectId: project.id } });
+      await prisma.webhook.deleteMany({ where: { projectId: project.id } });
+      await prisma.location.deleteMany({ where: { projectId: project.id } });
+      // Now you can safely delete the project
+      await prisma.project.delete({ where: { id: project.id } });
+    }
     await prisma.$disconnect();
   });
 

@@ -43,9 +43,9 @@ export const getPermissions = async (
   if (projectId) where.projectId = { equals: projectId };
   if (q) {
     where.OR = [
-      { type: { contains: q, mode: 'insensitive' } },
-      { resource: { contains: q, mode: 'insensitive' } },
-      { userId: { contains: q } }, // Remove mode here
+      { type: { contains: q } },
+      { resource: { contains: q } },
+      { userId: { contains: q } },
     ];
   }
   const permissions = await prisma.permission.findMany({
@@ -151,9 +151,9 @@ export const getPermissionsByResourceType = async (
   };
   if (q) {
     where.OR = [
-      { type: { contains: q, mode: 'insensitive' } },
-      { resource: { contains: q, mode: 'insensitive' } },
-      { userId: { contains: q } }, // Remove mode here
+      { type: { contains: q } },
+      { resource: { contains: q } },
+      { userId: { contains: q } },
     ];
   }
   const permissions = await prisma.permission.findMany({

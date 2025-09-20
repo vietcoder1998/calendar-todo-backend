@@ -8,11 +8,10 @@ describe('history.service (Prisma)', () => {
   let project: any;
 
   beforeAll(async () => {
-    // Create a minimal project for relation (use upsert to avoid unique constraint error)
-    project = await prisma.project.upsert({
-      where: { id: 'test-project' },
-      update: {},
-      create: {
+    // Ensure no existing project with the same id
+    await prisma.project.deleteMany({ where: { id: 'test-project' } });
+    project = await prisma.project.create({
+      data: {
         id: 'test-project',
         name: 'Test Project',
         status: 1,

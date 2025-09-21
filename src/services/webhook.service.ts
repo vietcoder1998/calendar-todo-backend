@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 import { Webhook as WebhookType } from '../types';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
@@ -21,10 +22,17 @@ export const getWebhooks = async (projectId?: string) => {
   const webhooks = await prisma.webhook.findMany();
   return webhooks.map(fromPrismaWebhook);
 };
+
 export const createWebhook = async (webhook: WebhookType) => {
-  const created = await prisma.webhook.create({ data: webhook });
+  const created = await prisma.webhook.create({
+    data: {
+      ...webhook,
+      id: webhook.id || uuidv4(), // Ensure UUID is set
+    },
+  });
   return fromPrismaWebhook(created);
 };
+
 export const updateWebhook = async (id: string, updates: Partial<WebhookType>) => {
   try {
     const updated = await prisma.webhook.update({ where: { id }, data: updates });

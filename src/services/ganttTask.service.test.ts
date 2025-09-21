@@ -20,10 +20,13 @@ const baseTask = {
 
 describe('ganttTask.service', () => {
   beforeAll(async () => {
-    await prisma.project.upsert({
-      where: { id: 'test-project' },
-      update: {},
-      create: { id: 'test-project', name: 'Test Project' },
+    // Ensure the test project exists
+    await prisma.project.create({
+      data: {
+        id: 'test-project',
+        name: 'Test Project',
+        // add any required fields for your schema
+      },
     });
   });
 
@@ -33,6 +36,7 @@ describe('ganttTask.service', () => {
   });
 
   afterAll(async () => {
+    // Clean up test data
     await prisma.ganttTask.deleteMany({ where: { projectId: 'test-project' } });
     await prisma.project.delete({ where: { id: 'test-project' } });
     await prisma.$disconnect();

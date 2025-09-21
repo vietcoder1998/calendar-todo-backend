@@ -192,6 +192,6 @@ export type Notification = {
   read: boolean;
   createdAt: string;
   updatedAt: string;
-  projectId: string;
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  projectId: string;
 };

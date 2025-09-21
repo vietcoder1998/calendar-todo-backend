@@ -12,6 +12,7 @@ import ganttTaskRouter from './routes/ganttTask.routes';
 import historyRouter from './routes/history.routes';
 import linkedItemRouter from './routes/linkedItem.routes';
 import locationRouter from './routes/location.routes';
+import notificationRouter from './routes/notification.routes';
 import permissionRouter from './routes/permission.routes';
 import projectRouter from './routes/project.routes';
 import todoRouter from './routes/todo.routes';
@@ -55,6 +56,7 @@ app.use('/api/webhooks', webhookRouter);
 app.use('/api/histories', historyRouter);
 app.use('/api/locations', locationRouter);
 app.use('/api/assets', assetRoutes);
+app.use('/api/notifications', notificationRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'server is running' });

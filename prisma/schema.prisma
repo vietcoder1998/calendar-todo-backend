@@ -15,6 +15,8 @@ model User {
   projectId   String?
   project     Project?     @relation(fields: [projectId], references: [id])
   permissions Permission[] @relation("UserPermissions")
+  roleId      String? // <-- Add this line
+  role        Role?        @relation(fields: [roleId], references: [id]) // <-- Add this line
   status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -60,22 +62,25 @@ model FileItem {
   label     String?
   asset     Asset?  @relation(fields: [assetId], references: [id])
   status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+
   @@map("fileitem")
 }
 
 model Permission {
-  id        String   @id
-  type      String // 'view' | 'edit' | 'drag' | 'drop'
-  resource  String // e.g. 'file:123', 'todo:456', 'user:789'
-  userId    String
-  projectId String
-  assetId   String? // New: link to asset
-  project   Project  @relation(fields: [projectId], references: [id])
-  asset     Asset?   @relation(fields: [assetId], references: [id])
-  users     User[]   @relation("UserPermissions")
-  status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id
+  type        String // 'view' | 'edit' | 'drag' | 'drop'
+  resource    String // e.g. 'file:123', 'todo:456', 'user:789'
+  userId      String
+  projectId   String
+  assetId     String? // New: link to asset
+  name        String?  @default("") // NEW: permission name, optional
+  description String?  @default("") // NEW: permission description, optional
+  project     Project  @relation(fields: [projectId], references: [id])
+  asset       Asset?   @relation(fields: [assetId], references: [id])
+  users       User[]   @relation("UserPermissions")
+  status      Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("permission")
 }
@@ -113,7 +118,6 @@ model GanttTask {
   assetId   String?
   asset     Asset?  @relation(fields: [assetId], references: [id])
   status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  
 
   @@map("gantttask")
 }
@@ -148,6 +152,7 @@ model Project {
   webhooks    Webhook[]
   users       User[]
   locations   Location[]
+  roles       Role[] // <--- Add this line
   status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   History     History[]
 
@@ -164,9 +169,9 @@ model History {
   timestamp String
   user      String?
   status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  
+
   projectId String
-  project   Project  @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id])
 
   @@map("history")
 }
@@ -176,6 +181,7 @@ model AssetType {
   name   String  @unique
   assets Asset[]
   status Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+
   @@map("assettype")
 }
 
@@ -195,6 +201,7 @@ model Asset {
   linkedItems LinkedItem[]
   Permission  Permission[]
   status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+
   @@map("asset")
 }
 
@@ -211,7 +218,22 @@ model Location {
   assetId        String?
   asset          Asset?   @relation(fields: [assetId], references: [id])
   status         Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+
   @@map("location")
+}
+
+model Role {
+  id        String   @id @default(uuid())
+  name      String
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  users     User[] // <-- This line allows Role.users (0:N)
+  status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@unique([name, projectId])
+  @@map("role")
 }
 
 // This file defines the Prisma schema, including the data model and database connection settings for the MySQL database.

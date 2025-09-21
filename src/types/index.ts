@@ -67,12 +67,23 @@ export type Todo = {
   ganttTaskIds?: string[];
 };
 
+export type Role = {
+  id: string;
+  name: string;
+  projectId: string;
+  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export type User = {
   id: string;
   name: string;
   email: string;
   label?: string | null;
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  roleId?: string | null; // <-- Add this line for user-role relation
+  role?: Role | null; // <-- Add this line for user-role relation
 };
 
 export type FileItem = {
@@ -95,6 +106,8 @@ export type Permission = {
   projectId: string;
   assetId: string | null;
   asset?: Record<string, unknown>;
+  name?: string | null;
+  description?: string | null;
   label?: string | null;
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt: Date;

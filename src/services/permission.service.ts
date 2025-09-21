@@ -61,9 +61,16 @@ export const getPermissions = async (
 export const createPermission = async (permission: Permission): Promise<Permission> => {
   // Only send fields that exist in Prisma schema
   const { asset, ...data } = permission;
+  // Set default name and description if not provided
+  const name = data.name ?? `${data.type} permission for ${data.resource}`;
+  const description =
+    data.description ??
+    `Permission of type ${data.type} on resource ${data.resource} for user ${data.userId}`;
   const created = await prisma.permission.create({
     data: {
       ...data,
+      name,
+      description,
       users: { connect: { id: permission.userId } },
     },
     include: { asset: true, users: true },
@@ -81,20 +88,27 @@ export const createManyPermissions = async (
     assetId?: string | null;
     label?: string | null;
     status?: number;
+    name?: string | null;
+    description?: string | null;
   }>,
 ): Promise<void> => {
   // Create all permissions in batch (without users relation)
   await prisma.permission.createMany({
-    data: permissions.map(({ id, type, resource, userId, projectId, assetId, label, status }) => ({
-      id,
-      type,
-      resource,
-      userId,
-      projectId,
-      assetId,
-      label,
-      status,
-    })),
+    data: permissions.map(
+      ({ id, type, resource, userId, projectId, assetId, label, status, name, description }) => ({
+        id,
+        type,
+        resource,
+        userId,
+        projectId,
+        assetId,
+        label,
+        status,
+        name: name ?? `${type} permission for ${resource}`,
+        description:
+          description ?? `Permission of type ${type} on resource ${resource} for user ${userId}`,
+      }),
+    ),
     skipDuplicates: true,
   });
   // Connect users relation for each permission

@@ -58,22 +58,12 @@ export const getProjects = async (): Promise<ProjectWithAll[]> => {
 };
 
 export const createProject = async (data: any): Promise<Project> => {
-  // TODO: validate data
   const project = await prisma.project.create({ data });
-
-  // Create an admin user for the project if not already present
-  const adminId = `admin-${project.id}`;
-  await prisma.user.upsert({
-    where: { id: adminId },
-    update: {},
-    create: {
-      id: adminId,
-      name: 'Admin',
-      email: `admin-${project.id}@example.com`,
-      projectId: project.id,
-    },
+  const defaultRoles = ['super_admin', 'admin', 'viewer', 'guest'];
+  await prisma.role.createMany({
+    data: defaultRoles.map((name) => ({ name, projectId: project.id })),
+    skipDuplicates: true,
   });
-
   return project;
 };
 

@@ -182,3 +182,16 @@ export type History = {
 
   projectId: string;
 };
+
+export type Notification = {
+  id: string;
+  title: string;
+  message: string;
+  type: string;
+  data?: Record<string, unknown>;
+  read: boolean;
+  createdAt: string;
+  updatedAt: string;
+  projectId: string;
+  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+};

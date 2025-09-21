@@ -5,6 +5,7 @@ import { createServer } from 'http';
 import { addHistoryOnUpdate, attachAssetOnCreate } from './middlewares/asset.middleware';
 import { parseQueryParams } from './middlewares/query.middleware';
 import { boundaryResponse } from './middlewares/response.middleware';
+import { createNotificationOnChange } from './middlewares/notification.middleware';
 import assetRoutes from './routes/asset.routes';
 import fileRouter from './routes/file.routes';
 import ganttTaskRouter from './routes/ganttTask.routes';
@@ -25,6 +26,7 @@ app.use(parseQueryParams);
 app.use(boundaryResponse);
 app.use(attachAssetOnCreate);
 app.use(addHistoryOnUpdate);
+app.use(createNotificationOnChange);
 
 const httpServer = createServer(app);
 setupSocket(httpServer);

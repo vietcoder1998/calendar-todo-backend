@@ -17,9 +17,18 @@ const fromPrismaNotification = (prismaNotification: any): Notification => ({
   status: prismaNotification.status,
 });
 
-export const getNotifications = async (projectId?: string) => {
+export const getNotifications = async (
+  projectId?: string,
+  pageIndex: number = 0,
+  pageSize: number = 20,
+) => {
   const where = projectId ? { projectId, status: { gte: 0 } } : { status: { gte: 0 } };
-  const notifications = await prisma.notification.findMany({ where });
+  const notifications = await prisma.notification.findMany({
+    where,
+    orderBy: { createdAt: 'desc' },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+  });
   return notifications.map(fromPrismaNotification);
 };
 

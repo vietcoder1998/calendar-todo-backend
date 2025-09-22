@@ -1,11 +1,13 @@
+import { pingMySQL } from './prisma';
+
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express, { Request, Response } from 'express';
 import { createServer } from 'http';
 import { addHistoryOnUpdate, attachAssetOnCreate } from './middlewares/asset.middleware';
+import { createNotificationOnChange } from './middlewares/notification.middleware';
 import { parseQueryParams } from './middlewares/query.middleware';
 import { boundaryResponse } from './middlewares/response.middleware';
-import { createNotificationOnChange } from './middlewares/notification.middleware';
 import assetRoutes from './routes/asset.routes';
 import fileRouter from './routes/file.routes';
 import ganttTaskRouter from './routes/ganttTask.routes';
@@ -21,6 +23,15 @@ import webhookRouter from './routes/webhook.routes';
 import { setupSocket } from './socket';
 
 const app = express();
+app.get('/api/ping-mysql', async (req: Request, res: Response) => {
+  const ok = await pingMySQL();
+  if (ok) {
+    res.status(200).json({ status: 'ok', message: 'MySQL connection successful' });
+  } else {
+    res.status(500).json({ status: 'error', message: 'MySQL connection failed' });
+  }
+});
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(parseQueryParams);
@@ -28,6 +39,16 @@ app.use(boundaryResponse);
 app.use(attachAssetOnCreate);
 app.use(addHistoryOnUpdate);
 app.use(createNotificationOnChange);
+
+// MySQL ping endpoint (must be after app is declared)
+app.get('/api/ping-mysql', async (req: Request, res: Response) => {
+  const ok = await pingMySQL();
+  if (ok) {
+    res.status(200).json({ status: 'ok', message: 'MySQL connection successful' });
+  } else {
+    res.status(500).json({ status: 'error', message: 'MySQL connection failed' });
+  }
+});
 
 const httpServer = createServer(app);
 setupSocket(httpServer);

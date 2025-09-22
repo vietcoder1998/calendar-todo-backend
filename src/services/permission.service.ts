@@ -114,9 +114,23 @@ export const createManyPermissions = async (
   // Connect users relation for each permission
   await Promise.all(
     permissions.map(async (perm) => {
+      let userIdToConnect = perm.userId;
+      let userExists = await prisma.user.findUnique({ where: { id: perm.userId } });
+      if (!userExists) {
+        // Try to find admin user for the project
+        const adminUser = await prisma.user.findFirst({
+          where: { name: 'Admin', projectId: perm.projectId },
+        });
+        if (adminUser) {
+          userIdToConnect = adminUser.id;
+        } else {
+          // If no admin, skip connect
+          return;
+        }
+      }
       await prisma.permission.update({
         where: { id: perm.id },
-        data: { users: { connect: { id: perm.userId } } },
+        data: { users: { connect: [{ id: userIdToConnect }] } },
       });
     }),
   );

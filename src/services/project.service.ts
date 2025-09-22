@@ -75,3 +75,11 @@ export const updateProject = async (id: string, data: any): Promise<Project> => 
 export const deleteProject = async (id: string): Promise<void> => {
   await prisma.project.delete({ where: { id } });
 };
+
+// Connect user to project
+export const connectUserToProject = async (projectId: string, userId: string): Promise<Project> => {
+  return prisma.project.update({
+    where: { id: projectId },
+    data: { users: { connect: [{ id: userId }] } },
+  });
+};

@@ -1,3 +1,4 @@
+import jobRouter from './routes/job.routes';
 import { pingMySQL } from './prisma';
 
 import bodyParser from 'body-parser';
@@ -64,6 +65,7 @@ app.use('/api/linked-items', linkedItemRouter);
 app.use('/api/gantt-tasks', ganttTaskRouter);
 app.use('/api/webhooks', webhookRouter);
 app.use('/api/histories', historyRouter);
+app.use('/api/jobs', jobRouter);
 
 // --- PROJECTS ROUTES ---
 app.use('/api/projects', projectRouter);
@@ -78,6 +80,7 @@ app.use('/api/histories', historyRouter);
 app.use('/api/locations', locationRouter);
 app.use('/api/assets', assetRoutes);
 app.use('/api/notifications', notificationRouter);
+app.use('/api/jobs', jobRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'server is running' });

@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -136,6 +137,7 @@ model Webhook {
   asset      Asset?  @relation(fields: [assetId], references: [id]) // <-- Add this line
   status     Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
 
+  jobs      Job[]
   @@map("webhook")
 }
 
@@ -257,3 +259,16 @@ model Notification {
 }
 
 // This file defines the Prisma schema, including the data model and database connection settings for the MySQL database.
+model Job {
+  id        String   @id @default(uuid())
+  name      String
+  schedule  String
+  enabled   Boolean  @default(true)
+  webhookId String
+  webhook   Webhook  @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+  status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("job")
+}

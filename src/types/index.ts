@@ -1,3 +1,14 @@
+// Job type for backend service use
+export type Job = {
+  id: string;
+  name: string;
+  schedule: string;
+  enabled: boolean;
+  webhookId: string;
+  status: number;
+  createdAt: string;
+  updatedAt: string;
+};
 // Project with all relations for backend service use
 export type ProjectWithAll = Project & {
   todos: Todo[];

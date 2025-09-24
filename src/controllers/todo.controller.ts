@@ -4,7 +4,7 @@ import logger from '../logger';
 import * as projectService from '../services/project.service';
 import * as todoService from '../services/todo.service';
 import { Todo } from '../types/index';
-import { emitTodoUpdate } from '../socket';
+import { publishTodoEvent } from '../queue';
 
 export const getTodos = async (req: Request, res: Response) => {
   try {
@@ -73,15 +73,14 @@ export const createTodo = async (req: Request, res: Response) => {
     res.status(400).json({ error: 'Todo creation failed', details: e?.message || String(e) });
   }
 };
-
 export const updateTodo = async (req: Request, res: Response) => {
   try {
     const todo = await todoService.updateTodo(req.params.id, req.body);
     if (todo) {
       logger.info('Updated todo: %o', todo);
-      // Emit socket event for mock/test
+      // Publish to queue for todo change
       if (todo.projectId) {
-        emitTodoUpdate(todo.projectId, todo);
+        await publishTodoEvent({ type: 'todo', projectId: todo.projectId, todo });
       }
       return res.json(todo);
     }

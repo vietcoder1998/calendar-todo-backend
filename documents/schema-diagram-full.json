@@ -1,0 +1,576 @@
+{
+  "nodes": [
+    {
+      "id": "User",
+      "type": "table",
+      "position": { "x": 0, "y": 0 },
+      "data": {
+        "label": "User",
+        "color": "#1E90FF",
+        "columns": [
+          { "id": "User_id", "name": "id", "type": "String", "pk": true, "nullable": false },
+          { "id": "User_name", "name": "name", "type": "String", "nullable": false },
+          { "id": "User_email", "name": "email", "type": "String", "nullable": false },
+          { "id": "User_avatarUrl", "name": "avatarUrl", "type": "String", "nullable": true },
+          { "id": "User_projectId", "name": "projectId", "type": "String", "nullable": true },
+          { "id": "User_roleId", "name": "roleId", "type": "String", "nullable": true },
+          { "id": "User_status", "name": "status", "type": "Int", "nullable": false },
+          { "id": "User_createdAt", "name": "createdAt", "type": "DateTime", "nullable": false },
+          { "id": "User_updatedAt", "name": "updatedAt", "type": "DateTime", "nullable": false }
+        ],
+        "order": 0
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "Project",
+      "type": "table",
+      "position": { "x": 350, "y": 0 },
+      "data": {
+        "label": "Project",
+        "color": "#87CEFA",
+        "columns": [
+          { "id": "Project_id", "name": "id", "type": "String", "pk": true, "nullable": false },
+          { "id": "Project_name", "name": "name", "type": "String", "nullable": false },
+          {
+            "id": "Project_description",
+            "name": "description",
+            "type": "String",
+            "nullable": true
+          },
+          { "id": "Project_avatarUrl", "name": "avatarUrl", "type": "String", "nullable": true },
+          { "id": "Project_plan", "name": "plan", "type": "String", "nullable": true },
+          { "id": "Project_members", "name": "members", "type": "Int", "nullable": true },
+          { "id": "Project_status", "name": "status", "type": "Int", "nullable": false }
+        ],
+        "order": 1
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "Todo",
+      "type": "table",
+      "position": { "x": 0, "y": 200 },
+      "data": {
+        "label": "Todo",
+        "color": "#FFD700",
+        "columns": [
+          { "id": "Todo_id", "name": "id", "type": "String", "pk": true, "nullable": false },
+          { "id": "Todo_title", "name": "title", "type": "String", "nullable": false },
+          { "id": "Todo_description", "name": "description", "type": "String", "nullable": false },
+          { "id": "Todo_date", "name": "date", "type": "String", "nullable": false },
+          { "id": "Todo_deadline", "name": "deadline", "type": "String", "nullable": true },
+          { "id": "Todo_label", "name": "label", "type": "String", "nullable": false },
+          { "id": "Todo_createdAt", "name": "createdAt", "type": "String", "nullable": false },
+          { "id": "Todo_updatedAt", "name": "updatedAt", "type": "String", "nullable": false },
+          { "id": "Todo_locationId", "name": "locationId", "type": "String", "nullable": true },
+          {
+            "id": "Todo_relatedTaskIds",
+            "name": "relatedTaskIds",
+            "type": "Json",
+            "nullable": true
+          },
+          { "id": "Todo_projectId", "name": "projectId", "type": "String", "nullable": false },
+          { "id": "Todo_history", "name": "history", "type": "Json", "nullable": true },
+          { "id": "Todo_linkedItems", "name": "linkedItems", "type": "Json", "nullable": true },
+          { "id": "Todo_assignedUsers", "name": "assignedUsers", "type": "Json", "nullable": true },
+          { "id": "Todo_files", "name": "files", "type": "Json", "nullable": true },
+          { "id": "Todo_webhooks", "name": "webhooks", "type": "Json", "nullable": true },
+          { "id": "Todo_ganttTaskIds", "name": "ganttTaskIds", "type": "Json", "nullable": true },
+          { "id": "Todo_assetId", "name": "assetId", "type": "String", "nullable": true },
+          { "id": "Todo_status", "name": "status", "type": "Int", "nullable": false }
+        ],
+        "order": 2
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "FileItem",
+      "type": "table",
+      "position": { "x": 350, "y": 200 },
+      "data": {
+        "label": "FileItem",
+        "color": "#FFA07A",
+        "columns": [
+          { "id": "FileItem_id", "name": "id", "type": "String", "pk": true, "nullable": false },
+          { "id": "FileItem_name", "name": "name", "type": "String", "nullable": true },
+          { "id": "FileItem_url", "name": "url", "type": "String", "nullable": true },
+          { "id": "FileItem_createdAt", "name": "createdAt", "type": "String", "nullable": true },
+          { "id": "FileItem_updatedAt", "name": "updatedAt", "type": "String", "nullable": true },
+          { "id": "FileItem_projectId", "name": "projectId", "type": "String", "nullable": false },
+          { "id": "FileItem_assetId", "name": "assetId", "type": "String", "nullable": true },
+          { "id": "FileItem_label", "name": "label", "type": "String", "nullable": true },
+          { "id": "FileItem_status", "name": "status", "type": "Int", "nullable": false }
+        ],
+        "order": 3
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "Permission",
+      "type": "table",
+      "position": { "x": 700, "y": 0 },
+      "data": {
+        "label": "Permission",
+        "color": "#B0C4DE",
+        "columns": [
+          { "id": "Permission_id", "name": "id", "type": "String", "pk": true, "nullable": false },
+          { "id": "Permission_type", "name": "type", "type": "String", "nullable": false },
+          { "id": "Permission_resource", "name": "resource", "type": "String", "nullable": false },
+          { "id": "Permission_userId", "name": "userId", "type": "String", "nullable": false },
+          {
+            "id": "Permission_projectId",
+            "name": "projectId",
+            "type": "String",
+            "nullable": false
+          },
+          { "id": "Permission_assetId", "name": "assetId", "type": "String", "nullable": true },
+          { "id": "Permission_name", "name": "name", "type": "String", "nullable": true },
+          {
+            "id": "Permission_description",
+            "name": "description",
+            "type": "String",
+            "nullable": true
+          },
+          { "id": "Permission_status", "name": "status", "type": "Int", "nullable": false },
+          {
+            "id": "Permission_createdAt",
+            "name": "createdAt",
+            "type": "DateTime",
+            "nullable": false
+          },
+          {
+            "id": "Permission_updatedAt",
+            "name": "updatedAt",
+            "type": "DateTime",
+            "nullable": false
+          }
+        ],
+        "order": 4
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "LinkedItem",
+      "type": "table",
+      "position": { "x": 700, "y": 200 },
+      "data": {
+        "label": "LinkedItem",
+        "color": "#B0E0E6",
+        "columns": [
+          { "id": "LinkedItem_id", "name": "id", "type": "String", "pk": true, "nullable": false },
+          { "id": "LinkedItem_todoId", "name": "todoId", "type": "String", "nullable": false },
+          { "id": "LinkedItem_title", "name": "title", "type": "String", "nullable": false },
+          {
+            "id": "LinkedItem_description",
+            "name": "description",
+            "type": "String",
+            "nullable": true
+          },
+          { "id": "LinkedItem_url", "name": "url", "type": "String", "nullable": false },
+          { "id": "LinkedItem_label", "name": "label", "type": "String", "nullable": true },
+          {
+            "id": "LinkedItem_createdAt",
+            "name": "createdAt",
+            "type": "String",
+            "nullable": false
+          },
+          {
+            "id": "LinkedItem_updatedAt",
+            "name": "updatedAt",
+            "type": "String",
+            "nullable": false
+          },
+          {
+            "id": "LinkedItem_projectId",
+            "name": "projectId",
+            "type": "String",
+            "nullable": false
+          },
+          { "id": "LinkedItem_assetId", "name": "assetId", "type": "String", "nullable": true },
+          { "id": "LinkedItem_status", "name": "status", "type": "Int", "nullable": false }
+        ],
+        "order": 5
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "GanttTask",
+      "type": "table",
+      "position": { "x": 0, "y": 400 },
+      "data": {
+        "label": "GanttTask",
+        "color": "#FFDAB9",
+        "columns": [
+          { "id": "GanttTask_id", "name": "id", "type": "String", "pk": true, "nullable": false },
+          { "id": "GanttTask_name", "name": "name", "type": "String", "nullable": true },
+          { "id": "GanttTask_start", "name": "start", "type": "String", "nullable": true },
+          { "id": "GanttTask_end", "name": "end", "type": "String", "nullable": true },
+          { "id": "GanttTask_createdAt", "name": "createdAt", "type": "String", "nullable": true },
+          { "id": "GanttTask_updatedAt", "name": "updatedAt", "type": "String", "nullable": true },
+          { "id": "GanttTask_startDate", "name": "startDate", "type": "String", "nullable": true },
+          { "id": "GanttTask_endDate", "name": "endDate", "type": "String", "nullable": true },
+          { "id": "GanttTask_color", "name": "color", "type": "String", "nullable": true },
+          { "id": "GanttTask_projectId", "name": "projectId", "type": "String", "nullable": false },
+          { "id": "GanttTask_assetId", "name": "assetId", "type": "String", "nullable": true },
+          { "id": "GanttTask_status", "name": "status", "type": "Int", "nullable": false }
+        ],
+        "order": 6
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "Webhook",
+      "type": "table",
+      "position": { "x": 350, "y": 400 },
+      "data": {
+        "label": "Webhook",
+        "color": "#E6E6FA",
+        "columns": [
+          { "id": "Webhook_id", "name": "id", "type": "String", "pk": true, "nullable": false },
+          { "id": "Webhook_name", "name": "name", "type": "String", "nullable": false },
+          { "id": "Webhook_platform", "name": "platform", "type": "String", "nullable": false },
+          { "id": "Webhook_token", "name": "token", "type": "String", "nullable": true },
+          { "id": "Webhook_chatId", "name": "chatId", "type": "String", "nullable": true },
+          { "id": "Webhook_webhookUrl", "name": "webhookUrl", "type": "String", "nullable": true },
+          { "id": "Webhook_enabled", "name": "enabled", "type": "Boolean", "nullable": false },
+          { "id": "Webhook_projectId", "name": "projectId", "type": "String", "nullable": false },
+          { "id": "Webhook_assetId", "name": "assetId", "type": "String", "nullable": true },
+          { "id": "Webhook_status", "name": "status", "type": "Int", "nullable": false }
+        ],
+        "order": 7
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "Role",
+      "type": "table",
+      "position": { "x": 700, "y": 400 },
+      "data": {
+        "label": "Role",
+        "color": "#D8BFD8",
+        "columns": [
+          { "id": "Role_id", "name": "id", "type": "String", "pk": true, "nullable": false },
+          { "id": "Role_name", "name": "name", "type": "String", "nullable": false },
+          { "id": "Role_projectId", "name": "projectId", "type": "String", "nullable": false },
+          { "id": "Role_status", "name": "status", "type": "Int", "nullable": false },
+          { "id": "Role_createdAt", "name": "createdAt", "type": "DateTime", "nullable": false },
+          { "id": "Role_updatedAt", "name": "updatedAt", "type": "DateTime", "nullable": false }
+        ],
+        "order": 8
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "Notification",
+      "type": "table",
+      "position": { "x": 0, "y": 600 },
+      "data": {
+        "label": "Notification",
+        "color": "#F08080",
+        "columns": [
+          {
+            "id": "Notification_id",
+            "name": "id",
+            "type": "String",
+            "pk": true,
+            "nullable": false
+          },
+          { "id": "Notification_title", "name": "title", "type": "String", "nullable": false },
+          { "id": "Notification_message", "name": "message", "type": "String", "nullable": false },
+          { "id": "Notification_type", "name": "type", "type": "String", "nullable": false },
+          { "id": "Notification_data", "name": "data", "type": "Json", "nullable": true },
+          { "id": "Notification_read", "name": "read", "type": "Boolean", "nullable": false },
+          {
+            "id": "Notification_createdAt",
+            "name": "createdAt",
+            "type": "DateTime",
+            "nullable": false
+          },
+          {
+            "id": "Notification_updatedAt",
+            "name": "updatedAt",
+            "type": "DateTime",
+            "nullable": false
+          },
+          {
+            "id": "Notification_projectId",
+            "name": "projectId",
+            "type": "String",
+            "nullable": false
+          },
+          {
+            "id": "Notification_templateId",
+            "name": "templateId",
+            "type": "String",
+            "nullable": true
+          },
+          { "id": "Notification_status", "name": "status", "type": "Int", "nullable": false }
+        ],
+        "order": 9
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "NotificationTemplate",
+      "type": "table",
+      "position": { "x": 350, "y": 600 },
+      "data": {
+        "label": "NotificationTemplate",
+        "color": "#F5DEB3",
+        "columns": [
+          {
+            "id": "NotificationTemplate_id",
+            "name": "id",
+            "type": "String",
+            "pk": true,
+            "nullable": false
+          },
+          {
+            "id": "NotificationTemplate_name",
+            "name": "name",
+            "type": "String",
+            "nullable": false
+          },
+          {
+            "id": "NotificationTemplate_subject",
+            "name": "subject",
+            "type": "String",
+            "nullable": false
+          },
+          {
+            "id": "NotificationTemplate_body",
+            "name": "body",
+            "type": "String",
+            "nullable": false
+          },
+          { "id": "NotificationTemplate_type", "name": "type", "type": "String", "nullable": true },
+          {
+            "id": "NotificationTemplate_projectId",
+            "name": "projectId",
+            "type": "String",
+            "nullable": false
+          },
+          {
+            "id": "NotificationTemplate_status",
+            "name": "status",
+            "type": "Int",
+            "nullable": false
+          },
+          {
+            "id": "NotificationTemplate_createdAt",
+            "name": "createdAt",
+            "type": "DateTime",
+            "nullable": false
+          },
+          {
+            "id": "NotificationTemplate_updatedAt",
+            "name": "updatedAt",
+            "type": "DateTime",
+            "nullable": false
+          }
+        ],
+        "order": 10
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "source": "User",
+      "sourceHandle": "User_projectId-left-source",
+      "target": "Project",
+      "targetHandle": "Project_id-left-target",
+      "id": "User-Project-User_projectId-left-source-Project_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "User",
+      "sourceHandle": "User_roleId-left-source",
+      "target": "Role",
+      "targetHandle": "Role_id-left-target",
+      "id": "User-Role-User_roleId-left-source-Role_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "Todo",
+      "sourceHandle": "Todo_projectId-left-source",
+      "target": "Project",
+      "targetHandle": "Project_id-left-target",
+      "id": "Todo-Project-Todo_projectId-left-source-Project_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "Todo",
+      "sourceHandle": "Todo_assetId-left-source",
+      "target": "Asset",
+      "targetHandle": "Asset_id-left-target",
+      "id": "Todo-Asset-Todo_assetId-left-source-Asset_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "FileItem",
+      "sourceHandle": "FileItem_projectId-left-source",
+      "target": "Project",
+      "targetHandle": "Project_id-left-target",
+      "id": "FileItem-Project-FileItem_projectId-left-source-Project_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "FileItem",
+      "sourceHandle": "FileItem_assetId-left-source",
+      "target": "Asset",
+      "targetHandle": "Asset_id-left-target",
+      "id": "FileItem-Asset-FileItem_assetId-left-source-Asset_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "Permission",
+      "sourceHandle": "Permission_projectId-left-source",
+      "target": "Project",
+      "targetHandle": "Project_id-left-target",
+      "id": "Permission-Project-Permission_projectId-left-source-Project_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "Permission",
+      "sourceHandle": "Permission_assetId-left-source",
+      "target": "Asset",
+      "targetHandle": "Asset_id-left-target",
+      "id": "Permission-Asset-Permission_assetId-left-source-Asset_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "Permission",
+      "sourceHandle": "Permission_userId-left-source",
+      "target": "User",
+      "targetHandle": "User_id-left-target",
+      "id": "Permission-User-Permission_userId-left-source-User_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "LinkedItem",
+      "sourceHandle": "LinkedItem_projectId-left-source",
+      "target": "Project",
+      "targetHandle": "Project_id-left-target",
+      "id": "LinkedItem-Project-LinkedItem_projectId-left-source-Project_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "LinkedItem",
+      "sourceHandle": "LinkedItem_assetId-left-source",
+      "target": "Asset",
+      "targetHandle": "Asset_id-left-target",
+      "id": "LinkedItem-Asset-LinkedItem_assetId-left-source-Asset_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "GanttTask",
+      "sourceHandle": "GanttTask_projectId-left-source",
+      "target": "Project",
+      "targetHandle": "Project_id-left-target",
+      "id": "GanttTask-Project-GanttTask_projectId-left-source-Project_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "GanttTask",
+      "sourceHandle": "GanttTask_assetId-left-source",
+      "target": "Asset",
+      "targetHandle": "Asset_id-left-target",
+      "id": "GanttTask-Asset-GanttTask_assetId-left-source-Asset_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "Webhook",
+      "sourceHandle": "Webhook_projectId-left-source",
+      "target": "Project",
+      "targetHandle": "Project_id-left-target",
+      "id": "Webhook-Project-Webhook_projectId-left-source-Project_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "Webhook",
+      "sourceHandle": "Webhook_assetId-left-source",
+      "target": "Asset",
+      "targetHandle": "Asset_id-left-target",
+      "id": "Webhook-Asset-Webhook_assetId-left-source-Asset_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "Role",
+      "sourceHandle": "Role_projectId-left-source",
+      "target": "Project",
+      "targetHandle": "Project_id-left-target",
+      "id": "Role-Project-Role_projectId-left-source-Project_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "Notification",
+      "sourceHandle": "Notification_projectId-left-source",
+      "target": "Project",
+      "targetHandle": "Project_id-left-target",
+      "id": "Notification-Project-Notification_projectId-left-source-Project_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "Notification",
+      "sourceHandle": "Notification_templateId-left-source",
+      "target": "NotificationTemplate",
+      "targetHandle": "NotificationTemplate_id-left-target",
+      "id": "Notification-NotificationTemplate-Notification_templateId-left-source-NotificationTemplate_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    },
+    {
+      "source": "NotificationTemplate",
+      "sourceHandle": "NotificationTemplate_projectId-left-source",
+      "target": "Project",
+      "targetHandle": "Project_id-left-target",
+      "id": "NotificationTemplate-Project-NotificationTemplate_projectId-left-source-Project_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    }
+  ],
+  "viewport": { "x": 0, "y": 0, "zoom": 1 },
+  "notes": [],
+  "zones": []
+}

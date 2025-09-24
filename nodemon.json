@@ -1,5 +1,5 @@
 {
-  "watch": ["src", ".env", "prisma"],
+  "watch": ["src/*", ".env", "prisma"],
   "ext": "ts,json",
   "ignore": ["src/**/*.spec.ts"],
   "exec": "ts-node ./src/index.ts"

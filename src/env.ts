@@ -18,5 +18,6 @@ export const SOCKET_EVENT = {
   ProjectSync: 'project:sync',
   TodoUpdated: 'todo:updated',
   NotificationNew: 'notification:new',
+  ProjectJoinSuccess: 'project:join:success',
 };
 export const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';

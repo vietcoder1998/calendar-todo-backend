@@ -32,6 +32,8 @@ export function setupSocket(server: HttpServer) {
     socket.on('joinProject', (projectId: string) => {
       socket.join(`project:${projectId}`);
       console.log(`Socket ${socket.id} joined project:${projectId}`);
+      // Emit success event to the joining socket
+      socket.emit(SOCKET_EVENT.ProjectJoinSuccess, { projectId });
     });
 
     socket.on('todo:update', ({ projectId, todo }: { projectId: string; todo: any }) => {

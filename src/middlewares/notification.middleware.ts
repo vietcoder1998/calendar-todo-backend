@@ -48,7 +48,7 @@ export async function createNotificationOnChange(req: Request, res: Response, ne
         }
         // Get userId if present
         const userId = req.body.userId || 'unknown';
-        await prisma.notification.create({
+        const notification = await prisma.notification.create({
           data: {
             projectId,
             title: `Project ${projectId} ${resourceType} ${method.toUpperCase()} change`,
@@ -57,6 +57,17 @@ export async function createNotificationOnChange(req: Request, res: Response, ne
             data: req.body,
           },
         });
+        // Publish to RabbitMQ for socket event
+        try {
+          const { publishNotificationEvent } = await import('../queue');
+          await publishNotificationEvent({
+            type: 'notification',
+            projectId,
+            notification,
+          });
+        } catch (err) {
+          // Optionally log error
+        }
       } catch (err) {
         // Optionally log error, but don't block the request
         // console.error('Failed to create notification:', err);

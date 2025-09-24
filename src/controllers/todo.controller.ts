@@ -4,6 +4,7 @@ import logger from '../logger';
 import * as projectService from '../services/project.service';
 import * as todoService from '../services/todo.service';
 import { Todo } from '../types/index';
+import { emitTodoUpdate } from '../socket';
 
 export const getTodos = async (req: Request, res: Response) => {
   try {
@@ -16,6 +17,7 @@ export const getTodos = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch todos', details: e?.message || String(e) });
   }
 };
+// end updateTodo
 
 export const createTodo = async (req: Request, res: Response) => {
   try {
@@ -77,6 +79,10 @@ export const updateTodo = async (req: Request, res: Response) => {
     const todo = await todoService.updateTodo(req.params.id, req.body);
     if (todo) {
       logger.info('Updated todo: %o', todo);
+      // Emit socket event for mock/test
+      if (todo.projectId) {
+        emitTodoUpdate(todo.projectId, todo);
+      }
       return res.json(todo);
     }
     res.status(404).json({ error: 'Not found' });

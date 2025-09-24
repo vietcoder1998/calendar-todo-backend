@@ -21,6 +21,7 @@ import projectRouter from './routes/project.routes';
 import todoRouter from './routes/todo.routes';
 import userRouter from './routes/user.routes';
 import webhookRouter from './routes/webhook.routes';
+import notificationTemplateRouter from './routes/notificationTemplate.routes';
 import { setupSocket } from './socket';
 
 const app = express();
@@ -81,6 +82,7 @@ app.use('/api/locations', locationRouter);
 app.use('/api/assets', assetRoutes);
 app.use('/api/notifications', notificationRouter);
 app.use('/api/jobs', jobRouter);
+app.use('/api/notification-templates', notificationTemplateRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'server is running' });

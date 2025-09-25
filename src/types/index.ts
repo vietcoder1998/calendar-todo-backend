@@ -144,8 +144,6 @@ export type GanttTask = {
   id: string;
   name: string | null;
   label?: string | null;
-  start: string | null;
-  end: string | null;
   createdAt: string | null;
   updatedAt: string | null;
   startDate: string | null;

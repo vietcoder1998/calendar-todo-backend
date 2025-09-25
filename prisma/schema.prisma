@@ -117,6 +117,7 @@ model GanttTask {
   project   Project @relation(fields: [projectId], references: [id])
   assetId   String?
   asset     Asset?  @relation(fields: [assetId], references: [id])
+  position  Int? // Task order/position (set in app logic, not auto-increment in Prisma for MySQL)
   status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
 
   @@map("gantttask")

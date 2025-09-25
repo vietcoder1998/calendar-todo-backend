@@ -4,7 +4,7 @@ import { GanttTask as GanttTaskType } from '../types';
 import { createAsset } from './asset.util';
 const prisma = new PrismaClient();
 
-const fromPrismaGanttTask = (prismaTask: GanttTaskType): GanttTaskType => ({
+const fromPrismaGanttTask = (prismaTask: any): GanttTaskType => ({
   id: prismaTask.id,
   name: prismaTask.name ?? null,
   startDate: prismaTask.startDate ?? null,
@@ -14,11 +14,15 @@ const fromPrismaGanttTask = (prismaTask: GanttTaskType): GanttTaskType => ({
   assetId: prismaTask.assetId ?? null,
   createdAt: prismaTask.createdAt,
   updatedAt: prismaTask.createdAt,
+  position: prismaTask.position ?? 0,
 });
 
 // Get only Gantt tasks by projectId
 export const getOnlyGanttTasksByProjectId = async (projectId: string) => {
-  const tasks = await prisma.ganttTask.findMany({ where: { projectId } });
+  const tasks = await prisma.ganttTask.findMany({
+    where: { projectId },
+    orderBy: { position: 'asc' },
+  });
   return tasks.map(fromPrismaGanttTask);
 };
 

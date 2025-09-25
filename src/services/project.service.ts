@@ -1,4 +1,4 @@
-import { Project, ProjectWithAll, Todo } from '@/types';
+import { GanttTask, Project, ProjectWithAll } from '@/types';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -27,6 +27,10 @@ export const getProjectById = async (id: string): Promise<ProjectWithAll | null>
         : typeof todo.relatedTaskIds === 'string'
           ? JSON.parse(todo.relatedTaskIds)
           : null,
+    })),
+    ganttTasks: project.ganttTasks.map((task: any) => ({
+      ...task,
+      position: task.position === null ? 0 : task.position,
     })),
   };
 };

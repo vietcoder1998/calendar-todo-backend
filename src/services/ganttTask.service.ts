@@ -105,3 +105,13 @@ export const deleteGanttTask = async (id: string) => {
     return false;
   }
 };
+
+export const swapGanttTaskPosition = async (id1: string, id2: string) => {
+  const task1 = await prisma.ganttTask.findUnique({ where: { id: id1 } });
+  const task2 = await prisma.ganttTask.findUnique({ where: { id: id2 } });
+  if (!task1 || !task2) throw new Error('Task not found');
+  // Swap positions
+  await prisma.ganttTask.update({ where: { id: id1 }, data: { position: task2.position } });
+  await prisma.ganttTask.update({ where: { id: id2 }, data: { position: task1.position } });
+  return true;
+};

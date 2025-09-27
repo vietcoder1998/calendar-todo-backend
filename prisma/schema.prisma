@@ -48,6 +48,7 @@ model Todo {
   reportId       String?
   report         Report? @relation(fields: [reportId], references: [id])
   status         Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position       Int?    // For ordering
 
   @@map("todo")
 }
@@ -66,6 +67,7 @@ model FileItem {
   reportId  String?
   report    Report? @relation(fields: [reportId], references: [id])
   status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position  Int?    // For ordering
 
   @@map("fileitem")
 }
@@ -103,6 +105,7 @@ model LinkedItem {
   assetId     String?
   asset       Asset?  @relation(fields: [assetId], references: [id])
   status      Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position    Int?    // For ordering
 
   @@map("linkeditem")
 }
@@ -120,7 +123,7 @@ model GanttTask {
   project   Project @relation(fields: [projectId], references: [id])
   assetId   String?
   asset     Asset?  @relation(fields: [assetId], references: [id])
-  position  Int? // Task order/position (set in app logic, not auto-increment in Prisma for MySQL)
+  position  Int?    // Task order/position (set in app logic, not auto-increment in Prisma for MySQL)
   reportId  String?
   report    Report? @relation(fields: [reportId], references: [id])
   status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
@@ -216,6 +219,7 @@ model Asset {
   Permission  Permission[]
   status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   Webhook     Webhook[]
+  position    Int?         // For ordering
 
   @@map("asset")
 }
@@ -233,6 +237,7 @@ model Location {
   assetId        String?
   asset          Asset?   @relation(fields: [assetId], references: [id])
   status         Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position       Int?     // For ordering
 
   @@map("location")
 }
@@ -242,10 +247,11 @@ model Role {
   name      String
   projectId String
   project   Project  @relation(fields: [projectId], references: [id])
-  users     User[] // <-- This line allows Role.users (0:N)
+  users     User[]   // <-- This line allows Role.users (0:N)
   status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  position  Int?     // For ordering
 
   @@unique([name, projectId])
   @@map("role")
@@ -262,9 +268,10 @@ model Notification {
   updatedAt  DateTime              @updatedAt
   projectId  String
   project    Project               @relation(fields: [projectId], references: [id])
-  templateId String? // <-- Add this line for mapping
+  templateId String?               // <-- Add this line for mapping
   template   NotificationTemplate? @relation(fields: [templateId], references: [id]) // <-- Add this line
   status     Int                   @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position   Int?                  // For ordering
 
   @@map("notification")
 }
@@ -281,6 +288,7 @@ model NotificationTemplate {
   status        Int            @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @default(now())
+  position      Int?           // For ordering
 
   @@map("notificationtemplate")
 }
@@ -294,6 +302,7 @@ model Label {
   status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  position  Int?     // For ordering
 
   @@map("label")
 }
@@ -324,6 +333,7 @@ model Report {
   status    Int         @default(1)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+  position  Int?        // For ordering
 
   @@map("report")
 }

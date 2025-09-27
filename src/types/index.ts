@@ -8,6 +8,7 @@ export type Job = {
   status: number;
   createdAt: string;
   updatedAt: string;
+  position?: number;
 };
 // Project with all relations for backend service use
 export type ProjectWithAll = Project & {
@@ -36,6 +37,7 @@ export interface Asset {
   ganttTasks?: GanttTask[];
   linkedItems?: LinkedItem[];
   permissions?: Permission[];
+  position?: number;
 }
 export type Location = {
   id: string;
@@ -48,7 +50,7 @@ export type Location = {
   createdAt: string;
   updatedAt: string;
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
-  //  (removed)
+  position?: number;
 };
 // --- Shared with frontend ---
 export type TodoHistoryEntry = {
@@ -76,6 +78,7 @@ export type Todo = {
   files?: string[];
   webhooks?: string[];
   ganttTaskIds?: string[];
+  position?: number;
 };
 
 export type Role = {
@@ -85,6 +88,7 @@ export type Role = {
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt: Date;
   updatedAt: Date;
+  position?: number;
 };
 
 export type User = {
@@ -107,6 +111,7 @@ export type FileItem = {
   projectId: string;
   assetId?: string | null;
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  position?: number;
 };
 
 export type Permission = {
@@ -138,6 +143,7 @@ export type LinkedItem = {
   updatedAt: string;
   projectId: string;
   assetId: string | null;
+  position?: number;
 };
 
 export type GanttTask = {
@@ -152,7 +158,7 @@ export type GanttTask = {
   projectId: string;
   assetId: string | null;
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
-  position: number;
+  position?: number;
 };
 
 export type Webhook = {
@@ -204,4 +210,27 @@ export type Notification = {
   updatedAt: string;
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
   projectId: string;
+  position?: number;
+};
+
+export type Label = {
+  id: string;
+  name: string;
+  color?: string | null;
+  projectId: string;
+  status?: number;
+  createdAt: string;
+  updatedAt: string;
+  position?: number;
+};
+
+export type Report = {
+  id: string;
+  title: string;
+  content?: string | null;
+  projectId: string;
+  status?: number;
+  createdAt: string;
+  updatedAt: string;
+  position?: number;
 };

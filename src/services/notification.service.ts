@@ -15,6 +15,7 @@ const fromPrismaNotification = (prismaNotification: any): Notification => ({
   updatedAt: prismaNotification.updatedAt,
   projectId: prismaNotification.projectId,
   status: prismaNotification.status,
+  position: prismaNotification.position ?? null,
 });
 
 export const getNotifications = async (
@@ -68,7 +69,7 @@ export const updateNotification = async (id: string, updates: Partial<Notificati
       type: data.type,
       data: (data.data as Prisma.JsonValue) ?? undefined,
       read: data.read,
-      status: data.status,
+      status: data.status ?? undefined,
     };
     const updated = await prisma.notification.update({ where: { id }, data: updateData });
     return fromPrismaNotification(updated);

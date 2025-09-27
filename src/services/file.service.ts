@@ -15,6 +15,8 @@ const fromPrismaFile = (prismaFile: any): FileItemType => ({
     : null,
   projectId: prismaFile.projectId,
   assetId: prismaFile.assetId ?? null,
+  status: prismaFile.status ?? null,
+  position: prismaFile.position ?? null,
 });
 
 export const getFiles = async (projectId?: string) => {
@@ -31,18 +33,35 @@ export const createFile = async (file: FileItemType) => {
   if (file.name) {
     assetId = await createAsset(file.name, 'file');
   }
+  let position = file.position;
+  if (position == null && file.projectId) {
+    const max = await prisma.fileItem.aggregate({
+      where: { projectId: file.projectId },
+      _max: { position: true },
+    });
+    position = (max._max?.position ?? 0) + 1;
+  }
   const created = await prisma.fileItem.create({
     data: {
       ...file,
       assetId,
       projectId: file.projectId,
+      position,
+      status: file.status ?? 1,
     },
   });
   return fromPrismaFile(created);
 };
 export const updateFile = async (id: string, updates: Partial<FileItemType>) => {
   try {
-    const updated = await prisma.fileItem.update({ where: { id }, data: updates });
+    const updateData: any = { ...updates };
+    if ('status' in updates) {
+      updateData.status = updates.status ?? 1;
+    }
+    if (updateData.projectId === undefined) {
+      delete updateData.projectId;
+    }
+    const updated = await prisma.fileItem.update({ where: { id }, data: updateData });
     return fromPrismaFile(updated);
   } catch {
     return null;

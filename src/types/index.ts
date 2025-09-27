@@ -8,7 +8,7 @@ export type Job = {
   status: number;
   createdAt: string;
   updatedAt: string;
-  position?: number;
+  position: number | null;
 };
 // Project with all relations for backend service use
 export type ProjectWithAll = Project & {
@@ -29,7 +29,7 @@ export interface Asset {
   type?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
 
   todos?: Todo[];
   files?: FileItem[];
@@ -37,7 +37,7 @@ export interface Asset {
   ganttTasks?: GanttTask[];
   linkedItems?: LinkedItem[];
   permissions?: Permission[];
-  position?: number;
+  position: number | null;
 }
 export type Location = {
   id: string;
@@ -49,8 +49,8 @@ export type Location = {
   projectId: string;
   createdAt: string;
   updatedAt: string;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
-  position?: number;
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
+  position: number | null;
 };
 // --- Shared with frontend ---
 export type TodoHistoryEntry = {
@@ -78,17 +78,17 @@ export type Todo = {
   files?: string[];
   webhooks?: string[];
   ganttTaskIds?: string[];
-  position?: number;
+  position: number | null;
 };
 
 export type Role = {
   id: string;
   name: string;
   projectId: string;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt: Date;
   updatedAt: Date;
-  position?: number;
+  position: number | null;
 };
 
 export type User = {
@@ -96,7 +96,7 @@ export type User = {
   name: string;
   email: string;
   label?: string | null;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
   roleId?: string | null; // <-- Add this line for user-role relation
   role?: Role | null; // <-- Add this line for user-role relation
 };
@@ -110,8 +110,8 @@ export type FileItem = {
   updatedAt: string | null;
   projectId: string;
   assetId?: string | null;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
-  position?: number;
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
+  position: number | null;
 };
 
 export type Permission = {
@@ -125,7 +125,7 @@ export type Permission = {
   name?: string | null;
   description?: string | null;
   label?: string | null;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt: Date;
   updatedAt: Date;
   users?: User[]; // Add users relation for many-to-many mapping
@@ -143,7 +143,7 @@ export type LinkedItem = {
   updatedAt: string;
   projectId: string;
   assetId: string | null;
-  position?: number;
+  position: number | null;
 };
 
 export type GanttTask = {
@@ -157,8 +157,8 @@ export type GanttTask = {
   color: string | null;
   projectId: string;
   assetId: string | null;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
-  position?: number;
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
+  position: number | null;
 };
 
 export type Webhook = {
@@ -171,7 +171,7 @@ export type Webhook = {
   webhookUrl: string | null;
   enabled: boolean;
   projectId: string;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
 };
 
 export type Project = {
@@ -181,8 +181,8 @@ export type Project = {
   description?: string | null;
   avatarUrl?: string | null;
   plan?: string | null;
-  members?: number | null;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  members: number | null | null;
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
 };
 
 export type History = {
@@ -194,7 +194,7 @@ export type History = {
   payload?: Record<string, unknown>;
   timestamp: string;
   user?: string;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
 
   projectId: string;
 };
@@ -208,9 +208,9 @@ export type Notification = {
   read: boolean;
   createdAt: string;
   updatedAt: string;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
   projectId: string;
-  position?: number;
+  position: number | null;
 };
 
 export type Label = {
@@ -218,10 +218,10 @@ export type Label = {
   name: string;
   color?: string | null;
   projectId: string;
-  status?: number;
+  status: number | null;
   createdAt: string;
   updatedAt: string;
-  position?: number;
+  position: number | null;
 };
 
 export type Report = {
@@ -229,8 +229,8 @@ export type Report = {
   title: string;
   content?: string | null;
   projectId: string;
-  status?: number;
+  status: number | null;
   createdAt: string;
   updatedAt: string;
-  position?: number;
+  position: number | null;
 };

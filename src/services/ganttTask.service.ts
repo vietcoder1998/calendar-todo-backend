@@ -15,6 +15,7 @@ const fromPrismaGanttTask = (prismaTask: any): GanttTaskType => ({
   createdAt: prismaTask.createdAt,
   updatedAt: prismaTask.createdAt,
   position: prismaTask.position ?? 0,
+  status: prismaTask.status ?? null,
 });
 
 // Get only Gantt tasks by projectId
@@ -49,15 +50,14 @@ export const createGanttTask = async (task: GanttTaskType) => {
     throw new Error('Project not found');
   }
 
-  // Auto-increment position for this project
-  const maxPositionResult = (await prisma.ganttTask.aggregate({
-    where: { projectId },
-    _max: { position: true } as any,
-  })) as any;
-  const nextPosition =
-    (maxPositionResult._max && maxPositionResult._max.position
-      ? maxPositionResult._max.position
-      : 0) + 1;
+  let position = task.position;
+  if (position == null && projectId) {
+    const max = await prisma.ganttTask.aggregate({
+      where: { projectId },
+      _max: { position: true },
+    });
+    position = (max._max?.position ?? 0) + 1;
+  }
 
   // Create asset and link
   let assetId: string | null = null;
@@ -73,7 +73,8 @@ export const createGanttTask = async (task: GanttTaskType) => {
     color: color || 'bg-blue-500',
     assetId,
     projectId,
-    position: nextPosition,
+    position,
+    status: rest.status === null ? undefined : rest.status,
   };
   const created = await prisma.ganttTask.create({ data });
   return fromPrismaGanttTask(created);

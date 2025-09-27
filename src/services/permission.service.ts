@@ -71,6 +71,7 @@ export const createPermission = async (permission: Permission): Promise<Permissi
       ...data,
       name,
       description,
+      status: data.status === null ? undefined : data.status,
       users: { connect: { id: permission.userId } },
     },
     include: { asset: true, users: true },

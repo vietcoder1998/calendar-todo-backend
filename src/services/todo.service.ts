@@ -70,6 +70,14 @@ export const createTodo = async (todo: Omit<Todo, 'id'> & { id?: string }): Prom
   }
   // Prisma expects relation connects, not direct ids
   const { projectId, assetId: _assetId, ...rest } = toPrismaTodoInput(todo);
+  let position = todo.position;
+  if (position == null && todo.projectId) {
+    const max = await prisma.todo.aggregate({
+      where: { projectId: todo.projectId },
+      _max: { position: true },
+    });
+    position = (max._max?.position ?? 0) + 1;
+  }
   const created = await prisma.todo.create({
     data: {
       ...rest,
@@ -79,6 +87,7 @@ export const createTodo = async (todo: Omit<Todo, 'id'> & { id?: string }): Prom
       updatedAt: rest.updatedAt || new Date().toISOString(),
       project: { connect: { id: todo.projectId } },
       ...(assetId ? { asset: { connect: { id: assetId } } } : {}),
+      position,
     },
   });
   return fromPrismaTodo(created);

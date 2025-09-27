@@ -60,6 +60,7 @@ export const createTodo = async (req: Request, res: Response) => {
       webhooks: Array.isArray(webhooks) ? webhooks.map(String) : [],
       ganttTaskIds: Array.isArray(ganttTaskIds) ? ganttTaskIds.map(String) : [],
       relatedTaskIds: Array.isArray(relatedTaskIds) ? relatedTaskIds.map(String) : [],
+      position: null,
     };
     const project = await projectService.getProjectById(projectId);
     if (!project) {

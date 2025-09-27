@@ -121,3 +121,15 @@ export const getTodoDetail = async (req: Request, res: Response) => {
       .json({ error: 'Failed to fetch todo detail', details: e?.message || String(e) });
   }
 };
+
+export const swapTodoPosition = async (req: Request, res: Response) => {
+  try {
+    const { id1, id2 } = req.body;
+    if (!id1 || !id2) return res.status(400).json({ error: 'Missing todo ids' });
+    await todoService.swapTodoPosition(id1, id2);
+    res.status(200).json({ success: true });
+  } catch (e: any) {
+    logger.error('Swap todo position failed: %s', e?.message || e);
+    res.status(400).json({ error: 'Swap todo position failed', details: e?.message || String(e) });
+  }
+};

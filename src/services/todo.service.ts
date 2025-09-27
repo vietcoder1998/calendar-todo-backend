@@ -119,3 +119,11 @@ export const getTodoDetail = async (id: string): Promise<Todo | null> => {
   const todo = await prisma.todo.findUnique({ where: { id } });
   return todo ? fromPrismaTodo(todo) : null;
 };
+
+export const swapTodoPosition = async (id1: string, id2: string): Promise<void> => {
+  const todo1 = await prisma.todo.findUnique({ where: { id: id1 } });
+  const todo2 = await prisma.todo.findUnique({ where: { id: id2 } });
+  if (!todo1 || !todo2) throw new Error('Todo not found');
+  await prisma.todo.update({ where: { id: id1 }, data: { position: todo2.position } });
+  await prisma.todo.update({ where: { id: id2 }, data: { position: todo1.position } });
+};

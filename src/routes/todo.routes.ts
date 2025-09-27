@@ -9,5 +9,6 @@ router.post('/', validateTodo, todoController.createTodo);
 router.put('/:id', validateTodo, todoController.updateTodo);
 router.delete('/:id', todoController.deleteTodo);
 router.get('/:id', todoController.getTodoDetail);
+router.post('/swap-position', todoController.swapTodoPosition);
 
 export default router;

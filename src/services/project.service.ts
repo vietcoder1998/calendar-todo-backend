@@ -32,6 +32,18 @@ export const getProjectById = async (id: string): Promise<ProjectWithAll | null>
       ...task,
       position: task.position === null ? 0 : task.position,
     })),
+    files: project.files.map((file: any) => ({
+      ...file,
+      position: file.position === undefined || file.position === null ? 0 : file.position,
+    })),
+    linkedItems: project.linkedItems.map((item: any) => ({
+      ...item,
+      position: item.position === undefined || item.position === null ? 0 : item.position,
+    })),
+    permissions: project.permissions.map((permission: any) => ({
+      ...permission,
+      name: permission.name === null ? undefined : permission.name,
+    })),
   };
 };
 

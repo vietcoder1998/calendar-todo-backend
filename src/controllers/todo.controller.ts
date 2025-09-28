@@ -80,6 +80,7 @@ export const createTodo = async (req: Request, res: Response) => {
 };
 export const updateTodo = async (req: Request, res: Response) => {
   try {
+    console.log(req.params, req.path);
     const todo = await todoService.updateTodo(req.params.id, req.body);
     console.log('UPDATEEEE', todo);
     if (todo) {

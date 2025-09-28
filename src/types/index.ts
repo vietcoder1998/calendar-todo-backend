@@ -66,7 +66,7 @@ export type Todo = {
   description: string;
   date: string;
   deadline?: string | null;
-  status: 'todo' | 'in-progress' | 'review' | 'done' | number; // string for legacy, number for new status
+  status: number; // string for legacy, number for new status
   createdAt: string;
   updatedAt: string;
   locationId?: string | null;

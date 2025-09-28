@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import type { Todo } from '@/types';
 import { createAsset } from './asset.util';
+import logger from '../logger';
 
 const prisma = new PrismaClient();
 
@@ -16,12 +17,14 @@ const toPrismaTodoInput = (todo: Omit<Todo, 'id'> & { id?: string }): any => ({
   history: todo.history ? JSON.stringify(todo.history) : undefined,
   startDate: todo.startDate ?? null,
   endDate: todo.endDate ?? null,
+  status: todo.status ?? null,
+  label: todo.label ?? null,
 });
 
 // Utility: Convert Prisma Todo to app Todo type
 const fromPrismaTodo = (prismaTodo: any): Todo => ({
   ...prismaTodo,
-  status: prismaTodo.status as 'todo' | 'in-progress' | 'review' | 'done',
+  label: prismaTodo.label as 'todo' | 'in-progress' | 'review' | 'done',
   relatedTaskIds: prismaTodo.relatedTaskIds ? JSON.parse(prismaTodo.relatedTaskIds as any) : [],
   linkedItems: prismaTodo.linkedItems ? JSON.parse(prismaTodo.linkedItems as any) : [],
   assignedUsers: prismaTodo.assignedUsers ? JSON.parse(prismaTodo.assignedUsers as any) : [],
@@ -32,6 +35,7 @@ const fromPrismaTodo = (prismaTodo: any): Todo => ({
   deadline: prismaTodo.deadline ?? null,
   startDate: prismaTodo.startDate ?? null,
   endDate: prismaTodo.endDate ?? null,
+  status: prismaTodo.status ?? 1,
 });
 
 export const getTodos = async (projectId?: string): Promise<Todo[]> => {
@@ -98,13 +102,31 @@ export const createTodo = async (todo: Omit<Todo, 'id'> & { id?: string }): Prom
 
 export const updateTodo = async (id: string, updates: Partial<Todo>): Promise<Todo | null> => {
   try {
+    // Build update data, only include defined fields
+    const updateData: any = {};
+    for (const key in updates) {
+      const value = (updates as any)[key];
+      if (value !== undefined) {
+        if (key === 'projectId') {
+          updateData['project'] = { connect: { id: value } };
+        } else {
+          updateData[key] = value;
+        }
+      }
+    }
+
     const updated = await prisma.todo.update({
       where: { id },
-      data: toPrismaTodoInput(updates as Todo),
+      data: updateData,
     });
-    // Always return full mapped todo data
     return fromPrismaTodo(updated);
-  } catch {
+  } catch (err) {
+    logger.error(
+      'Failed to update todo: %s',
+      typeof err === 'object' && err !== null && 'message' in err
+        ? (err as any).message
+        : JSON.stringify(err),
+    );
     return null;
   }
 };
@@ -113,7 +135,13 @@ export const deleteTodo = async (id: string): Promise<boolean> => {
   try {
     await prisma.todo.delete({ where: { id } });
     return true;
-  } catch {
+  } catch (err) {
+    logger.error(
+      'Failed to delete todo: %s',
+      typeof err === 'object' && err !== null && 'message' in err
+        ? (err as any).message
+        : JSON.stringify(err),
+    );
     return false;
   }
 };

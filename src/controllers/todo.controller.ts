@@ -81,6 +81,7 @@ export const createTodo = async (req: Request, res: Response) => {
 export const updateTodo = async (req: Request, res: Response) => {
   try {
     const todo = await todoService.updateTodo(req.params.id, req.body);
+    console.log('UPDATEEEE', todo);
     if (todo) {
       logger.info('Updated todo: %o', todo);
       // Publish to queue for todo change

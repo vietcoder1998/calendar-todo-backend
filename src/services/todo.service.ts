@@ -100,7 +100,7 @@ export const updateTodo = async (id: string, updates: Partial<Todo>): Promise<To
   try {
     const updated = await prisma.todo.update({
       where: { id },
-      data: toPrismaTodoInput(updates as any),
+      data: toPrismaTodoInput(updates as Todo),
     });
     // Always return full mapped todo data
     return fromPrismaTodo(updated);

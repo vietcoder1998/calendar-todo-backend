@@ -42,8 +42,15 @@ export const getAssetById = async (id: string): Promise<(Asset & { type: any }) 
 import { Prisma } from '@prisma/client';
 
 export const createAsset = async (data: Prisma.AssetCreateInput): Promise<Asset> => {
+  let position = (data as any).position;
+  if (position == null) {
+    const max = await prisma.asset.aggregate({
+      _max: { position: true },
+    });
+    position = (max._max?.position ?? 0) + 1;
+  }
   return prisma.asset.create({
-    data,
+    data: { ...data, position },
   });
 };
 

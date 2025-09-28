@@ -1,30 +1,29 @@
-import { GanttTask as GanttTaskType } from '../types';
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import { GanttTask as GanttTaskType } from '../types';
 import { createAsset } from './asset.util';
 const prisma = new PrismaClient();
 
 const fromPrismaGanttTask = (prismaTask: any): GanttTaskType => ({
   id: prismaTask.id,
   name: prismaTask.name ?? null,
-  start: prismaTask.start ?? null,
-  end: prismaTask.end ?? null,
-  createdAt: prismaTask.createdAt
-    ? (prismaTask.createdAt.toISOString?.() ?? prismaTask.createdAt)
-    : null,
-  updatedAt: prismaTask.updatedAt
-    ? (prismaTask.updatedAt.toISOString?.() ?? prismaTask.updatedAt)
-    : null,
   startDate: prismaTask.startDate ?? null,
   endDate: prismaTask.endDate ?? null,
   color: prismaTask.color ?? null,
   projectId: prismaTask.projectId,
   assetId: prismaTask.assetId ?? null,
+  createdAt: prismaTask.createdAt,
+  updatedAt: prismaTask.createdAt,
+  position: prismaTask.position ?? 0,
+  status: prismaTask.status ?? null,
 });
 
 // Get only Gantt tasks by projectId
 export const getOnlyGanttTasksByProjectId = async (projectId: string) => {
-  const tasks = await prisma.ganttTask.findMany({ where: { projectId } });
+  const tasks = await prisma.ganttTask.findMany({
+    where: { projectId },
+    orderBy: { position: 'asc' },
+  });
   return tasks.map(fromPrismaGanttTask);
 };
 
@@ -42,15 +41,22 @@ export const getGanttTaskById = async (id: string) => {
   return task ? fromPrismaGanttTask(task) : null;
 };
 
-export const createGanttTask = async (
-  task: GanttTaskType & { color?: string; startDate?: string; endDate?: string },
-) => {
-  const { projectId, color, startDate, endDate, ...rest } = task as any;
+export const createGanttTask = async (task: GanttTaskType) => {
+  const { projectId, color, ...rest } = task as GanttTaskType;
 
   // Check if project exists
   const project = await prisma.project.findUnique({ where: { id: projectId } });
   if (!project) {
     throw new Error('Project not found');
+  }
+
+  let position = task.position;
+  if (position == null && projectId) {
+    const max = await prisma.ganttTask.aggregate({
+      where: { projectId },
+      _max: { position: true },
+    });
+    position = (max._max?.position ?? 0) + 1;
   }
 
   // Create asset and link
@@ -62,13 +68,13 @@ export const createGanttTask = async (
   const data = {
     ...rest,
     id: randomUUID(),
-    start: startDate ?? rest.start,
-    end: endDate ?? rest.end,
-    startDate: startDate ?? rest.start,
-    endDate: endDate ?? rest.end,
+    startDate: rest.startDate,
+    endDate: rest.endDate,
     color: color || 'bg-blue-500',
     assetId,
     projectId,
+    position,
+    status: rest.status === null ? undefined : rest.status,
   };
   const created = await prisma.ganttTask.create({ data });
   return fromPrismaGanttTask(created);
@@ -99,4 +105,14 @@ export const deleteGanttTask = async (id: string) => {
   } catch {
     return false;
   }
+};
+
+export const swapGanttTaskPosition = async (id1: string, id2: string) => {
+  const task1 = await prisma.ganttTask.findUnique({ where: { id: id1 } });
+  const task2 = await prisma.ganttTask.findUnique({ where: { id: id2 } });
+  if (!task1 || !task2) throw new Error('Task not found');
+  // Swap positions
+  await prisma.ganttTask.update({ where: { id: id1 }, data: { position: task2.position } });
+  await prisma.ganttTask.update({ where: { id: id2 }, data: { position: task1.position } });
+  return true;
 };

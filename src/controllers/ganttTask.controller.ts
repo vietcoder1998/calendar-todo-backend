@@ -85,3 +85,14 @@ export const deleteGanttTask = async (req: Request, res: Response) => {
     res.status(400).json({ error: 'GanttTask deletion failed', details: e?.message || String(e) });
   }
 };
+
+export const swapGanttTaskPosition = async (req: Request, res: Response) => {
+  try {
+    const { id1, id2 } = req.body;
+    if (!id1 || !id2) return res.status(400).json({ error: 'Missing id1 or id2' });
+    await ganttTaskService.swapGanttTaskPosition(id1, id2);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};

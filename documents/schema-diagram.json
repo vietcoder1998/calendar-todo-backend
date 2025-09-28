@@ -1,0 +1,69 @@
+{
+  "nodes": [
+    {
+      "id": "User",
+      "type": "table",
+      "position": { "x": 0, "y": 0 },
+      "data": {
+        "label": "User",
+        "color": "#1E90FF",
+        "columns": [
+          { "id": "User_id", "name": "id", "type": "String", "pk": true, "nullable": false },
+          { "id": "User_name", "name": "name", "type": "String", "nullable": false },
+          { "id": "User_email", "name": "email", "type": "String", "nullable": false },
+          { "id": "User_avatarUrl", "name": "avatarUrl", "type": "String", "nullable": true },
+          { "id": "User_projectId", "name": "projectId", "type": "String", "nullable": true },
+          { "id": "User_roleId", "name": "roleId", "type": "String", "nullable": true },
+          { "id": "User_status", "name": "status", "type": "Int", "nullable": false },
+          { "id": "User_createdAt", "name": "createdAt", "type": "DateTime", "nullable": false },
+          { "id": "User_updatedAt", "name": "updatedAt", "type": "DateTime", "nullable": false }
+        ],
+        "order": 0
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "Project",
+      "type": "table",
+      "position": { "x": 350, "y": 0 },
+      "data": {
+        "label": "Project",
+        "color": "#87CEFA",
+        "columns": [
+          { "id": "Project_id", "name": "id", "type": "String", "pk": true, "nullable": false },
+          { "id": "Project_name", "name": "name", "type": "String", "nullable": false },
+          {
+            "id": "Project_description",
+            "name": "description",
+            "type": "String",
+            "nullable": true
+          },
+          { "id": "Project_avatarUrl", "name": "avatarUrl", "type": "String", "nullable": true },
+          { "id": "Project_plan", "name": "plan", "type": "String", "nullable": true },
+          { "id": "Project_members", "name": "members", "type": "Int", "nullable": true },
+          { "id": "Project_status", "name": "status", "type": "Int", "nullable": false }
+        ],
+        "order": 1
+      },
+      "measured": { "width": 288, "height": 127 },
+      "selected": false,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "source": "User",
+      "sourceHandle": "User_projectId-left-source",
+      "target": "Project",
+      "targetHandle": "Project_id-left-target",
+      "id": "User-Project-User_projectId-left-source-Project_id-left-target",
+      "type": "custom",
+      "data": { "relationship": "many-to-one" }
+    }
+  ],
+  "viewport": { "x": 0, "y": 0, "zoom": 1 },
+  "notes": [],
+  "zones": []
+}

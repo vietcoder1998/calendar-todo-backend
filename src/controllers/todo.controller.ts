@@ -4,6 +4,7 @@ import logger from '../logger';
 import * as projectService from '../services/project.service';
 import * as todoService from '../services/todo.service';
 import { Todo } from '../types/index';
+import { publishTodoEvent } from '../queue';
 
 export const getTodos = async (req: Request, res: Response) => {
   try {
@@ -16,6 +17,7 @@ export const getTodos = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch todos', details: e?.message || String(e) });
   }
 };
+// end updateTodo
 
 export const createTodo = async (req: Request, res: Response) => {
   try {
@@ -58,6 +60,7 @@ export const createTodo = async (req: Request, res: Response) => {
       webhooks: Array.isArray(webhooks) ? webhooks.map(String) : [],
       ganttTaskIds: Array.isArray(ganttTaskIds) ? ganttTaskIds.map(String) : [],
       relatedTaskIds: Array.isArray(relatedTaskIds) ? relatedTaskIds.map(String) : [],
+      position: null,
     };
     const project = await projectService.getProjectById(projectId);
     if (!project) {
@@ -71,12 +74,15 @@ export const createTodo = async (req: Request, res: Response) => {
     res.status(400).json({ error: 'Todo creation failed', details: e?.message || String(e) });
   }
 };
-
 export const updateTodo = async (req: Request, res: Response) => {
   try {
     const todo = await todoService.updateTodo(req.params.id, req.body);
     if (todo) {
       logger.info('Updated todo: %o', todo);
+      // Publish to queue for todo change
+      if (todo.projectId) {
+        await publishTodoEvent({ type: 'todo', projectId: todo.projectId, todo });
+      }
       return res.json(todo);
     }
     res.status(404).json({ error: 'Not found' });
@@ -113,5 +119,17 @@ export const getTodoDetail = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ error: 'Failed to fetch todo detail', details: e?.message || String(e) });
+  }
+};
+
+export const swapTodoPosition = async (req: Request, res: Response) => {
+  try {
+    const { id1, id2 } = req.body;
+    if (!id1 || !id2) return res.status(400).json({ error: 'Missing todo ids' });
+    await todoService.swapTodoPosition(id1, id2);
+    res.status(200).json({ success: true });
+  } catch (e: any) {
+    logger.error('Swap todo position failed: %s', e?.message || e);
+    res.status(400).json({ error: 'Swap todo position failed', details: e?.message || String(e) });
   }
 };

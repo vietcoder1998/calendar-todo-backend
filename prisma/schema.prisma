@@ -15,6 +15,8 @@ model User {
   projectId   String?
   project     Project?     @relation(fields: [projectId], references: [id])
   permissions Permission[] @relation("UserPermissions")
+  roleId      String? // <-- Add this line
+  role        Role?        @relation(fields: [roleId], references: [id]) // <-- Add this line
   status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -43,7 +45,10 @@ model Todo {
   ganttTaskIds   Json?
   assetId        String?
   asset          Asset?  @relation(fields: [assetId], references: [id])
+  reportId       String?
+  report         Report? @relation(fields: [reportId], references: [id])
   status         Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position       Int?    // For ordering
 
   @@map("todo")
 }
@@ -59,23 +64,29 @@ model FileItem {
   assetId   String?
   label     String?
   asset     Asset?  @relation(fields: [assetId], references: [id])
+  reportId  String?
+  report    Report? @relation(fields: [reportId], references: [id])
   status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position  Int?    // For ordering
+
   @@map("fileitem")
 }
 
 model Permission {
-  id        String   @id
-  type      String // 'view' | 'edit' | 'drag' | 'drop'
-  resource  String // e.g. 'file:123', 'todo:456', 'user:789'
-  userId    String
-  projectId String
-  assetId   String? // New: link to asset
-  project   Project  @relation(fields: [projectId], references: [id])
-  asset     Asset?   @relation(fields: [assetId], references: [id])
-  users     User[]   @relation("UserPermissions")
-  status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id
+  type        String // 'view' | 'edit' | 'drag' | 'drop'
+  resource    String // e.g. 'file:123', 'todo:456', 'user:789'
+  userId      String
+  projectId   String
+  assetId     String? // New: link to asset
+  name        String?  @default("") // NEW: permission name, optional
+  description String?  @default("") // NEW: permission description, optional
+  project     Project  @relation(fields: [projectId], references: [id])
+  asset       Asset?   @relation(fields: [assetId], references: [id])
+  users       User[]   @relation("UserPermissions")
+  status      Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("permission")
 }
@@ -94,6 +105,7 @@ model LinkedItem {
   assetId     String?
   asset       Asset?  @relation(fields: [assetId], references: [id])
   status      Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position    Int?    // For ordering
 
   @@map("linkeditem")
 }
@@ -101,19 +113,20 @@ model LinkedItem {
 model GanttTask {
   id        String  @id
   name      String?
-  start     String?
-  end       String?
   createdAt String?
   updatedAt String?
   startDate String?
   endDate   String?
   color     String?
+  label     String?
   projectId String
   project   Project @relation(fields: [projectId], references: [id])
   assetId   String?
   asset     Asset?  @relation(fields: [assetId], references: [id])
+  position  Int?    // Task order/position (set in app logic, not auto-increment in Prisma for MySQL)
+  reportId  String?
+  report    Report? @relation(fields: [reportId], references: [id])
   status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  
 
   @@map("gantttask")
 }
@@ -128,30 +141,39 @@ model Webhook {
   enabled    Boolean
   projectId  String
   project    Project @relation(fields: [projectId], references: [id])
+  assetId    String? // <-- Add this line
+  asset      Asset?  @relation(fields: [assetId], references: [id]) // <-- Add this line
   status     Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  jobs       Job[]   // 1:n relation to Job
+
+  jobs Job[]
 
   @@map("webhook")
 }
 
 model Project {
-  id          String       @id
-  name        String
-  description String?
-  avatarUrl   String?      @db.Text
-  plan        String?
-  members     Int?
-  todos       Todo[]
-  files       FileItem[]
-  permissions Permission[]
-  linkedItems LinkedItem[]
-  ganttTasks  GanttTask[]
-  webhooks    Webhook[]
-  users       User[]
-  locations   Location[]
+  id                    String                 @id
+  name                  String
+  description           String?
+  avatarUrl             String?                @db.Text
+  plan                  String?
+  members               Int?
+  todos                 Todo[]
+  files                 FileItem[]
+  permissions           Permission[]
+  linkedItems           LinkedItem[]
+  ganttTasks            GanttTask[]
+  webhooks              Webhook[]
+  users                 User[]
+  locations             Location[]
+  roles                 Role[] // <--- Add this line
+  notifications         Notification[] // <--- Add this line
+  notificationTemplates NotificationTemplate[] // <-- Add this line for 1:N
+  status                Int                    @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  histories               History[]
+  labels                Label[]
+  reports                Report[]
   jobs        Job[]        // 1:n relation to Job
-  status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  History     History[]
+
 
   @@map("project")
 }
@@ -166,9 +188,9 @@ model History {
   timestamp String
   user      String?
   status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  
+
   projectId String
-  project   Project  @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id])
 
   @@map("history")
 }
@@ -178,6 +200,7 @@ model AssetType {
   name   String  @unique
   assets Asset[]
   status Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+
   @@map("assettype")
 }
 
@@ -197,6 +220,9 @@ model Asset {
   linkedItems LinkedItem[]
   Permission  Permission[]
   status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  Webhook     Webhook[]
+  position    Int?         // For ordering
+
   @@map("asset")
 }
 
@@ -213,26 +239,103 @@ model Location {
   assetId        String?
   asset          Asset?   @relation(fields: [assetId], references: [id])
   status         Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position       Int?     // For ordering
+
   @@map("location")
 }
 
+model Role {
+  id        String   @id @default(uuid())
+  name      String
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  users     User[]   // <-- This line allows Role.users (0:N)
+  status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  position  Int?     // For ordering
+
+  @@unique([name, projectId])
+  @@map("role")
+}
+
+model Notification {
+  id         String                @id @default(uuid())
+  title      String
+  message    String
+  type       String // e.g. 'info', 'warning', 'error', 'success', 'custom'
+  data       Json?
+  read       Boolean               @default(false)
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+  projectId  String
+  project    Project               @relation(fields: [projectId], references: [id])
+  templateId String?               // <-- Add this line for mapping
+  template   NotificationTemplate? @relation(fields: [templateId], references: [id]) // <-- Add this line
+  status     Int                   @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position   Int?                  // For ordering
+
+  @@map("notification")
+}
+
+model NotificationTemplate {
+  id            String         @id @default(uuid())
+  name          String
+  subject       String
+  body          String
+  type          String? // e.g. 'info', 'warning', 'custom', etc.
+  projectId     String
+  project       Project        @relation(fields: [projectId], references: [id])
+  notifications Notification[] // <-- Add this line for 1:N mapping
+  status        Int            @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now())
+  position      Int?           // For ordering
+
+  @@map("notificationtemplate")
+}
+
+model Label {
+  id        String   @id @default(uuid())
+  name      String
+  color     String?
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  position  Int?     // For ordering
+
+  @@map("label")
+}
+
 model Job {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  schedule    String   // cron or ISO string
-  webhookUrl  String
-  enabled     Boolean  @default(true)
-  config      Json?
-  status      Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  projectId   String
-  project     Project  @relation(fields: [projectId], references: [id])
-  webhookId   String?
-  webhook     Webhook? @relation(fields: [webhookId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  schedule  String
+  enabled   Boolean  @default(true)
+  webhookId String
+  webhook   Webhook  @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+  status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 
   @@map("job")
 }
 
-// This file defines the Prisma schema, including the data model and database connection settings for the MySQL database.
+model Report {
+  id        String      @id @default(uuid())
+  title     String
+  content   String?
+  projectId String
+  project   Project     @relation(fields: [projectId], references: [id])
+  todos     Todo[]
+  tasks     GanttTask[]
+  files     FileItem[]
+  status    Int         @default(1)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  position  Int?        // For ordering
+
+  @@map("report")
+}

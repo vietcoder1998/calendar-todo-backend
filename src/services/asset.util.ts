@@ -1,3 +1,4 @@
+import logger from '../logger';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -31,13 +32,18 @@ export async function createAsset(name: string, typeName: string, projectId?: st
       },
     });
 
-    // Find the admin user in the database
-    let finalOwnerId = 'admin';
-    const adminUser = await prisma.user.findFirst({ where: { name: 'Admin', projectId } });
-    if (adminUser) {
-      finalOwnerId = adminUser.id;
-    }
+    // Ensure project exists before creating permissions
     if (projectId) {
+      const project = await prisma.project.findUnique({ where: { id: projectId } });
+      if (!project) {
+        throw new Error(`Project with id ${projectId} does not exist`);
+      }
+      let finalOwnerId = 'admin';
+      const adminUser = await prisma.user.findFirst({ where: { name: 'Admin', projectId } });
+      if (adminUser) {
+        finalOwnerId = adminUser.id;
+      }
+
       const actions = ['edit', 'view', 'comment', 'delete'];
       const permissionData = actions.map((type) => ({
         id: `${type}:asset:${asset.id}:${finalOwnerId}`,

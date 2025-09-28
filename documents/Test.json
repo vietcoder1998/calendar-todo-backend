@@ -1,0 +1,46 @@
+{
+  "nodes": [
+    {
+      "id": "users-1758731784625",
+      "type": "table",
+      "position": {
+        "x": 262.2780632666049,
+        "y": 102.90083130473045
+      },
+      "data": {
+        "label": "users",
+        "color": "#1E90FF",
+        "columns": [
+          {
+            "id": "col_1758731784625",
+            "name": "id",
+            "type": "INT",
+            "pk": true,
+            "nullable": false
+          },
+          {
+            "id": "col_1758731853707",
+            "name": "new_column_2",
+            "type": "TINYINT",
+            "nullable": true
+          }
+        ],
+        "order": 0
+      },
+      "measured": {
+        "width": 288,
+        "height": 127
+      },
+      "selected": true,
+      "dragging": false
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 286.12235305565804,
+    "y": 213.41766026284506,
+    "zoom": 1.2599210344716505
+  },
+  "notes": [],
+  "zones": []
+}

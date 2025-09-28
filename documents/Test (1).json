@@ -1,0 +1,86 @@
+{
+  "nodes": [
+    {
+      "id": "users-1758731784625",
+      "type": "table",
+      "position": {
+        "x": 147.98518612578744,
+        "y": -19.32905119308824
+      },
+      "data": {
+        "label": "users",
+        "color": "#1E90FF",
+        "columns": [
+          {
+            "id": "col_1758731784625",
+            "name": "id",
+            "type": "INT",
+            "pk": true,
+            "nullable": false
+          },
+          {
+            "id": "col_1758731853707",
+            "name": "new_column_2",
+            "type": "TINYINT",
+            "nullable": true
+          }
+        ],
+        "order": 0
+      },
+      "measured": {
+        "width": 288,
+        "height": 127
+      },
+      "selected": true,
+      "dragging": false
+    },
+    {
+      "id": "profile-1758731991869",
+      "type": "table",
+      "position": {
+        "x": 68.3924790548704,
+        "y": 223.098337374331
+      },
+      "data": {
+        "label": "profile",
+        "color": "#87CEFA",
+        "columns": [
+          {
+            "id": "col_1758731991869",
+            "name": "id",
+            "type": "INT",
+            "pk": true,
+            "nullable": false
+          }
+        ],
+        "order": 1
+      },
+      "measured": {
+        "width": 288,
+        "height": 98
+      },
+      "selected": false,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "source": "users-1758731784625",
+      "sourceHandle": "col_1758731784625-left-source",
+      "target": "profile-1758731991869",
+      "targetHandle": "col_1758731991869-left-target",
+      "id": "users-1758731784625-profile-1758731991869-col_1758731784625-left-source-col_1758731991869-left-target",
+      "type": "custom",
+      "data": {
+        "relationship": "one-to-many"
+      }
+    }
+  ],
+  "viewport": {
+    "x": 286.12235305565804,
+    "y": 213.41766026284506,
+    "zoom": 1.2599210344716505
+  },
+  "notes": [],
+  "zones": []
+}

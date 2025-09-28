@@ -38,7 +38,9 @@ export const getProjects = async (req: Request, res: Response) => {
 
 export const createProject = async (req: Request, res: Response) => {
   try {
-    const project = await projectService.createProject(req.body);
+    // Remove projectId if present
+    const { projectId, ...rest } = req.body;
+    const project = await projectService.createProject(rest);
     logger.info('Created project: %o', project);
     res.status(201).json(project);
   } catch (e: any) {

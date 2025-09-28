@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 import { Webhook as WebhookType } from '../types';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
@@ -11,6 +12,7 @@ const fromPrismaWebhook = (prismaWebhook: any): WebhookType => ({
   webhookUrl: prismaWebhook.webhookUrl ?? null,
   enabled: prismaWebhook.enabled,
   projectId: prismaWebhook.projectId,
+  status: prismaWebhook.status,
 });
 
 export const getWebhooks = async (projectId?: string) => {
@@ -21,18 +23,34 @@ export const getWebhooks = async (projectId?: string) => {
   const webhooks = await prisma.webhook.findMany();
   return webhooks.map(fromPrismaWebhook);
 };
+
 export const createWebhook = async (webhook: WebhookType) => {
-  const created = await prisma.webhook.create({ data: webhook });
+  const created = await prisma.webhook.create({
+    data: {
+      ...webhook,
+      id: webhook.id || uuidv4(), // Ensure UUID is set
+      status: webhook.status ?? 1,
+    },
+  });
   return fromPrismaWebhook(created);
 };
+
 export const updateWebhook = async (id: string, updates: Partial<WebhookType>) => {
   try {
-    const updated = await prisma.webhook.update({ where: { id }, data: updates });
+    const updateData: any = { ...updates };
+    if ('status' in updates) {
+      updateData.status = updates.status ?? 1;
+    }
+    if (updateData.projectId === undefined) {
+      delete updateData.projectId;
+    }
+    const updated = await prisma.webhook.update({ where: { id }, data: updateData });
     return fromPrismaWebhook(updated);
   } catch {
     return null;
   }
 };
+
 export const deleteWebhook = async (id: string) => {
   try {
     await prisma.webhook.delete({ where: { id } });

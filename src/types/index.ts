@@ -1,3 +1,15 @@
+// Job type for backend service use
+export type Job = {
+  id: string;
+  name: string;
+  schedule: string;
+  enabled: boolean;
+  webhookId: string;
+  status: number;
+  createdAt: string;
+  updatedAt: string;
+  position: number | null;
+};
 // Project with all relations for backend service use
 export type ProjectWithAll = Project & {
   todos: Todo[];
@@ -17,7 +29,7 @@ export interface Asset {
   type?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
 
   todos?: Todo[];
   files?: FileItem[];
@@ -25,6 +37,7 @@ export interface Asset {
   ganttTasks?: GanttTask[];
   linkedItems?: LinkedItem[];
   permissions?: Permission[];
+  position: number | null;
 }
 export type Location = {
   id: string;
@@ -36,8 +49,8 @@ export type Location = {
   projectId: string;
   createdAt: string;
   updatedAt: string;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
-  //  (removed)
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
+  position: number | null;
 };
 // --- Shared with frontend ---
 export type TodoHistoryEntry = {
@@ -65,6 +78,17 @@ export type Todo = {
   files?: string[];
   webhooks?: string[];
   ganttTaskIds?: string[];
+  position: number | null;
+};
+
+export type Role = {
+  id: string;
+  name: string;
+  projectId: string;
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
+  createdAt: Date;
+  updatedAt: Date;
+  position: number | null;
 };
 
 export type User = {
@@ -72,7 +96,9 @@ export type User = {
   name: string;
   email: string;
   label?: string | null;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
+  roleId?: string | null; // <-- Add this line for user-role relation
+  role?: Role | null; // <-- Add this line for user-role relation
 };
 
 export type FileItem = {
@@ -84,7 +110,8 @@ export type FileItem = {
   updatedAt: string | null;
   projectId: string;
   assetId?: string | null;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
+  position: number | null;
 };
 
 export type Permission = {
@@ -98,7 +125,7 @@ export type Permission = {
   label?: string | null;
   name?: string; // added for display name
   description?: string; // added for optional description
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt: Date;
   updatedAt: Date;
   users?: User[]; // Add users relation for many-to-many mapping
@@ -116,14 +143,13 @@ export type LinkedItem = {
   updatedAt: string;
   projectId: string;
   assetId: string | null;
+  position: number | null;
 };
 
 export type GanttTask = {
   id: string;
   name: string | null;
   label?: string | null;
-  start: string | null;
-  end: string | null;
   createdAt: string | null;
   updatedAt: string | null;
   startDate: string | null;
@@ -131,7 +157,8 @@ export type GanttTask = {
   color: string | null;
   projectId: string;
   assetId: string | null;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
+  position: number | null;
 };
 
 export type Webhook = {
@@ -144,7 +171,7 @@ export type Webhook = {
   webhookUrl: string | null;
   enabled: boolean;
   projectId: string;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
 };
 
 export type Project = {
@@ -154,8 +181,8 @@ export type Project = {
   description?: string | null;
   avatarUrl?: string | null;
   plan?: string | null;
-  members?: number | null;
-  status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
+  members: number | null | null;
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
 };
 
 export type History = {
@@ -178,7 +205,44 @@ export type JobInput = {
   webhookUrl: string;
   enabled?: boolean;
   config?: any;
-  status?: number;
-  projectId: string;
   webhookId?: string | null;
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
+
+  projectId: string;
+};
+
+export type Notification = {
+  id: string;
+  title: string;
+  message: string;
+  type: string;
+  data?: Record<string, unknown>;
+  read: boolean;
+  createdAt: string;
+  updatedAt: string;
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
+  projectId: string;
+  position: number | null;
+};
+
+export type Label = {
+  id: string;
+  name: string;
+  color?: string | null;
+  projectId: string;
+  status: number | null;
+  createdAt: string;
+  updatedAt: string;
+  position: number | null;
+};
+
+export type Report = {
+  id: string;
+  title: string;
+  content?: string | null;
+  projectId: string;
+  status: number | null;
+  createdAt: string;
+  updatedAt: string;
+  position: number | null;
 };

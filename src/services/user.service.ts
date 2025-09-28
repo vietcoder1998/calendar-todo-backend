@@ -6,8 +6,22 @@ export const getUsers = async (): Promise<User[]> => {
   return prisma.user.findMany();
 };
 
-export const getUsersByProject = async (projectId: string): Promise<User[]> => {
-  return prisma.user.findMany({ where: { projectId } });
+export const getUsersByProject = async (
+  projectId: string,
+  pageIndex?: number,
+  pageSize?: number,
+  q?: string,
+): Promise<User[]> => {
+  const where: any = { projectId };
+  if (q) {
+    where.OR = [{ name: { contains: q } }, { email: { contains: q } }];
+  }
+  return prisma.user.findMany({
+    where,
+    skip: pageIndex && pageSize ? pageIndex * pageSize : undefined,
+    take: pageSize,
+    orderBy: { createdAt: 'desc' },
+  });
 };
 
 export const createUser = async (data: any): Promise<User> => {

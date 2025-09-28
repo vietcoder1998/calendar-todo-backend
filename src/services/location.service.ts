@@ -26,11 +26,21 @@ export async function createLocation(
   if (data.name) {
     assetId = await createAsset(data.name, 'location');
   }
+  let position = (data as any).position;
+  if (position == null) {
+    const max = await prisma.location.aggregate({
+      where: { projectId },
+      _max: { position: true },
+    });
+    position = (max._max?.position ?? 0) + 1;
+  }
   const loc = await prisma.location.create({
     data: {
       ...data,
       projectId,
       assetId,
+      position,
+      status: data.status === null ? undefined : data.status,
       // Fix config typing for Prisma
     },
   });
@@ -56,6 +66,7 @@ export async function updateLocation(
     where: { id: locationId },
     data: {
       ...updateData,
+      status: updateData.status === null ? undefined : updateData.status,
       // Fix config typing for Prisma
     },
   });

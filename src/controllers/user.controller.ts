@@ -4,18 +4,12 @@ import logger from '../logger';
 
 export const getUsersByProjectId = async (req: Request, res: Response): Promise<void> => {
   try {
-    const projectId: string = req.params.id;
+    const projectId: string = req.params.id || req.params.projectId;
     const q = req.query.q as string | undefined;
+    const pageIndex = req.query.pageIndex ? Number(req.query.pageIndex) : undefined;
+    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : undefined;
     logger.debug('Getting users for project: %s', projectId);
-    let users = await userService.getUsersByProject(projectId);
-    if (q) {
-      const query = q.toLowerCase();
-      users = users.filter(
-        (u: any) =>
-          (u.name && u.name.toLowerCase().includes(query)) ||
-          (u.email && u.email.toLowerCase().includes(query)),
-      );
-    }
+    const users = await userService.getUsersByProject(projectId, pageIndex, pageSize, q);
     logger.info('Fetched users for project: %s', projectId);
     res.json(users);
   } catch (e: any) {

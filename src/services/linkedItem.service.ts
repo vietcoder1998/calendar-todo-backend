@@ -1,5 +1,4 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { createAsset } from './asset.util';
 import { LinkedItem } from '@/types';
 const prisma = new PrismaClient();
 
@@ -25,11 +24,17 @@ export const createLinkedItem = async (linkedItem: LinkedItem) => {
   // Create asset and link
 
   // Ensure projectId is set
-  if (!linkedItem.projectId) {
-    throw new Error('projectId is required to create a linked linkedItem');
+  if (!linkedItem.projectId) throw new Error('projectId required');
+  let position = linkedItem.position;
+  if (position == null && linkedItem.projectId) {
+    const max = await prisma.linkedItem.aggregate({
+      where: { projectId: linkedItem.projectId },
+      _max: { position: true },
+    });
+    position = (max._max?.position ?? 0) + 1;
   }
   const item = await prisma.linkedItem.create({
-    data: linkedItem,
+    data: { ...linkedItem, position },
   });
   return {
     ...item,

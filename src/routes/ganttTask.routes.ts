@@ -10,5 +10,6 @@ router.get('/project/:projectId', ganttTaskController.getGanttTasksByProjectId);
 router.post('/', validateGanttTask, ganttTaskController.createGanttTask);
 router.put('/:id', validateGanttTask, ganttTaskController.updateGanttTask);
 router.delete('/:id', ganttTaskController.deleteGanttTask);
+router.post('/swap-position', ganttTaskController.swapGanttTaskPosition);
 
 export default router;

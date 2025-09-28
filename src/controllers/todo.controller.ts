@@ -38,6 +38,8 @@ export const createTodo = async (req: Request, res: Response) => {
       history,
       locationId,
       deadline,
+      startDate,
+      endDate,
     } = req.body;
     if (!title || !date || !status || !projectId) {
       return res.status(400).json({ error: 'Missing required todo fields' });
@@ -61,6 +63,8 @@ export const createTodo = async (req: Request, res: Response) => {
       ganttTaskIds: Array.isArray(ganttTaskIds) ? ganttTaskIds.map(String) : [],
       relatedTaskIds: Array.isArray(relatedTaskIds) ? relatedTaskIds.map(String) : [],
       position: null,
+      startDate: startDate ?? null,
+      endDate: endDate ?? null,
     };
     const project = await projectService.getProjectById(projectId);
     if (!project) {

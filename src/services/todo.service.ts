@@ -14,6 +14,8 @@ const toPrismaTodoInput = (todo: Omit<Todo, 'id'> & { id?: string }): any => ({
   webhooks: todo.webhooks ? JSON.stringify(todo.webhooks) : undefined,
   ganttTaskIds: todo.ganttTaskIds ? JSON.stringify(todo.ganttTaskIds) : undefined,
   history: todo.history ? JSON.stringify(todo.history) : undefined,
+  startDate: todo.startDate ?? null,
+  endDate: todo.endDate ?? null,
 });
 
 // Utility: Convert Prisma Todo to app Todo type
@@ -28,7 +30,8 @@ const fromPrismaTodo = (prismaTodo: any): Todo => ({
   ganttTaskIds: prismaTodo.ganttTaskIds ? JSON.parse(prismaTodo.ganttTaskIds as any) : [],
   history: prismaTodo.history ? JSON.parse(prismaTodo.history as any) : [],
   deadline: prismaTodo.deadline ?? null,
-  locationId: prismaTodo.locationId ?? null,
+  startDate: prismaTodo.startDate ?? null,
+  endDate: prismaTodo.endDate ?? null,
 });
 
 export const getTodos = async (projectId?: string): Promise<Todo[]> => {

@@ -49,6 +49,8 @@ model Todo {
   report         Report? @relation(fields: [reportId], references: [id])
   status         Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   position       Int? // For ordering
+  startDate      String? // ISO string for Gantt integration
+  endDate        String? // ISO string for Gantt integration
 
   @@map("todo")
 }
@@ -127,6 +129,7 @@ model GanttTask {
   reportId  String?
   report    Report? @relation(fields: [reportId], references: [id])
   status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  progress  Int     @default(0) // Progress percentage (0-100)
 
   @@map("gantttask")
 }

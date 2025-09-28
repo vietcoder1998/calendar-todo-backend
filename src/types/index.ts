@@ -79,6 +79,8 @@ export type Todo = {
   webhooks?: string[];
   ganttTaskIds?: string[];
   position: number | null;
+  startDate?: string | null;
+  endDate?: string | null;
 };
 
 export type Role = {

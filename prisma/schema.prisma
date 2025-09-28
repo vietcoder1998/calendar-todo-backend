@@ -47,7 +47,7 @@ model Todo {
   asset          Asset?  @relation(fields: [assetId], references: [id])
   reportId       String?
   report         Report? @relation(fields: [reportId], references: [id])
-  status         Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  status         Int?     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   position       Int? // For ordering
   startDate      String? // ISO string for Gantt integration
   endDate        String? // ISO string for Gantt integration

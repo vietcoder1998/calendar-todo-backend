@@ -16,6 +16,7 @@ import projectRouter from './routes/project.routes';
 import todoRouter from './routes/todo.routes';
 import userRouter from './routes/user.routes';
 import webhookRouter from './routes/webhook.routes';
+import jobRouter from './routes/job.routes';
 import { setupSocket } from './socket';
 
 const app = express();
@@ -53,6 +54,7 @@ app.use('/api/webhooks', webhookRouter);
 app.use('/api/histories', historyRouter);
 app.use('/api/locations', locationRouter);
 app.use('/api/assets', assetRoutes);
+app.use('/api/jobs', jobRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'server is running' });

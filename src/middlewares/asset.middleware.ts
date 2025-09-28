@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
-import { createAsset } from '../services/asset.util';
 import logger from '../logger';
-import { History } from '@/types';
+import { History, Project } from '@/types';
+import { createAsset } from '../services/asset.util';
 import * as permissionService from '../services/permission.service';
 
 const prisma = new PrismaClient();
@@ -64,7 +64,6 @@ export async function addHistoryOnUpdate(req: Request, res: Response, next: Next
     // Wait for the controller to finish
     res.on('finish', async () => {
       const projectId: string = String(req.headers['x-project-id'] ?? '');
-      console.log('projectId', projectId);
       if (projectId) {
         const project = await prisma.project.findFirst({ where: { id: projectId } });
         if (project) {

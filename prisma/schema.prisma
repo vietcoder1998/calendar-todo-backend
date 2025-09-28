@@ -129,6 +129,7 @@ model Webhook {
   projectId  String
   project    Project @relation(fields: [projectId], references: [id])
   status     Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  jobs       Job[]   // 1:n relation to Job
 
   @@map("webhook")
 }
@@ -148,6 +149,7 @@ model Project {
   webhooks    Webhook[]
   users       User[]
   locations   Location[]
+  jobs        Job[]        // 1:n relation to Job
   status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   History     History[]
 
@@ -212,6 +214,25 @@ model Location {
   asset          Asset?   @relation(fields: [assetId], references: [id])
   status         Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   @@map("location")
+}
+
+model Job {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  schedule    String   // cron or ISO string
+  webhookUrl  String
+  enabled     Boolean  @default(true)
+  config      Json?
+  status      Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
+  webhookId   String?
+  webhook     Webhook? @relation(fields: [webhookId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("job")
 }
 
 // This file defines the Prisma schema, including the data model and database connection settings for the MySQL database.

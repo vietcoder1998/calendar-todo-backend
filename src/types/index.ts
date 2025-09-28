@@ -96,6 +96,8 @@ export type Permission = {
   assetId: string | null;
   asset?: Record<string, unknown>;
   label?: string | null;
+  name?: string; // added for display name
+  description?: string; // added for optional description
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
   createdAt: Date;
   updatedAt: Date;
@@ -166,6 +168,17 @@ export type History = {
   timestamp: string;
   user?: string;
   status?: number; // delete: -2, remove: -1, inactive: 0, active: 1
-
   projectId: string;
+};
+
+export type JobInput = {
+  name: string;
+  description?: string;
+  schedule: string;
+  webhookUrl: string;
+  enabled?: boolean;
+  config?: any;
+  status?: number;
+  projectId: string;
+  webhookId?: string | null;
 };

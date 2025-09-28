@@ -19,6 +19,8 @@ const fromPrismaPermission = (prismaPermission: any): Permission => ({
       }
     : undefined,
   label: prismaPermission.label ?? null,
+  name: prismaPermission.name ?? 'Permission', // default name
+  description: prismaPermission.description ?? undefined,
   status: typeof prismaPermission.status === 'number' ? prismaPermission.status : undefined,
   createdAt: prismaPermission.createdAt
     ? typeof prismaPermission.createdAt === 'string'
@@ -46,6 +48,8 @@ export const getPermissions = async (
       { type: { contains: q } },
       { resource: { contains: q } },
       { userId: { contains: q } },
+      { name: { contains: q } },
+      { description: { contains: q } },
     ];
   }
   const permissions = await prisma.permission.findMany({
@@ -61,11 +65,14 @@ export const getPermissions = async (
 export const createPermission = async (permission: Permission): Promise<Permission> => {
   // Only send fields that exist in Prisma schema
   const { asset, ...data } = permission;
+  const dataToCreate = {
+    ...data,
+    name: data.name || 'Permission',
+    description: data.description || undefined,
+    users: { connect: { id: permission.userId } },
+  };
   const created = await prisma.permission.create({
-    data: {
-      ...data,
-      users: { connect: { id: permission.userId } },
-    },
+    data: dataToCreate,
     include: { asset: true, users: true },
   });
   return fromPrismaPermission(created);
@@ -80,21 +87,27 @@ export const createManyPermissions = async (
     projectId: string;
     assetId?: string | null;
     label?: string | null;
+    name?: string;
+    description?: string;
     status?: number;
   }>,
 ): Promise<void> => {
   // Create all permissions in batch (without users relation)
   await prisma.permission.createMany({
-    data: permissions.map(({ id, type, resource, userId, projectId, assetId, label, status }) => ({
-      id,
-      type,
-      resource,
-      userId,
-      projectId,
-      assetId,
-      label,
-      status,
-    })),
+    data: permissions.map(
+      ({ id, type, resource, userId, projectId, assetId, label, name, description, status }) => ({
+        id,
+        type,
+        resource,
+        userId,
+        projectId,
+        assetId,
+        label,
+        name: name || 'Permission',
+        description,
+        status,
+      }),
+    ),
     skipDuplicates: true,
   });
   // Connect users relation for each permission
@@ -114,9 +127,14 @@ export const updatePermission = async (
 ): Promise<Permission | null> => {
   try {
     const { asset, ...data } = updates;
+    const dataToUpdate = {
+      ...data,
+      name: data.name || 'Permission',
+      description: data.description || undefined,
+    };
     const updated = await prisma.permission.update({
       where: { id },
-      data: data as any,
+      data: dataToUpdate as any,
       include: { asset: true, users: true },
     });
     return fromPrismaPermission(updated);
@@ -154,6 +172,8 @@ export const getPermissionsByResourceType = async (
       { type: { contains: q } },
       { resource: { contains: q } },
       { userId: { contains: q } },
+      { name: { contains: q } },
+      { description: { contains: q } },
     ];
   }
   const permissions = await prisma.permission.findMany({

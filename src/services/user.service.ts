@@ -35,3 +35,14 @@ export const updateUser = async (id: string, data: any): Promise<User> => {
 export const deleteUser = async (id: string): Promise<void> => {
   await prisma.user.delete({ where: { id: id } });
 };
+
+export async function searchUsers(query: string, pageIndex = 0, pageSize = 20) {
+  const users = await prisma.user.findMany({
+    where: {
+      OR: [{ name: { contains: query } }, { email: { contains: query } }],
+    },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+  });
+  return users;
+}

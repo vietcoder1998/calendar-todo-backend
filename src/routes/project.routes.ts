@@ -36,6 +36,8 @@ router.get('/:projectId/permissions/webhooks', getPermissionsByProjectWebhooks);
 router.get('/:projectId/permissions/histories', getPermissionsByProjectHistories);
 router.get('/:projectId/permissions/locations', getPermissionsByProjectLocations);
 
+router.get('/search', projectController.searchAll);
+
 router.post('/', validateProject, projectController.createProject);
 router.put('/:projectId', validateProject, projectController.updateProject);
 router.delete('/:projectId', projectController.deleteProject);

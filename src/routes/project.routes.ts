@@ -20,6 +20,7 @@ import {
 const router = Router();
 
 router.get('/', projectController.getProjects);
+router.get('/search', projectController.searchAll);
 router.get('/:projectId', projectController.getProjectById);
 router.get('/:projectId/users', userController.getUsersByProjectId);
 router.get('/:projectId/linked-items', linkedItemController.getLinkedItems);
@@ -35,8 +36,6 @@ router.get('/:projectId/permissions/files', getPermissionsByProjectFiles);
 router.get('/:projectId/permissions/webhooks', getPermissionsByProjectWebhooks);
 router.get('/:projectId/permissions/histories', getPermissionsByProjectHistories);
 router.get('/:projectId/permissions/locations', getPermissionsByProjectLocations);
-
-router.get('/search', projectController.searchAll);
 
 router.post('/', validateProject, projectController.createProject);
 router.put('/:projectId', validateProject, projectController.updateProject);

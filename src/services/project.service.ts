@@ -118,11 +118,16 @@ export async function searchAllProjectEntities(
   pageIndex = 0,
   pageSize = 20,
 ) {
+  // Helper to build filter
+  const stringFilter = (field: string) => (query ? { [field]: { contains: query } } : {});
+  const orFilter = (fields: string[]) =>
+    query ? { OR: fields.map((f) => ({ [f]: { contains: query } })) } : {};
+
   // Search projects
   const projects = await prisma.project.findMany({
     where: {
       id: projectId,
-      OR: [{ name: { contains: query } }, { description: { contains: query } }],
+      ...orFilter(['name', 'description']),
     },
     skip: pageIndex * pageSize,
     take: pageSize,
@@ -132,7 +137,7 @@ export async function searchAllProjectEntities(
   const users = await prisma.user.findMany({
     where: {
       projectId,
-      name: { contains: query },
+      ...stringFilter('name'),
     },
     skip: pageIndex * pageSize,
     take: pageSize,
@@ -142,7 +147,7 @@ export async function searchAllProjectEntities(
   const todos = await prisma.todo.findMany({
     where: {
       projectId,
-      OR: [{ title: { contains: query } }, { description: { contains: query } }],
+      ...orFilter(['title', 'description']),
     },
     skip: pageIndex * pageSize,
     take: pageSize,
@@ -152,7 +157,7 @@ export async function searchAllProjectEntities(
   const files = await prisma.fileItem.findMany({
     where: {
       projectId,
-      name: { contains: query },
+      ...stringFilter('name'),
     },
     skip: pageIndex * pageSize,
     take: pageSize,
@@ -162,7 +167,7 @@ export async function searchAllProjectEntities(
   const webhooks = await prisma.webhook.findMany({
     where: {
       projectId,
-      OR: [{ name: { contains: query } }, { webhookUrl: { contains: query } }],
+      ...orFilter(['name', 'webhookUrl']),
     },
     skip: pageIndex * pageSize,
     take: pageSize,
@@ -172,7 +177,7 @@ export async function searchAllProjectEntities(
   const linkedItems = await prisma.linkedItem.findMany({
     where: {
       projectId,
-      title: { contains: query },
+      ...stringFilter('title'),
     },
     skip: pageIndex * pageSize,
     take: pageSize,
@@ -182,17 +187,17 @@ export async function searchAllProjectEntities(
   const locations = await prisma.location.findMany({
     where: {
       projectId,
-      name: { contains: query },
+      ...stringFilter('name'),
     },
     skip: pageIndex * pageSize,
     take: pageSize,
   });
 
-  // Search histories (remove description if not present in schema)
+  // Search histories
   const histories = await prisma.history.findMany({
     where: {
       projectId,
-      action: { contains: query },
+      ...stringFilter('action'),
     },
     skip: pageIndex * pageSize,
     take: pageSize,

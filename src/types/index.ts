@@ -161,6 +161,7 @@ export type GanttTask = {
   assetId: string | null;
   status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
   position: number | null;
+  progress: number; // 0 to 100
 };
 
 export type Webhook = {

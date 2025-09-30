@@ -4,7 +4,7 @@ import { GanttTask as GanttTaskType } from '../types';
 import { createAsset } from './asset.util';
 const prisma = new PrismaClient();
 
-const fromPrismaGanttTask = (prismaTask: any): GanttTaskType => ({
+const fromPrismaGanttTask = (prismaTask: GanttTaskType): GanttTaskType => ({
   id: prismaTask.id,
   name: prismaTask.name ?? null,
   startDate: prismaTask.startDate ?? null,
@@ -16,6 +16,7 @@ const fromPrismaGanttTask = (prismaTask: any): GanttTaskType => ({
   updatedAt: prismaTask.createdAt,
   position: prismaTask.position ?? 0,
   status: prismaTask.status ?? null,
+  progress: prismaTask.progress ?? 0,
 });
 
 // Get only Gantt tasks by projectId

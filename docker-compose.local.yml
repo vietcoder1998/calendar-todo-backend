@@ -4,10 +4,12 @@ services:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: devuser
+      MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: calendar_todo
-      MYSQL_USER: root
       MYSQL_PASSWORD: root_password
+      MYSQL_ALLOW_EMPTY_PASSWORD: false
+      MYSQL_RANDOM_ROOT_PASSWORD: false
       TZ: Asia/Ho_Chi_Minh
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
@@ -15,6 +17,8 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d
+    networks:
+      - calendar_net
   rabbitmq:
     image: rabbitmq:3-management
     restart: always
@@ -26,6 +30,12 @@ services:
       RABBITMQ_DEFAULT_PASS: guest_password
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - calendar_net
 volumes:
   db_data:
   rabbitmq_data:
+
+networks:
+  calendar_net:
+    driver: bridge

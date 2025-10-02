@@ -24,6 +24,7 @@ import jobRouter from './routes/job.routes';
 import notificationTemplateRouter from './routes/notificationTemplate.routes';
 import reportRouter from './routes/report.routes';
 import { setupSocket } from './socket';
+import logger from './logger';
 
 const app = express();
 app.get('/api/ping-mysql', async (req: Request, res: Response) => {
@@ -92,5 +93,5 @@ app.get('/', (req: Request, res: Response) => {
 
 const PORT = process.env.PORT || 4000;
 httpServer.listen(PORT, () => {
-  console.log(`API server running on http://localhost:${PORT}`);
+  logger.info(`API server running on http://localhost:${PORT}`);
 });

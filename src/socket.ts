@@ -2,6 +2,7 @@ import { Server as HttpServer } from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import amqp from 'amqplib';
 import { RABBITMQ_URL, QUEUE_NAME, SOCKET_EVENT } from './env';
+import logger from './logger';
 let io: SocketIOServer | null = null;
 
 export function broadcastProjectSync(projectId: string, payload: any = {}) {
@@ -27,11 +28,11 @@ export function setupSocket(server: HttpServer) {
   });
 
   io.on('connection', (socket: Socket) => {
-    console.log('A user connected:', socket.id);
+    logger.info('A user connected:', socket.id);
 
     socket.on('joinProject', (projectId: string) => {
       socket.join(`project:${projectId}`);
-      console.log(`Socket ${socket.id} joined project:${projectId}`);
+      logger.info(`Socket ${socket.id} joined project:${projectId}`);
       // Emit success event to the joining socket
       socket.emit(SOCKET_EVENT.ProjectJoinSuccess, { projectId });
     });
@@ -41,7 +42,7 @@ export function setupSocket(server: HttpServer) {
     });
 
     socket.on('disconnect', () => {
-      console.log('User disconnected:', socket.id);
+      logger.info('User disconnected:', socket.id);
     });
   });
 

@@ -1,10 +1,8 @@
-import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
 import logger from '../logger';
 import * as projectService from '../services/project.service';
 import * as todoService from '../services/todo.service';
 import { Todo } from '../types/index';
-import { publishTodoEvent } from '../queue';
 
 export const getTodos = async (req: Request, res: Response) => {
   try {
@@ -80,18 +78,10 @@ export const createTodo = async (req: Request, res: Response) => {
 };
 export const updateTodo = async (req: Request, res: Response) => {
   try {
-    console.log(req.params, req.path);
+    logger.info('---->', req.params.id, ' ............');
     const todo = await todoService.updateTodo(req.params.id, req.body);
-    console.log('UPDATEEEE', todo);
-    if (todo) {
-      logger.info('Updated todo: %o', todo);
-      // Publish to queue for todo change
-      if (todo.projectId) {
-        await publishTodoEvent({ type: 'todo', projectId: todo.projectId, todo });
-      }
-      return res.json(todo);
-    }
-    res.status(404).json({ error: 'Not found' });
+
+    return res.json(todo);
   } catch (e: any) {
     logger.error('Todo update failed: %s', e?.message || e);
     res.status(400).json({ error: 'Todo update failed', details: e?.message || String(e) });

@@ -6,7 +6,7 @@ const logger = createLogger({
   format: format.combine(
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     format.printf(({ timestamp, level, message, ...meta }) => {
-      return `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+      return `${timestamp} [${level}]: ${message} ${String(meta)}`;
     }),
   ),
   defaultMeta: { service: 'api-service' },

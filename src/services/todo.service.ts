@@ -122,12 +122,7 @@ export const updateTodo = async (id: string, updates: Partial<Todo>): Promise<To
 
     return fromPrismaTodo(updated);
   } catch (err) {
-    logger.error(
-      'Failed to update todo: %s',
-      typeof err === 'object' && err !== null && 'message' in err
-        ? (err as any).message
-        : JSON.stringify(err),
-    );
+    logger.error('Failed to update todo: %s', err);
     return null;
   }
 };

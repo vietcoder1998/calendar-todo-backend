@@ -78,7 +78,7 @@ export const createTodo = async (req: Request, res: Response) => {
 };
 export const updateTodo = async (req: Request, res: Response) => {
   try {
-    logger.info('---->', req.params.id, ' ............');
+    logger.info('---->' + req.params.id + ' ............');
     const todo = await todoService.updateTodo(req.params.id, req.body);
 
     return res.json(todo);

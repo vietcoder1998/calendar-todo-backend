@@ -1,4 +1,4 @@
-import { GanttTask, Project, ProjectWithAll } from '@/types';
+import { Project, ProjectWithAll } from '@/types';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -99,3 +99,118 @@ export const connectUserToProject = async (projectId: string, userId: string): P
     data: { users: { connect: [{ id: userId }] } },
   });
 };
+
+export async function searchProjects(query: string, pageIndex = 0, pageSize = 20) {
+  // Prisma does not support 'mode' in StringFilter for all versions. Use 'contains' only.
+  const projects = await prisma.project.findMany({
+    where: {
+      OR: [{ name: { contains: query } }, { description: { contains: query } }],
+    },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+  });
+  return projects;
+}
+
+export async function searchAllProjectEntities(
+  query: string,
+  projectId: string,
+  pageIndex = 0,
+  pageSize = 20,
+) {
+  // Helper to build filter
+  const stringFilter = (field: string) => (query ? { [field]: { contains: query } } : {});
+  const orFilter = (fields: string[]) =>
+    query ? { OR: fields.map((f) => ({ [f]: { contains: query } })) } : {};
+
+  // Search projects
+  const projects = await prisma.project.findMany({
+    where: {
+      id: projectId,
+      ...orFilter(['name', 'description']),
+    },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+  });
+
+  // Search users
+  const users = await prisma.user.findMany({
+    where: {
+      projectId,
+      ...stringFilter('name'),
+    },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+  });
+
+  // Search todos
+  const todos = await prisma.todo.findMany({
+    where: {
+      projectId,
+      ...orFilter(['title', 'description']),
+    },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+  });
+
+  // Search files
+  const files = await prisma.fileItem.findMany({
+    where: {
+      projectId,
+      ...stringFilter('name'),
+    },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+  });
+
+  // Search webhooks
+  const webhooks = await prisma.webhook.findMany({
+    where: {
+      projectId,
+      ...orFilter(['name', 'webhookUrl']),
+    },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+  });
+
+  // Search linked items
+  const linkedItems = await prisma.linkedItem.findMany({
+    where: {
+      projectId,
+      ...stringFilter('title'),
+    },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+  });
+
+  // Search locations
+  const locations = await prisma.location.findMany({
+    where: {
+      projectId,
+      ...stringFilter('name'),
+    },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+  });
+
+  // Search histories
+  const histories = await prisma.history.findMany({
+    where: {
+      projectId,
+      ...stringFilter('action'),
+    },
+    skip: pageIndex * pageSize,
+    take: pageSize,
+  });
+
+  return {
+    projects,
+    users,
+    todos,
+    files,
+    webhooks,
+    linkedItems,
+    locations,
+    histories,
+  };
+}

@@ -20,6 +20,7 @@ import {
 const router = Router();
 
 router.get('/', projectController.getProjects);
+router.get('/search', projectController.searchAll);
 router.get('/:projectId', projectController.getProjectById);
 router.get('/:projectId/users', userController.getUsersByProjectId);
 router.get('/:projectId/linked-items', linkedItemController.getLinkedItems);

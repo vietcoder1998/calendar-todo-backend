@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
+import logger from '../logger';
+import * as fileService from '../services/file.service';
+import * as historyService from '../services/history.service';
+import * as linkedItemService from '../services/linkedItem.service';
+import * as locationService from '../services/location.service';
 import * as projectService from '../services/project.service';
 import * as userService from '../services/user.service';
-import * as linkedItemService from '../services/linkedItem.service';
-import * as fileService from '../services/file.service';
 import * as webhookService from '../services/webhook.service';
-import * as historyService from '../services/history.service';
-import * as locationService from '../services/location.service';
-import logger from '../logger';
 
 export const getProjectById = async (req: Request, res: Response) => {
   try {
@@ -136,5 +136,30 @@ export const getLocations = async (req: Request, res: Response) => {
   } catch (e: any) {
     logger.error('Failed to fetch locations: %s', e?.message || e);
     res.status(500).json({ error: 'Failed to fetch locations', details: e?.message || String(e) });
+  }
+};
+
+export const searchAll = async (req: Request, res: Response) => {
+  try {
+    const { q, projectId, pageIndex = 0, pageSize = 20 } = req.query;
+
+    if (!projectId || typeof projectId !== 'string') {
+      return res.status(400).json({ error: 'Missing or invalid projectId' });
+    }
+    const query = String(q ?? '')
+      .trim()
+      ?.toLowerCase();
+    const pageIdx = Number(pageIndex) || 0;
+    const pageSz = Number(pageSize) || 20;
+    const results = await projectService.searchAllProjectEntities(
+      query,
+      projectId,
+      pageIdx,
+      pageSz,
+    );
+    res.json(results);
+  } catch (e: any) {
+    logger.error('Search all failed: %s', e?.message || e);
+    res.status(500).json({ error: 'Search all failed', details: e?.message || String(e) });
   }
 };

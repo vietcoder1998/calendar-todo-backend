@@ -1,7 +1,8 @@
-import { PrismaClient } from '@prisma/client';
 import type { Todo } from '@/types';
-import { createAsset } from './asset.util';
+import { PrismaClient } from '@prisma/client';
 import logger from '../logger';
+import { createAsset } from './asset.util';
+import { publishTodoEvent } from '../queue';
 
 const prisma = new PrismaClient();
 
@@ -104,14 +105,11 @@ export const updateTodo = async (id: string, updates: Partial<Todo>): Promise<To
   try {
     // Build update data, only include defined fields
     const updateData: any = {};
+    logger.debug('Updating todo %s with data: %o', id, updates);
     for (const key in updates) {
       const value = (updates as any)[key];
       if (value !== undefined) {
-        if (key === 'projectId') {
-          updateData['project'] = { connect: { id: value } };
-        } else {
-          updateData[key] = value;
-        }
+        updateData[key] = value;
       }
     }
 
@@ -119,14 +117,12 @@ export const updateTodo = async (id: string, updates: Partial<Todo>): Promise<To
       where: { id },
       data: updateData,
     });
+
+    await publishTodoEvent({ type: 'todo', projectId: updated.projectId, updated });
+
     return fromPrismaTodo(updated);
   } catch (err) {
-    logger.error(
-      'Failed to update todo: %s',
-      typeof err === 'object' && err !== null && 'message' in err
-        ? (err as any).message
-        : JSON.stringify(err),
-    );
+    logger.error('Failed to update todo: %s', err);
     return null;
   }
 };

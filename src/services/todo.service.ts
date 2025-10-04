@@ -1,8 +1,8 @@
 import type { Todo } from '@/types';
 import { PrismaClient } from '@prisma/client';
 import logger from '../logger';
-import { createAsset } from './asset.util';
 import { publishTodoEvent } from '../queue';
+import { createAsset } from './asset.util';
 
 const prisma = new PrismaClient();
 
@@ -27,7 +27,7 @@ const fromPrismaTodo = (prismaTodo: any): Todo => ({
   ...prismaTodo,
   label: prismaTodo.label as 'todo' | 'in-progress' | 'review' | 'done',
   relatedTaskIds: prismaTodo.relatedTaskIds ? JSON.parse(prismaTodo.relatedTaskIds as any) : [],
-  linkedItems: prismaTodo.linkedItems ? JSON.parse(prismaTodo.linkedItems as any) : [],
+  linkedItems: prismaTodo.linkedItems ?? [],
   assignedUsers: prismaTodo.assignedUsers ? JSON.parse(prismaTodo.assignedUsers as any) : [],
   files: prismaTodo.files ? JSON.parse(prismaTodo.files as any) : [],
   webhooks: prismaTodo.webhooks ? JSON.parse(prismaTodo.webhooks as any) : [],

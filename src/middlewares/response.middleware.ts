@@ -55,9 +55,12 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
           `message: ${message}`,
           `path: ${req.url}`,
           `method: ${req.method}`,
-          `body: ${JSON.stringify(req.body)}`,
-          `headers: ${JSON.stringify(req.headers)}`,
-          `calledDetail: ${JSON.stringify(req.meta)}`,
+          'body:',
+          formatYaml(req.body),
+          'headers:',
+          formatYaml(req.headers),
+          'calledDetail:',
+          formatYaml(req.meta),
         ].join('\n'),
       );
       return oldJson.call(this, { data: null, message, code, errorCode });
@@ -69,9 +72,12 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
           `message: ${body}`,
           `path: ${req.url}`,
           `method: ${req.method}`,
-          `body: ${JSON.stringify(req.body)}`,
-          `headers: ${JSON.stringify(req.headers)}`,
-          `calledDetail: ${JSON.stringify(req.meta)}`,
+          'body:',
+          formatYaml(req.body),
+          'headers:',
+          formatYaml(req.headers),
+          'calledDetail:',
+          formatYaml(req.meta),
         ].join('\n'),
       );
       return oldJson.call(this, { data: null, message: String(body) });
@@ -86,9 +92,12 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
           `message: Success`,
           `path: ${req.url}`,
           `method: ${req.method}`,
-          `body: ${JSON.stringify(req.body)}`,
-          `headers: ${JSON.stringify(req.headers)}`,
-          `calledDetail: ${JSON.stringify(req.meta)}`,
+          'body:',
+          formatYaml(req.body),
+          'headers:',
+          formatYaml(req.headers),
+          'calledDetail:',
+          formatYaml(req.meta),
         ].join('\n'),
       );
       return oldJson.call(this, {
@@ -106,12 +115,30 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
         `message: Success`,
         `path: ${req.url}`,
         `method: ${req.method}`,
-        `body: ${JSON.stringify(req.body)}`,
-        `headers: ${JSON.stringify(req.headers)}`,
-        `calledDetail: ${JSON.stringify(req.meta)}`,
+        'body:',
+        formatYaml(req.body),
+        'headers:',
+        formatYaml(req.headers),
+        'calledDetail:',
+        formatYaml(req.meta),
       ].join('\n'),
     );
     return oldJson.call(this, { data: body, message: 'Success' });
   };
   next();
+}
+
+// Helper to format objects as YAML-like text
+function formatYaml(obj: any, indent = 2): string {
+  if (obj == null) return '';
+  if (typeof obj !== 'object') return String(obj);
+  const pad = (n: number) => ' '.repeat(n);
+  return Object.entries(obj)
+    .map(([key, value]) => {
+      if (typeof value === 'object' && value !== null) {
+        return `${pad(indent)}${key}:\n${formatYaml(value, indent + 2)}`;
+      }
+      return `${pad(indent)}${key}: ${String(value)}`;
+    })
+    .join('\n');
 }

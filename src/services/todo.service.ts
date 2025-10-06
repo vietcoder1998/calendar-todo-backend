@@ -9,17 +9,18 @@ const prisma = new PrismaClient();
 // Utility: Convert app Todo type to Prisma create/update input
 const toPrismaTodoInput = (todo: Omit<Todo, 'id'> & { id?: string }): any => ({
   ...todo,
-  relatedTaskIds: todo.relatedTaskIds ? JSON.stringify(todo.relatedTaskIds) : undefined,
-  linkedItems: todo.linkedItems ? JSON.stringify(todo.linkedItems) : undefined,
-  assignedUsers: todo.assignedUsers ? JSON.stringify(todo.assignedUsers) : undefined,
-  files: todo.files ? JSON.stringify(todo.files) : undefined,
-  webhooks: todo.webhooks ? JSON.stringify(todo.webhooks) : undefined,
-  ganttTaskIds: todo.ganttTaskIds ? JSON.stringify(todo.ganttTaskIds) : undefined,
-  history: todo.history ? JSON.stringify(todo.history) : undefined,
   startDate: todo.startDate ?? null,
   endDate: todo.endDate ?? null,
   status: todo.status ?? null,
   label: todo.label ?? null,
+  // Relations: pass arrays directly, handled in create/update logic
+  relatedTasks: todo.relatedTasks,
+  assignedUsers: todo.assignedUsers,
+  todoFiles: todo.todoFiles,
+  todoWebhooks: todo.todoWebhooks,
+  todoGanttTasks: todo.todoGanttTasks,
+  todoLinkedItems: todo.todoLinkedItems,
+  todoHistories: todo.todoHistories,
 });
 
 // Utility: Convert Prisma Todo to app Todo type
@@ -86,19 +87,76 @@ export const createTodo = async (todo: Omit<Todo, 'id'> & { id?: string }): Prom
     });
     position = (max._max?.position ?? 0) + 1;
   }
-  const created = await prisma.todo.create({
-    data: {
-      ...rest,
-      status,
-      label: todo.label || 'todo',
-      createdAt: rest.createdAt || new Date().toISOString(),
-      updatedAt: rest.updatedAt || new Date().toISOString(),
-      project: { connect: { id: todo.projectId } },
-      ...(assetId ? { asset: { connect: { id: assetId } } } : {}),
-      position,
-    },
-  });
-  return fromPrismaTodo(created);
+  // Build relation data
+  const data: any = {
+    title: todo.title,
+    description: todo.description,
+    date: todo.date,
+    deadline: todo.deadline,
+    label: todo.label,
+    createdAt: todo.createdAt || new Date().toISOString(),
+    updatedAt: todo.updatedAt || new Date().toISOString(),
+    project: { connect: { id: todo.projectId } },
+    asset: todo.assetId ? { connect: { id: todo.assetId } } : undefined,
+    report: todo.reportId ? { connect: { id: todo.reportId } } : undefined,
+    status: todo.status ?? 1,
+    position: todo.position,
+    startDate: todo.startDate,
+    endDate: todo.endDate,
+    // Relations
+    relatedTasks: todo.relatedTasks?.length
+      ? {
+          create: todo.relatedTasks.map((rt) => ({
+            relatedId: rt.relatedId,
+            status: rt.status ?? 1,
+          })),
+        }
+      : undefined,
+    assignedUsers: todo.assignedUsers?.length
+      ? { create: todo.assignedUsers.map((au) => ({ userId: au.userId, status: au.status ?? 1 })) }
+      : undefined,
+    todoFiles: todo.todoFiles?.length
+      ? { create: todo.todoFiles.map((tf) => ({ fileId: tf.fileId, status: tf.status ?? 1 })) }
+      : undefined,
+    todoWebhooks: todo.todoWebhooks?.length
+      ? {
+          create: todo.todoWebhooks.map((tw) => ({
+            webhookId: tw.webhookId,
+            status: tw.status ?? 1,
+          })),
+        }
+      : undefined,
+    todoGanttTasks: todo.todoGanttTasks?.length
+      ? {
+          create: todo.todoGanttTasks.map((gt) => ({
+            ganttTaskId: gt.ganttTaskId,
+            status: gt.status ?? 1,
+          })),
+        }
+      : undefined,
+    todoLinkedItems: todo.todoLinkedItems?.length
+      ? {
+          create: todo.todoLinkedItems.map((li) => ({
+            linkedItemId: li.linkedItemId,
+            status: li.status ?? 1,
+          })),
+        }
+      : undefined,
+    todoHistories: todo.todoHistories?.length
+      ? {
+          create: todo.todoHistories.map((th) => ({
+            historyId: th.historyId,
+            status: th.status ?? 1,
+          })),
+        }
+      : undefined,
+  };
+
+  const created = await prisma.todo.create({ data });
+  // Fetch with relations
+  const detail = await getTodoDetail(created.id);
+  if (!detail) throw new Error('Created todo not found');
+  return detail;
 };
 
 export const updateTodo = async (id: string, updates: Partial<Todo>): Promise<Todo | null> => {
@@ -143,8 +201,24 @@ export const deleteTodo = async (id: string): Promise<boolean> => {
 };
 
 export const getTodoDetail = async (id: string): Promise<Todo | null> => {
-  const todo = await prisma.todo.findUnique({ where: { id } });
-  return todo ? fromPrismaTodo(todo) : null;
+  const todo = await prisma.todo.findUnique({
+    where: { id },
+    include: {
+      relatedTasks: true,
+      assignedUsers: true,
+      todoFiles: true,
+      todoWebhooks: true,
+      todoGanttTasks: true,
+      todoLinkedItems: true,
+      todoHistories: true,
+    },
+  });
+  if (!todo) return null;
+  // Ensure status is always a number
+  return {
+    ...todo,
+    status: typeof todo.status === 'number' ? todo.status : 1,
+  };
 };
 
 export const swapTodoPosition = async (id1: string, id2: string): Promise<void> => {

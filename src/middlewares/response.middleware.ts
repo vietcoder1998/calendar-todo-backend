@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import logger from '../logger';
 
 // Extend Express Request to allow meta property
 declare module 'express-serve-static-core' {
@@ -48,6 +49,14 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
       const code = body.code || 500;
       const errorCode = body.errorCode || body.code || 'UNKNOWN_ERROR';
       const message = body.message || body.error || String(body);
+      logger.error(
+        'API Error: %s | Path: %s | Method: %s | Body: %o | Headers: %o',
+        message,
+        req.originalUrl,
+        req.method,
+        req.body,
+        req.headers,
+      );
       return oldJson.call(this, { data: null, message, code, errorCode });
     }
     if (typeof body === 'string') {

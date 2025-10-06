@@ -11,12 +11,10 @@ export const getTodos = async (req: Request, res: Response) => {
     logger.info('Fetched todos');
     res.json(todos);
   } catch (e: any) {
-    logger.error('Failed to fetch todos: %s', e?.message || e);
     res.status(500).json({ error: 'Failed to fetch todos', details: e?.message || String(e) });
   }
 };
 // end updateTodo
-
 export const createTodo = async (req: Request, res: Response) => {
   try {
     const {
@@ -27,17 +25,17 @@ export const createTodo = async (req: Request, res: Response) => {
       createdAt,
       updatedAt,
       projectId,
-      linkedItems,
-      assignedUsers,
-      files,
-      webhooks,
-      ganttTaskIds,
-      relatedTaskIds,
-      history,
       locationId,
       deadline,
       startDate,
       endDate,
+      relatedTasks,
+      assignedUsers,
+      todoFiles,
+      todoWebhooks,
+      todoGanttTasks,
+      todoLinkedItems,
+      todoHistories,
     } = req.body;
     if (!title || !date || !status || !projectId) {
       return res.status(400).json({ error: 'Missing required todo fields' });
@@ -53,16 +51,17 @@ export const createTodo = async (req: Request, res: Response) => {
       projectId,
       locationId,
       deadline,
-      history,
-      linkedItems: Array.isArray(linkedItems) ? linkedItems.map(String) : [],
-      assignedUsers: Array.isArray(assignedUsers) ? assignedUsers.map(String) : [],
-      files: Array.isArray(files) ? files.map(String) : [],
-      webhooks: Array.isArray(webhooks) ? webhooks.map(String) : [],
-      ganttTaskIds: Array.isArray(ganttTaskIds) ? ganttTaskIds.map(String) : [],
-      relatedTaskIds: Array.isArray(relatedTaskIds) ? relatedTaskIds.map(String) : [],
       position: null,
       startDate: startDate ?? null,
       endDate: endDate ?? null,
+      // Relations
+      relatedTasks: Array.isArray(relatedTasks) ? relatedTasks : [],
+      assignedUsers: Array.isArray(assignedUsers) ? assignedUsers : [],
+      todoFiles: Array.isArray(todoFiles) ? todoFiles : [],
+      todoWebhooks: Array.isArray(todoWebhooks) ? todoWebhooks : [],
+      todoGanttTasks: Array.isArray(todoGanttTasks) ? todoGanttTasks : [],
+      todoLinkedItems: Array.isArray(todoLinkedItems) ? todoLinkedItems : [],
+      todoHistories: Array.isArray(todoHistories) ? todoHistories : [],
     };
     const project = await projectService.getProjectById(projectId);
     if (!project) {
@@ -72,18 +71,15 @@ export const createTodo = async (req: Request, res: Response) => {
     logger.info('Created todo: %o', created);
     res.status(201).json(created);
   } catch (e: any) {
-    logger.error('Todo creation failed: %s', e?.message || e);
     res.status(400).json({ error: 'Todo creation failed', details: e?.message || String(e) });
   }
 };
 export const updateTodo = async (req: Request, res: Response) => {
   try {
-    logger.info('---->' + req.params.id + ' ............');
     const todo = await todoService.updateTodo(req.params.id, req.body);
 
     return res.json(todo);
   } catch (e: any) {
-    logger.error('Todo update failed: %s', e?.message || e);
     res.status(400).json({ error: 'Todo update failed', details: e?.message || String(e) });
   }
 };
@@ -97,7 +93,6 @@ export const deleteTodo = async (req: Request, res: Response) => {
     }
     res.status(404).json({ error: 'Not found' });
   } catch (e: any) {
-    logger.error('Todo deletion failed: %s', e?.message || e);
     res.status(400).json({ error: 'Todo deletion failed', details: e?.message || String(e) });
   }
 };

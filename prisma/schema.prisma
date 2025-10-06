@@ -8,68 +8,135 @@ datasource db {
 }
 
 model User {
-  id          String       @id @default(uuid())
-  name        String       @default("gmail")
-  email       String       @unique
-  avatarUrl   String?
-  projectId   String?
-  project     Project?     @relation(fields: [projectId], references: [id])
-  permissions Permission[] @relation("UserPermissions")
-  roleId      String? // <-- Add this line
-  role        Role?        @relation(fields: [roleId], references: [id]) // <-- Add this line
-  status      Int          @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id           String         @id @default(uuid())
+  name         String         @default("gmail")
+  email        String         @unique
+  avatarUrl    String?
+  projectId    String?
+  project      Project?       @relation(fields: [projectId], references: [id])
+  permissions  Permission[]   @relation("UserPermissions")
+  roleId       String? // <-- Add this line
+  role         Role?          @relation(fields: [roleId], references: [id]) // <-- Add this line
+  status       Int            @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  AssignedUser AssignedUser[]
 
   @@map("user")
 }
 
 model Todo {
-  id             String  @id
-  title          String
-  description    String
-  date           String
-  deadline       String?
-  label          String // 'todo' | 'in-progress' | 'review' | 'done'
-  createdAt      String
-  updatedAt      String
-  locationId     String?
-  relatedTaskIds Json?
-  projectId      String
-  project        Project @relation(fields: [projectId], references: [id])
-  history        Json?
-  linkedItems    Json?
-  assignedUsers  Json?
-  files          Json?
-  webhooks       Json?
-  ganttTaskIds   Json?
-  assetId        String?
-  asset          Asset?  @relation(fields: [assetId], references: [id])
-  reportId       String?
-  report         Report? @relation(fields: [reportId], references: [id])
-  status         Int?     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  position       Int? // For ordering
-  startDate      String? // ISO string for Gantt integration
-  endDate        String? // ISO string for Gantt integration
+  id          String    @id
+  title       String
+  description String
+  date        String
+  deadline    String?
+  label       String // 'todo' | 'in-progress' | 'review' | 'done'
+  createdAt   String
+  updatedAt   String
+  locationId  String?
+  location    Location? @relation(fields: [locationId], references: [id])
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id])
+  assetId     String?
+  asset       Asset?    @relation(fields: [assetId], references: [id])
+  reportId    String?
+  report      Report?   @relation(fields: [reportId], references: [id])
+  status      Int?      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position    Int? // For ordering
+  startDate   String? // ISO string for Gantt integration
+  endDate     String? // ISO string for Gantt integration
+
+  // Relations
+  relatedTasks    RelatedTask[]
+  assignedUsers   AssignedUser[]
+  todoFiles       TodoFile[]
+  todoWebhooks    TodoWebhook[]
+  todoGanttTasks  TodoGanttTask[]
+  todoLinkedItems TodoLinkedItem[]
+  todoHistories   TodoHistory[]
 
   @@map("todo")
 }
 
+model RelatedTask {
+  id        String @id @default(uuid())
+  todoId    String
+  relatedId String
+  todo      Todo   @relation(fields: [todoId], references: [id])
+  status    Int    @default(1)
+}
+
+model AssignedUser {
+  id     String @id @default(uuid())
+  todoId String
+  userId String
+  todo   Todo   @relation(fields: [todoId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+  status Int    @default(1)
+}
+
+model TodoFile {
+  id     String   @id @default(uuid())
+  todoId String
+  fileId String
+  todo   Todo     @relation(fields: [todoId], references: [id])
+  file   FileItem @relation(fields: [fileId], references: [id])
+  status Int      @default(1)
+}
+
+model TodoWebhook {
+  id        String  @id @default(uuid())
+  todoId    String
+  webhookId String
+  todo      Todo    @relation(fields: [todoId], references: [id])
+  webhook   Webhook @relation(fields: [webhookId], references: [id])
+  status    Int     @default(1)
+}
+
+model TodoGanttTask {
+  id          String    @id @default(uuid())
+  todoId      String
+  ganttTaskId String
+  todo        Todo      @relation(fields: [todoId], references: [id])
+  ganttTask   GanttTask @relation(fields: [ganttTaskId], references: [id])
+  status      Int       @default(1)
+}
+
+model TodoLinkedItem {
+  id           String     @id @default(uuid())
+  todoId       String
+  linkedItemId String
+  todo         Todo       @relation(fields: [todoId], references: [id])
+  linkedItem   LinkedItem @relation(fields: [linkedItemId], references: [id])
+  status       Int        @default(1)
+}
+
+model TodoHistory {
+  id        String  @id @default(uuid())
+  todoId    String
+  historyId String
+  todo      Todo    @relation(fields: [todoId], references: [id])
+  history   History @relation(fields: [historyId], references: [id])
+  status    Int     @default(1)
+}
+
 model FileItem {
-  id        String  @id
+  id        String     @id
   name      String?
   url       String?
   createdAt String?
   updatedAt String?
   projectId String
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project    @relation(fields: [projectId], references: [id])
   assetId   String?
   label     String?
-  asset     Asset?  @relation(fields: [assetId], references: [id])
+  asset     Asset?     @relation(fields: [assetId], references: [id])
   reportId  String?
-  report    Report? @relation(fields: [reportId], references: [id])
-  status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  report    Report?    @relation(fields: [reportId], references: [id])
+  status    Int        @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   position  Int? // For ordering
+  TodoFile  TodoFile[]
 
   @@map("fileitem")
 }
@@ -94,42 +161,44 @@ model Permission {
 }
 
 model LinkedItem {
-  id          String  @id
-  todoId      String
-  title       String
-  description String?
-  url         String
-  label       String? // 'active' | 'archived' | 'pending'
-  createdAt   String
-  updatedAt   String
-  projectId   String
-  project     Project @relation(fields: [projectId], references: [id])
-  assetId     String?
-  asset       Asset?  @relation(fields: [assetId], references: [id])
-  status      Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  position    Int? // For ordering
+  id             String           @id
+  todoId         String
+  title          String
+  description    String?
+  url            String
+  label          String? // 'active' | 'archived' | 'pending'
+  createdAt      String
+  updatedAt      String
+  projectId      String
+  project        Project          @relation(fields: [projectId], references: [id])
+  assetId        String?
+  asset          Asset?           @relation(fields: [assetId], references: [id])
+  status         Int              @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  position       Int? // For ordering
+  TodoLinkedItem TodoLinkedItem[]
 
   @@map("linkeditem")
 }
 
 model GanttTask {
-  id        String  @id
-  name      String?
-  createdAt String?
-  updatedAt String?
-  startDate String?
-  endDate   String?
-  color     String?
-  label     String?
-  projectId String
-  project   Project @relation(fields: [projectId], references: [id])
-  assetId   String?
-  asset     Asset?  @relation(fields: [assetId], references: [id])
-  position  Int? // Task order/position (set in app logic, not auto-increment in Prisma for MySQL)
-  reportId  String?
-  report    Report? @relation(fields: [reportId], references: [id])
-  status    Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
-  progress  Int     @default(0) // Progress percentage (0-100)
+  id            String          @id
+  name          String?
+  createdAt     String?
+  updatedAt     String?
+  startDate     String?
+  endDate       String?
+  color         String?
+  label         String?
+  projectId     String
+  project       Project         @relation(fields: [projectId], references: [id])
+  assetId       String?
+  asset         Asset?          @relation(fields: [assetId], references: [id])
+  position      Int? // Task order/position (set in app logic, not auto-increment in Prisma for MySQL)
+  reportId      String?
+  report        Report?         @relation(fields: [reportId], references: [id])
+  status        Int             @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
+  progress      Int             @default(0) // Progress percentage (0-100)
+  TodoGanttTask TodoGanttTask[]
 
   @@map("gantttask")
 }
@@ -148,7 +217,8 @@ model Webhook {
   asset      Asset?  @relation(fields: [assetId], references: [id]) // <-- Add this line
   status     Int     @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
 
-  jobs Job[]
+  jobs        Job[]
+  TodoWebhook TodoWebhook[]
 
   @@map("webhook")
 }
@@ -191,8 +261,9 @@ model History {
   user      String?
   status    Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
 
-  projectId String
-  project   Project @relation(fields: [projectId], references: [id])
+  projectId   String
+  project     Project       @relation(fields: [projectId], references: [id])
+  TodoHistory TodoHistory[]
 
   @@map("history")
 }
@@ -242,6 +313,7 @@ model Location {
   asset          Asset?   @relation(fields: [assetId], references: [id])
   status         Int      @default(1) // delete: -2, remove: -1, inactive: 0, active: 1
   position       Int? // For ordering
+  Todo           Todo[]
 
   @@map("location")
 }

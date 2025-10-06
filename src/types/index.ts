@@ -66,21 +66,77 @@ export type Todo = {
   description: string;
   date: string;
   deadline?: string | null;
-  status: number; // string for legacy, number for new status
+  status: number;
   createdAt: string;
   updatedAt: string;
   locationId?: string | null;
-  relatedTaskIds?: string[] | null;
+  location?: Location | null;
   projectId: string;
-  history?: TodoHistoryEntry[];
-  linkedItems?: string[];
-  assignedUsers?: string[];
-  files?: string[];
-  webhooks?: string[];
-  ganttTaskIds?: string[];
+  project?: Project | null;
+  assetId?: string | null;
+  asset?: Asset | null;
+  reportId?: string | null;
+  report?: Report | null;
   position: number | null;
   startDate?: string | null;
   endDate?: string | null;
+  // Relations
+  relatedTasks?: RelatedTask[];
+  assignedUsers?: AssignedUser[];
+  todoFiles?: TodoFile[];
+  todoWebhooks?: TodoWebhook[];
+  todoGanttTasks?: TodoGanttTask[];
+  todoLinkedItems?: TodoLinkedItem[];
+  todoHistories?: TodoHistory[];
+};
+
+export type RelatedTask = {
+  id: string;
+  todoId: string;
+  relatedId: string;
+  status: number;
+};
+
+export type AssignedUser = {
+  id: string;
+  todoId: string;
+  userId: string;
+  status: number;
+};
+
+export type TodoFile = {
+  id: string;
+  todoId: string;
+  fileId: string;
+  status: number;
+};
+
+export type TodoWebhook = {
+  id: string;
+  todoId: string;
+  webhookId: string;
+  status: number;
+};
+
+export type TodoGanttTask = {
+  id: string;
+  todoId: string;
+  ganttTaskId: string;
+  status: number;
+};
+
+export type TodoLinkedItem = {
+  id: string;
+  todoId: string;
+  linkedItemId: string;
+  status: number;
+};
+
+export type TodoHistory = {
+  id: string;
+  todoId: string;
+  historyId: string;
+  status: number;
 };
 
 export type Role = {

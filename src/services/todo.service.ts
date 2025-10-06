@@ -27,13 +27,13 @@ const toPrismaTodoInput = (todo: Omit<Todo, 'id'> & { id?: string }): any => ({
 const fromPrismaTodo = (prismaTodo: any): Todo => ({
   ...prismaTodo,
   label: prismaTodo.label as 'todo' | 'in-progress' | 'review' | 'done',
-  relatedTaskIds: prismaTodo.relatedTaskIds ?? [],
-  linkedItems: prismaTodo.linkedItems ?? [],
+  relatedTasks: prismaTodo.relatedTasks ?? [],
   assignedUsers: prismaTodo.assignedUsers ?? [],
-  files: prismaTodo.files ?? [],
-  webhooks: prismaTodo.webhooks ?? [],
-  ganttTaskIds: prismaTodo.ganttTaskIds ?? [],
-  history: prismaTodo.history ?? [],
+  todoFiles: prismaTodo.todoFiles ?? [],
+  todoWebhooks: prismaTodo.todoWebhooks ?? [],
+  todoGanttTasks: prismaTodo.todoGanttTasks ?? [],
+  todoLinkedItems: prismaTodo.todoLinkedItems ?? [],
+  todoHistories: prismaTodo.todoHistories ?? [],
   deadline: prismaTodo.deadline ?? null,
   startDate: prismaTodo.startDate ?? null,
   endDate: prismaTodo.endDate ?? null,
@@ -41,11 +41,22 @@ const fromPrismaTodo = (prismaTodo: any): Todo => ({
 });
 
 export const getTodos = async (projectId?: string): Promise<Todo[]> => {
-  if (projectId) {
-    const todos = await prisma.todo.findMany({ where: { projectId } });
-    return todos.map(fromPrismaTodo);
-  }
-  const todos = await prisma.todo.findMany();
+  const todos = await prisma.todo.findMany({
+    ...(projectId ? { where: { projectId } } : {}),
+    include: {
+      relatedTasks: true,
+      assignedUsers: true,
+      todoFiles: true,
+      todoWebhooks: true,
+      todoGanttTasks: true,
+      todoLinkedItems: true,
+      todoHistories: true,
+      project: true,
+      asset: true,
+      report: true,
+      location: true,
+    },
+  });
   return todos.map(fromPrismaTodo);
 };
 

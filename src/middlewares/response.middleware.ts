@@ -37,6 +37,7 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
     pageSize: req.query.pageSize ? Number(req.query.pageSize) : 10,
     q: typeof req.query.q === 'string' ? req.query.q : '',
   };
+
   const oldJson = res.json;
   res.json = function (body: any) {
     // If already in boundary format, don't double-wrap
@@ -47,8 +48,9 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
     if (body instanceof Error || (body && body.error)) {
       // If error object, try to extract code and errorCode
       const code = body.code || 500;
-      const errorCode = body.errorCode || body.code || 'UNKNOWN_ERROR';
+      const errorCode = body.errorCode || body.code || -1;
       const message = body.message || body.error || String(body);
+      const details = body.details || undefined;
       logger.error(
         [
           'API Error:',
@@ -56,14 +58,17 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
           `path: ${req.url}`,
           `method: ${req.method}`,
           'body:',
-          formatYaml(req.body),
+          formatTable(req.body), // <-- table format for body
           'headers:',
-          formatYaml(req.headers),
+          formatTable(req.headers), // <-- table format for headers
           'calledDetail:',
-          formatYaml(req.meta),
-        ].join('\n'),
+          formatTable(req.meta), // <-- table format for meta
+          details ? `details:\n${formatTable(details)}` : '',
+        ]
+          .filter(Boolean)
+          .join('\n'),
       );
-      return oldJson.call(this, { data: null, message, code, errorCode });
+      return oldJson.call(this, { data: null, message, code, errorCode, details });
     }
     if (typeof body === 'string') {
       logger.info(
@@ -73,11 +78,11 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
           `path: ${req.url}`,
           `method: ${req.method}`,
           'body:',
-          formatYaml(req.body),
+          formatTable(req.body),
           'headers:',
-          formatYaml(req.headers),
+          formatTable(req.headers),
           'calledDetail:',
-          formatYaml(req.meta),
+          formatTable(req.meta),
         ].join('\n'),
       );
       return oldJson.call(this, { data: null, message: String(body) });
@@ -93,11 +98,11 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
           `path: ${req.url}`,
           `method: ${req.method}`,
           'body:',
-          formatYaml(req.body),
+          formatTable(req.body),
           'headers:',
-          formatYaml(req.headers),
+          formatTable(req.headers),
           'calledDetail:',
-          formatYaml(req.meta),
+          formatTable(req.meta),
         ].join('\n'),
       );
       return oldJson.call(this, {
@@ -116,11 +121,11 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
         `path: ${req.url}`,
         `method: ${req.method}`,
         'body:',
-        formatYaml(req.body),
+        formatTable(req.body),
         'headers:',
-        formatYaml(req.headers),
+        formatTable(req.headers),
         'calledDetail:',
-        formatYaml(req.meta),
+        formatTable(req.meta),
       ].join('\n'),
     );
     return oldJson.call(this, { data: body, message: 'Success' });
@@ -128,17 +133,18 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
   next();
 }
 
-// Helper to format objects as YAML-like text
-function formatYaml(obj: any, indent = 2): string {
-  if (obj == null) return '';
-  if (typeof obj !== 'object') return String(obj);
-  const pad = (n: number) => ' '.repeat(n);
-  return Object.entries(obj)
+// Helper to format objects as a table-like string for logging
+function formatTable(obj: any): string {
+  if (!obj || typeof obj !== 'object') return '';
+  const entries = Object.entries(obj);
+  if (entries.length === 0) return '';
+  const header = '| Key           | Value         |\n|---------------|---------------|';
+  const rows = entries
     .map(([key, value]) => {
-      if (typeof value === 'object' && value !== null) {
-        return `${pad(indent)}${key}:\n${formatYaml(value, indent + 2)}`;
-      }
-      return `${pad(indent)}${key}: ${String(value)}`;
+      const val =
+        typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value);
+      return `| ${key.padEnd(13)} | ${val.padEnd(13)} |`;
     })
     .join('\n');
+  return `${header}\n${rows}`;
 }

@@ -89,18 +89,19 @@ export const createTodo = async (todo: Omit<Todo, 'id'> & { id?: string }): Prom
   }
   // Build relation data
   const data: any = {
+    id: todo.id, // <-- Fix: add id if provided
     title: todo.title,
     description: todo.description,
     date: todo.date,
     deadline: todo.deadline,
-    label: todo.label,
+    label: todo.label ?? 'todo', // <-- Fix: always provide label
     createdAt: todo.createdAt || new Date().toISOString(),
     updatedAt: todo.updatedAt || new Date().toISOString(),
     project: { connect: { id: todo.projectId } },
     asset: todo.assetId ? { connect: { id: todo.assetId } } : undefined,
     report: todo.reportId ? { connect: { id: todo.reportId } } : undefined,
-    status: todo.status ?? 1,
-    position: todo.position,
+    status: status,
+    position: position,
     startDate: todo.startDate,
     endDate: todo.endDate,
     // Relations

@@ -50,22 +50,47 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
       const errorCode = body.errorCode || body.code || 'UNKNOWN_ERROR';
       const message = body.message || body.error || String(body);
       logger.error(
-        'API Error: %s | Path: %s | Method: %s | Body: %o | Headers: %o',
-        message,
-        req.originalUrl,
-        req.method,
-        req.body,
-        req.headers,
+        [
+          'API Error:',
+          `message: ${message}`,
+          `path: ${req.url}`,
+          `method: ${req.method}`,
+          `body: ${JSON.stringify(req.body)}`,
+          `headers: ${JSON.stringify(req.headers)}`,
+          `calledDetail: ${JSON.stringify(req.meta)}`,
+        ].join('\n'),
       );
       return oldJson.call(this, { data: null, message, code, errorCode });
     }
     if (typeof body === 'string') {
+      logger.info(
+        [
+          'API Success:',
+          `message: ${body}`,
+          `path: ${req.url}`,
+          `method: ${req.method}`,
+          `body: ${JSON.stringify(req.body)}`,
+          `headers: ${JSON.stringify(req.headers)}`,
+          `calledDetail: ${JSON.stringify(req.meta)}`,
+        ].join('\n'),
+      );
       return oldJson.call(this, { data: null, message: String(body) });
     }
     // If data is an array, add total, page, pageSize
     if (Array.isArray(body)) {
       const page = req.meta?.page ?? 1;
       const pageSize = req.meta?.pageSize ?? 10;
+      logger.info(
+        [
+          'API Success:',
+          `message: Success`,
+          `path: ${req.url}`,
+          `method: ${req.method}`,
+          `body: ${JSON.stringify(req.body)}`,
+          `headers: ${JSON.stringify(req.headers)}`,
+          `calledDetail: ${JSON.stringify(req.meta)}`,
+        ].join('\n'),
+      );
       return oldJson.call(this, {
         data: body,
         total: body.length,
@@ -75,6 +100,17 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
       });
     }
     // Default: wrap in { data, message }
+    logger.info(
+      [
+        'API Success:',
+        `message: Success`,
+        `path: ${req.url}`,
+        `method: ${req.method}`,
+        `body: ${JSON.stringify(req.body)}`,
+        `headers: ${JSON.stringify(req.headers)}`,
+        `calledDetail: ${JSON.stringify(req.meta)}`,
+      ].join('\n'),
+    );
     return oldJson.call(this, { data: body, message: 'Success' });
   };
   next();

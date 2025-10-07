@@ -2,7 +2,6 @@ import type { Todo } from '@/types';
 import { PrismaClient } from '@prisma/client';
 import logger from '../logger';
 import { publishTodoEvent } from '../queue';
-import { createAsset } from './asset.util';
 
 const prisma = new PrismaClient();
 
@@ -63,9 +62,6 @@ export const getTodos = async (projectId?: string): Promise<Todo[]> => {
 export const createTodo = async (todo: Omit<Todo, 'id'> & { id?: string }): Promise<Todo> => {
   // Create asset and link
   let assetId: string | null = null;
-  if (todo.title) {
-    assetId = await createAsset(todo.title, 'todo');
-  }
   // Convert status to int if string
   let status: number = 1;
   if (typeof todo.status === 'string') {

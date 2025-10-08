@@ -14,6 +14,21 @@ export const getTodos = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch todos', details: e?.message || String(e) });
   }
 };
+
+export const getTodoByProjectId = async (req: Request, res: Response) => {
+  try {
+    const { projectId } = req.params;
+    if (!projectId) {
+      return res.status(400).json({ error: 'Missing projectId parameter' });
+    }
+    const todos = await todoService.getTodos(projectId);
+    logger.info('Fetched todos for projectId %s', projectId);
+    res.json(todos);
+  } catch (e: any) {
+    res.status(500).json({ error: 'Failed to fetch todos', details: e?.message || String(e) });
+  }
+};
+
 // end updateTodo
 export const createTodo = async (req: Request, res: Response) => {
   try {

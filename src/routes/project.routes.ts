@@ -7,6 +7,7 @@ import * as permissionController from '../controllers/permission.controller';
 import * as projectController from '../controllers/project.controller';
 import * as userController from '../controllers/user.controller';
 import * as webhookController from '../controllers/webhook.controller';
+import * as todoController from '../controllers/todo.controller';
 import { validateProject } from '../middlewares/project.middleware';
 import {
   getPermissionsByProjectUsers,
@@ -28,6 +29,7 @@ router.get('/:projectId/files', fileController.getFiles);
 router.get('/:projectId/webhooks', webhookController.getWebhooks);
 router.get('/:projectId/histories', historyController.getHistories);
 router.get('/:projectId/locations', locationController.getLocations);
+router.get('/:projectId/todos', todoController.getTodoByProjectId);
 
 router.get('/:projectId/permissions', permissionController.getPermissions);
 router.get('/:projectId/permissions/users', getPermissionsByProjectUsers);

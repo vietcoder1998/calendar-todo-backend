@@ -21,28 +21,46 @@ declare module 'express-serve-static-core' {
  * Usage: Place after all routes, before error handler.
  */
 export function boundaryResponse(req: Request, res: Response, next: NextFunction) {
-  // Helper to get cache key
+  // Helper to get cache key with project context
   const getCacheKey = () => {
     const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    return `cache:${ip}:${req.method}:${req.originalUrl}`;
+    const projectId = req.headers['x-project-id'] || req.params.projectId || req.body.projectId;
+
+    // Include project ID in cache key for better organization
+    const baseKey = `cache:${ip}:${req.method}:${req.originalUrl}`;
+    return projectId ? `${baseKey}:project:${projectId}` : baseKey;
   };
 
-  // For update methods: invalidate cache for resource
+  // For update methods: invalidate cache for all users in the same project
   if (['PUT', 'PATCH', 'DELETE', 'POST'].includes(req.method)) {
-    // Try to get resource id from params
+    const projectId = req.headers['x-project-id'] || req.params.projectId || req.body.projectId;
     const resourceId = req.params.id || req.body.id;
-    if (resourceId) {
-      // Invalidate all cache for this resource (by IP)
-      const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-      const pattern = `cache:${ip}:GET:*${resourceId}*`;
-      // Redis SCAN for keys matching pattern
-      redisClient.keys(pattern).then((keys) => {
-        if (keys.length > 0) {
-          redisClient.del(keys);
-          logger.info(`Cache invalidated for resource ${resourceId} (${keys.length} keys)`);
-        }
-      });
+
+    // Build cache invalidation patterns
+    const patterns: string[] = [];
+
+    if (projectId) {
+      // Invalidate all GET requests for this project (all users)
+      patterns.push(`cache:*:GET:*${projectId}*`);
     }
+
+    if (resourceId) {
+      // Invalidate all GET requests for this specific resource (all users)
+      patterns.push(`cache:*:GET:*${resourceId}*`);
+    }
+
+    // Execute cache invalidation for all patterns
+    patterns.forEach(async (pattern) => {
+      try {
+        const keys = await redisClient.keys(pattern);
+        if (keys.length > 0) {
+          await redisClient.del(keys);
+          logger.info(`Cache invalidated for pattern ${pattern} (${keys.length} keys cleared)`);
+        }
+      } catch (error) {
+        logger.error(`Failed to invalidate cache for pattern ${pattern}:`, error);
+      }
+    });
   }
 
   // If x-project-id header is present, add projectId to req.params

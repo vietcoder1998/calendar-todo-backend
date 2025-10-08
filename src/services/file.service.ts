@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import path from 'path';
+import fs from 'fs/promises';
 import { FileItem as FileItemType } from '../types';
 import { createAsset } from './asset.util';
 const prisma = new PrismaClient();
@@ -27,25 +29,35 @@ export const getFiles = async (projectId?: string) => {
   const files = await prisma.fileItem.findMany();
   return files.map(fromPrismaFile);
 };
-export const createFile = async (file: FileItemType) => {
-  // Create asset and link if name is present
+export const createFile = async (fileData: FileItemType) => {
   let assetId: string | null = null;
-
-  let position = file.position ?? 0;
-  if (position == null && file.projectId) {
+  let position = fileData.position ?? 0;
+  if (position == null && fileData.projectId) {
     const max = await prisma.fileItem.aggregate({
-      where: { projectId: file.projectId },
+      where: { projectId: fileData.projectId },
       _max: { position: true },
     });
     position = (max._max?.position ?? 0) + 1;
   }
+
+  // If fileData._upload is present, handle local upload
+  if ((fileData as any)._upload) {
+    const upload = (fileData as any)._upload as { buffer: Buffer; originalname: string };
+    const uploadDir = path.resolve(__dirname, '../../uploads');
+    await fs.mkdir(uploadDir, { recursive: true });
+    const filename = `${Date.now()}_${upload.originalname}`;
+    const filepath = path.join(uploadDir, filename);
+    await fs.writeFile(filepath, upload.buffer);
+    fileData.url = `/uploads/${filename}`;
+  }
+
   const created = await prisma.fileItem.create({
     data: {
-      ...file,
+      ...fileData,
       assetId,
-      projectId: file.projectId,
+      projectId: fileData.projectId,
       position,
-      status: file.status ?? 1,
+      status: fileData.status ?? 1,
     },
   });
   return fromPrismaFile(created);

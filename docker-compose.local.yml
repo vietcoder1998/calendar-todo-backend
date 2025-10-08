@@ -32,10 +32,19 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - calendar_net
+  redis:
+    image: redis:7.2
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - calendar_net
 volumes:
   db_data:
   rabbitmq_data:
-
+  redis_data:
 networks:
   calendar_net:
     driver: bridge

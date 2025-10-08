@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import logger from '../logger';
+import redisClient from '../utils/redisClient';
 
 // Extend Express Request to allow meta property
 declare module 'express-serve-static-core' {
@@ -20,6 +21,55 @@ declare module 'express-serve-static-core' {
  * Usage: Place after all routes, before error handler.
  */
 export function boundaryResponse(req: Request, res: Response, next: NextFunction) {
+  // Helper to get cache key
+  const getCacheKey = () => {
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    return `cache:${ip}:${req.method}:${req.originalUrl}`;
+  };
+
+  // For GET: try to serve from cache
+  if (req.method === 'GET') {
+    const cacheKey = getCacheKey();
+    redisClient.get(cacheKey).then((cached) => {
+      if (cached) {
+        logger.info(`Cache hit for ${cacheKey}`);
+        res.setHeader('X-Cache', 'HIT');
+        return res.json(JSON.parse(cached));
+      } else {
+        logger.info(`Cache miss for ${cacheKey}`);
+        res.setHeader('X-Cache', 'MISS');
+        // Patch res.json to cache response after sending
+        const oldJson = res.json;
+        res.json = function (body: any) {
+          // Only cache successful responses
+          if (res.statusCode === 200) {
+            redisClient.set(cacheKey, JSON.stringify(body), { EX: 86400 }); // 1 day expiry
+          }
+          return oldJson.call(this, body);
+        };
+        next();
+      }
+    });
+    return;
+  }
+
+  // For update methods: invalidate cache for resource
+  if (['PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+    // Try to get resource id from params
+    const resourceId = req.params.id || req.body.id;
+    if (resourceId) {
+      // Invalidate all cache for this resource (by IP)
+      const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      const pattern = `cache:${ip}:GET:*${resourceId}*`;
+      // Redis SCAN for keys matching pattern
+      redisClient.keys(pattern).then((keys) => {
+        if (keys.length > 0) {
+          redisClient.del(keys);
+          logger.info(`Cache invalidated for resource ${resourceId} (${keys.length} keys)`);
+        }
+      });
+    }
+  }
   // If x-project-id header is present, add projectId to req.params
   const projectIdHeader = req.headers['x-project-id'];
 

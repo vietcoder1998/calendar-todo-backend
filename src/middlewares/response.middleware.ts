@@ -27,34 +27,8 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
     return `cache:${ip}:${req.method}:${req.originalUrl}`;
   };
 
-  // For GET: try to serve from cache
-  if (req.method === 'GET') {
-    const cacheKey = getCacheKey();
-    redisClient.get(cacheKey).then((cached) => {
-      if (cached) {
-        logger.info(`Cache hit for ${cacheKey}`);
-        res.setHeader('X-Cache', 'HIT');
-        return res.json(JSON.parse(cached));
-      } else {
-        logger.info(`Cache miss for ${cacheKey}`);
-        res.setHeader('X-Cache', 'MISS');
-        // Patch res.json to cache response after sending
-        const oldJson = res.json;
-        res.json = function (body: any) {
-          // Only cache successful responses
-          if (res.statusCode === 200) {
-            redisClient.set(cacheKey, JSON.stringify(body), { EX: 86400 }); // 1 day expiry
-          }
-          return oldJson.call(this, body);
-        };
-        next();
-      }
-    });
-    return;
-  }
-
   // For update methods: invalidate cache for resource
-  if (['PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+  if (['PUT', 'PATCH', 'DELETE', 'POST'].includes(req.method)) {
     // Try to get resource id from params
     const resourceId = req.params.id || req.body.id;
     if (resourceId) {
@@ -70,6 +44,7 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
       });
     }
   }
+
   // If x-project-id header is present, add projectId to req.params
   const projectIdHeader = req.headers['x-project-id'];
 
@@ -88,12 +63,36 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
     q: typeof req.query.q === 'string' ? req.query.q : '',
   };
 
+  // Unified response handler with caching support
   const oldJson = res.json;
   res.json = function (body: any) {
+    // Handle caching for GET requests
+    if (req.method === 'GET') {
+      const cacheKey = getCacheKey();
+
+      // Check if this is a cached response being served
+      const isCacheHit = res.getHeader('X-Cache') === 'HIT';
+
+      if (!isCacheHit) {
+        // This is a fresh response, cache it if successful
+        if (res.statusCode === 200) {
+          const responseToCache = formatResponse(body);
+          redisClient.set(cacheKey, JSON.stringify(responseToCache), { EX: 86400 }); // 1 day expiry
+        }
+        res.setHeader('X-Cache', 'MISS');
+      }
+    }
+
+    return oldJson.call(this, formatResponse(body));
+  };
+
+  // Helper function to format response consistently
+  function formatResponse(body: any) {
     // If already in boundary format, don't double-wrap
     if (body && typeof body === 'object' && 'data' in body && 'message' in body) {
-      return oldJson.call(this, body);
+      return body;
     }
+
     // If body is an error or string, treat as message
     if (body instanceof Error || (body && body.error)) {
       // If error object, try to extract code and errorCode
@@ -108,18 +107,19 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
           `path: ${req.url}`,
           `method: ${req.method}`,
           'body:',
-          formatTable(req.body), // <-- table format for body
+          formatTable(req.body),
           'headers:',
-          formatTable(req.headers), // <-- table format for headers
+          formatTable(req.headers),
           'calledDetail:',
-          formatTable(req.meta), // <-- table format for meta
+          formatTable(req.meta),
           details ? `details:\n${formatTable(details)}` : '',
         ]
           .filter(Boolean)
           .join('\n'),
       );
-      return oldJson.call(this, { data: null, message, code, errorCode, details });
+      return { data: null, message, code, errorCode, details };
     }
+
     if (typeof body === 'string') {
       logger.info(
         [
@@ -135,8 +135,9 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
           formatTable(req.meta),
         ].join('\n'),
       );
-      return oldJson.call(this, { data: null, message: String(body) });
+      return { data: null, message: String(body) };
     }
+
     // If data is an array, add total, page, pageSize
     if (Array.isArray(body)) {
       const page = req.meta?.page ?? 1;
@@ -155,14 +156,15 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
           formatTable(req.meta),
         ].join('\n'),
       );
-      return oldJson.call(this, {
+      return {
         data: body,
         total: body.length,
         page,
         pageSize,
         message: 'Success',
-      });
+      };
     }
+
     // Default: wrap in { data, message }
     logger.info(
       [
@@ -178,8 +180,25 @@ export function boundaryResponse(req: Request, res: Response, next: NextFunction
         formatTable(req.meta),
       ].join('\n'),
     );
-    return oldJson.call(this, { data: body, message: 'Success' });
-  };
+    return { data: body, message: 'Success' };
+  }
+
+  // For GET: try to serve from cache first
+  if (req.method === 'GET') {
+    const cacheKey = getCacheKey();
+    redisClient.get(cacheKey).then((cached) => {
+      if (cached) {
+        logger.info(`Cache hit for ${cacheKey}`);
+        res.setHeader('X-Cache', 'HIT');
+        return res.json(JSON.parse(cached));
+      } else {
+        logger.info(`Cache miss for ${cacheKey}`);
+        next();
+      }
+    });
+    return;
+  }
+
   next();
 }
 

@@ -67,14 +67,16 @@ export async function addHistoryOnUpdate(req: Request, res: Response, next: Next
       if (projectId) {
         const project = await prisma.project.findFirst({ where: { id: projectId } });
         if (project) {
+          const timestamp = Date.now();
+          const randomSuffix = Math.random().toString(36).substring(2, 8);
           const history = await prisma.history.create({
             data: {
-              id: `${projectId}:${Date.now()}`,
+              id: `${projectId}:${timestamp}:${randomSuffix}`,
               type: 'asset',
               action: 'update',
               payload: req.body,
               date: new Date(),
-              timestamp: Date.now().toString(),
+              timestamp: timestamp.toString(),
               user: 'system',
               status: 1,
               projectId: projectId,

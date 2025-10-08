@@ -62,11 +62,10 @@ export type TodoHistoryEntry = {
 export type Todo = {
   id: string;
   title: string;
-  label?: string | null;
   description: string;
   date: string;
   deadline?: string | null;
-  status: number;
+  label?: string | null; // 'todo' | 'in-progress' | 'review' | 'done'
   createdAt: string;
   updatedAt: string;
   locationId?: string | null;
@@ -77,6 +76,7 @@ export type Todo = {
   asset?: Asset | null;
   reportId?: string | null;
   report?: Report | null;
+  status: number | null; // delete: -2, remove: -1, inactive: 0, active: 1
   position: number | null;
   startDate?: string | null;
   endDate?: string | null;
@@ -305,3 +305,15 @@ export type Report = {
   updatedAt: string;
   position: number | null;
 };
+
+// Error type for backend service use
+export type ServiceError = {
+  message: string;
+  code?: string | number;
+  status?: number;
+  stack?: string;
+  details?: Record<string, unknown>;
+};
+
+// Example usage:
+// throw { message: "Not found", code: "NOT_FOUND", status: 404 }

@@ -7,17 +7,66 @@ export const getProjectById = async (id: string): Promise<ProjectWithAll | null>
   const project = await prisma.project.findUnique({
     where: { id },
     include: {
-      todos: true,
-      files: true,
+      todos: {
+        include: {
+          relatedTasks: true,
+          assignedUsers: true,
+          todoFiles: true,
+          todoWebhooks: true,
+          todoGanttTasks: true,
+          todoLinkedItems: true,
+          todoHistories: true,
+          location: true,
+          asset: true,
+          report: true,
+        },
+      },
+      files: {
+        include: {
+          asset: true,
+          report: true,
+          TodoFile: true,
+        },
+      },
       permissions: true,
-      linkedItems: true,
-      ganttTasks: true,
-      webhooks: true,
-      users: true,
+      linkedItems: {
+        include: {
+          asset: true,
+          TodoLinkedItem: true,
+        },
+      },
+      ganttTasks: {
+        include: {
+          asset: true,
+          report: true,
+          TodoGanttTask: true,
+        },
+      },
+      webhooks: {
+        include: {
+          asset: true,
+          TodoWebhook: true,
+          jobs: true,
+        },
+      },
+      users: {
+        include: {
+          permissions: true,
+          role: true,
+          AssignedUser: true,
+        },
+      },
+      histories: true,
+      labels: true,
+      reports: true,
+      jobs: true,
+      roles: true,
+      notifications: true,
+      notificationTemplates: true,
+      locations: true,
     },
   });
   if (!project) return null;
-  // Map todos[].relatedTaskIds from JsonValue to string[] | null
   return {
     ...project,
     todos: project.todos.map((todo: any) => ({
@@ -59,16 +108,12 @@ export const getProjects = async (): Promise<ProjectWithAll[]> => {
       users: true,
     },
   });
-  // Map todos[].relatedTaskIds from JsonValue to string[] | null
+
   return projects.map((project: any) => ({
     ...project,
-    todos: project.todos.map((todo: any) => ({
-      ...todo,
-      relatedTaskIds: Array.isArray(todo.relatedTaskIds)
-        ? todo.relatedTaskIds
-        : typeof todo.relatedTaskIds === 'string'
-          ? JSON.parse(todo.relatedTaskIds)
-          : null,
+    permissions: project.permissions.map((permission: any) => ({
+      ...permission,
+      name: permission.name === null ? undefined : permission.name,
     })),
   }));
 };

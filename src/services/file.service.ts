@@ -30,10 +30,8 @@ export const getFiles = async (projectId?: string) => {
 export const createFile = async (file: FileItemType) => {
   // Create asset and link if name is present
   let assetId: string | null = null;
-  if (file.name) {
-    assetId = await createAsset(file.name, 'file');
-  }
-  let position = file.position;
+
+  let position = file.position ?? 0;
   if (position == null && file.projectId) {
     const max = await prisma.fileItem.aggregate({
       where: { projectId: file.projectId },

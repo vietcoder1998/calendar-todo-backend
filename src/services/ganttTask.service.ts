@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { GanttTask as GanttTaskType } from '../types';
-import { createAsset } from './asset.util';
 const prisma = new PrismaClient();
 
 const fromPrismaGanttTask = (prismaTask: GanttTaskType): GanttTaskType => ({
@@ -62,9 +61,6 @@ export const createGanttTask = async (task: GanttTaskType) => {
 
   // Create asset and link
   let assetId: string | null = null;
-  if (task.name) {
-    assetId = await createAsset(task.name, 'ganttTask');
-  }
 
   const data = {
     ...rest,

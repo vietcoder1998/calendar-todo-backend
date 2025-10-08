@@ -2,7 +2,6 @@ import type { Todo } from '@/types';
 import { PrismaClient } from '@prisma/client';
 import logger from '../logger';
 import { publishTodoEvent } from '../queue';
-import { createAsset } from './asset.util';
 
 const prisma = new PrismaClient();
 
@@ -27,13 +26,13 @@ const toPrismaTodoInput = (todo: Omit<Todo, 'id'> & { id?: string }): any => ({
 const fromPrismaTodo = (prismaTodo: any): Todo => ({
   ...prismaTodo,
   label: prismaTodo.label as 'todo' | 'in-progress' | 'review' | 'done',
-  relatedTaskIds: prismaTodo.relatedTaskIds ? JSON.parse(prismaTodo.relatedTaskIds as any) : [],
-  linkedItems: prismaTodo.linkedItems ?? [],
-  assignedUsers: prismaTodo.assignedUsers ? JSON.parse(prismaTodo.assignedUsers as any) : [],
-  files: prismaTodo.files ? JSON.parse(prismaTodo.files as any) : [],
-  webhooks: prismaTodo.webhooks ? JSON.parse(prismaTodo.webhooks as any) : [],
-  ganttTaskIds: prismaTodo.ganttTaskIds ? JSON.parse(prismaTodo.ganttTaskIds as any) : [],
-  history: prismaTodo.history ? JSON.parse(prismaTodo.history as any) : [],
+  relatedTasks: prismaTodo.relatedTasks ?? [],
+  assignedUsers: prismaTodo.assignedUsers ?? [],
+  todoFiles: prismaTodo.todoFiles ?? [],
+  todoWebhooks: prismaTodo.todoWebhooks ?? [],
+  todoGanttTasks: prismaTodo.todoGanttTasks ?? [],
+  todoLinkedItems: prismaTodo.todoLinkedItems ?? [],
+  todoHistories: prismaTodo.todoHistories ?? [],
   deadline: prismaTodo.deadline ?? null,
   startDate: prismaTodo.startDate ?? null,
   endDate: prismaTodo.endDate ?? null,
@@ -41,20 +40,28 @@ const fromPrismaTodo = (prismaTodo: any): Todo => ({
 });
 
 export const getTodos = async (projectId?: string): Promise<Todo[]> => {
-  if (projectId) {
-    const todos = await prisma.todo.findMany({ where: { projectId } });
-    return todos.map(fromPrismaTodo);
-  }
-  const todos = await prisma.todo.findMany();
+  const todos = await prisma.todo.findMany({
+    ...(projectId ? { where: { projectId } } : {}),
+    include: {
+      relatedTasks: true,
+      assignedUsers: true,
+      todoFiles: true,
+      todoWebhooks: true,
+      todoGanttTasks: true,
+      todoLinkedItems: true,
+      todoHistories: true,
+      project: true,
+      asset: true,
+      report: true,
+      location: true,
+    },
+  });
   return todos.map(fromPrismaTodo);
 };
 
 export const createTodo = async (todo: Omit<Todo, 'id'> & { id?: string }): Promise<Todo> => {
   // Create asset and link
   let assetId: string | null = null;
-  if (todo.title) {
-    assetId = await createAsset(todo.title, 'todo');
-  }
   // Convert status to int if string
   let status: number = 1;
   if (typeof todo.status === 'string') {
@@ -89,18 +96,19 @@ export const createTodo = async (todo: Omit<Todo, 'id'> & { id?: string }): Prom
   }
   // Build relation data
   const data: any = {
+    id: todo.id, // <-- Fix: add id if provided
     title: todo.title,
     description: todo.description,
     date: todo.date,
     deadline: todo.deadline,
-    label: todo.label,
+    label: todo.label ?? 'todo', // <-- Fix: always provide label
     createdAt: todo.createdAt || new Date().toISOString(),
     updatedAt: todo.updatedAt || new Date().toISOString(),
     project: { connect: { id: todo.projectId } },
     asset: todo.assetId ? { connect: { id: todo.assetId } } : undefined,
     report: todo.reportId ? { connect: { id: todo.reportId } } : undefined,
-    status: todo.status ?? 1,
-    position: todo.position,
+    status: status,
+    position: position,
     startDate: todo.startDate,
     endDate: todo.endDate,
     // Relations

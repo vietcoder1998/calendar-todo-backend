@@ -1,4 +1,5 @@
 import { pingMySQL } from './prisma';
+import { backupAllDatabase } from './jobs/backup';
 
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -51,6 +52,17 @@ app.get('/api/ping-mysql', async (req: Request, res: Response) => {
     res.status(200).json({ status: 'ok', message: 'MySQL connection successful' });
   } else {
     res.status(500).json({ status: 'error', message: 'MySQL connection failed' });
+  }
+});
+
+// Backup endpoint
+app.post('/api/backup', async (req: Request, res: Response) => {
+  try {
+    const results = await backupAllDatabase();
+    res.status(200).json({ status: 'ok', files: results });
+  } catch (err) {
+    logger.error('Backup failed', { err });
+    res.status(500).json({ status: 'error', message: 'Backup failed', details: err });
   }
 });
 

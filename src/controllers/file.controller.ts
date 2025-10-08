@@ -66,3 +66,17 @@ export const deleteFile = async (req: Request, res: Response) => {
     res.status(400).json({ error: 'File deletion failed', details: e?.message || String(e) });
   }
 };
+
+export const getFile = async (req: Request, res: Response) => {
+  try {
+    const file = await fileService.getFile(req.params.id);
+    if (file) {
+      logger.info('Fetched file: %o', file);
+      return res.json(file);
+    }
+    res.status(404).json({ error: 'Not found' });
+  } catch (e: any) {
+    logger.error('Failed to fetch file: %s', e?.message || e);
+    res.status(500).json({ error: 'Failed to fetch file', details: e?.message || String(e) });
+  }
+};

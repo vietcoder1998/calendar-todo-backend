@@ -1,8 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import path from 'path';
 import fs from 'fs/promises';
+import path from 'path';
 import { FileItem as FileItemType } from '../types';
-import { createAsset } from './asset.util';
 const prisma = new PrismaClient();
 
 const fromPrismaFile = (prismaFile: any): FileItemType => ({
@@ -29,54 +28,51 @@ export const getFiles = async (projectId?: string) => {
   const files = await prisma.fileItem.findMany();
   return files.map(fromPrismaFile);
 };
+
 export const createFile = async (fileData: FileItemType) => {
-  let assetId: string | null = null;
-  let position = fileData.position ?? 0;
-  if (position == null && fileData.projectId) {
-    const max = await prisma.fileItem.aggregate({
-      where: { projectId: fileData.projectId },
-      _max: { position: true },
-    });
-    position = (max._max?.position ?? 0) + 1;
-  }
-
-  // If fileData._upload is present, handle local upload
-  if ((fileData as any)._upload) {
-    const upload = (fileData as any)._upload as { buffer: Buffer; originalname: string };
-    const uploadDir = path.resolve(__dirname, '../../uploads');
-    await fs.mkdir(uploadDir, { recursive: true });
-    const filename = `${Date.now()}_${upload.originalname}`;
-    const filepath = path.join(uploadDir, filename);
-    await fs.writeFile(filepath, upload.buffer);
-    fileData.url = `/uploads/${filename}`;
-  }
-
-  const created = await prisma.fileItem.create({
-    data: {
-      ...fileData,
-      assetId,
-      projectId: fileData.projectId,
-      position,
-      status: fileData.status ?? 1,
-    },
-  });
-  return fromPrismaFile(created);
-};
-export const updateFile = async (id: string, updates: Partial<FileItemType>) => {
   try {
-    const updateData: any = { ...updates };
-    if ('status' in updates) {
-      updateData.status = updates.status ?? 1;
+    let assetId: string | null = null;
+    let position = fileData.position ?? 0;
+    if (position == null && fileData.projectId) {
+      const max = await prisma.fileItem.aggregate({
+        where: { projectId: fileData.projectId },
+        _max: { position: true },
+      });
+      position = (max._max?.position ?? 0) + 1;
     }
-    if (updateData.projectId === undefined) {
-      delete updateData.projectId;
+
+    // If fileData._upload is present, handle local upload
+    if ((fileData as any)._upload) {
+      const upload = (fileData as any)._upload as { buffer: Buffer; originalname: string };
+      const uploadDir = path.resolve(__dirname, '../../uploads');
+      await fs.mkdir(uploadDir, { recursive: true });
+      const filename = `${Date.now()}_${upload.originalname}`;
+      const filepath = path.join(uploadDir, filename);
+      await fs.writeFile(filepath, upload.buffer);
+      fileData.url = `/uploads/${filename}`;
     }
-    const updated = await prisma.fileItem.update({ where: { id }, data: updateData });
-    return fromPrismaFile(updated);
-  } catch {
-    return null;
+
+    // Only pass allowed fields to Prisma
+    const created = await prisma.fileItem.create({
+      data: {
+        id: fileData.id ?? '',
+        name: fileData.name ?? null,
+        url: fileData.url ?? null,
+        createdAt: fileData.createdAt ?? null,
+        updatedAt: fileData.updatedAt ?? null,
+        projectId: fileData.projectId ?? '',
+        assetId: fileData.assetId ?? null,
+        label: fileData.label ?? null,
+        status: fileData.status ?? 1,
+        position: position,
+      },
+    });
+    return fromPrismaFile(created);
+  } catch (err) {
+    throw err;
   }
 };
+
 export const deleteFile = async (id: string) => {
   try {
     await prisma.fileItem.delete({ where: { id } });
@@ -85,3 +81,17 @@ export const deleteFile = async (id: string) => {
     return false;
   }
 };
+export function updateFile(id: string, body: any) {
+  return prisma.fileItem
+    .update({
+      where: { id },
+      data: body,
+    })
+    .then((file) => (file ? fromPrismaFile(file) : null));
+}
+
+export function getFile(id: string) {
+  return prisma.fileItem
+    .findUnique({ where: { id } })
+    .then((file) => (file ? fromPrismaFile(file) : null));
+}

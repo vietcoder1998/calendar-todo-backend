@@ -10,3 +10,15 @@ export async function getLabelsByProjectId(req: Request, res: Response) {
     res.status(500).json({ error: 'Failed to fetch labels' });
   }
 }
+
+export async function createLabel(req: Request, res: Response) {
+  const { name, color, projectId } = req.body;
+  if (!name || !color || !projectId)
+    return res.status(400).json({ error: 'Missing required fields' });
+  try {
+    const label = await labelService.createLabel({ name, color, projectId });
+    res.status(201).json(label);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create label' });
+  }
+}

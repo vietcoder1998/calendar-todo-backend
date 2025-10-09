@@ -1,3 +1,6 @@
+export async function createLabel(data: { name: string; color: string; projectId: string }) {
+  return prisma.label.create({ data });
+}
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 

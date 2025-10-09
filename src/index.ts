@@ -26,6 +26,7 @@ import notificationTemplateRouter from './routes/notificationTemplate.routes';
 import reportRouter from './routes/report.routes';
 import { setupSocket } from './socket';
 import logger from './logger';
+import labelRouter from './routes/label.routes';
 
 const app = express();
 app.get('/api/ping-mysql', async (req: Request, res: Response) => {
@@ -98,6 +99,7 @@ app.use('/api/notifications', notificationRouter);
 app.use('/api/jobs', jobRouter);
 app.use('/api/notification-templates', notificationTemplateRouter);
 app.use('/api/reports', reportRouter);
+app.use('/api/labels', labelRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'server is running' });

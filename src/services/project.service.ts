@@ -120,11 +120,84 @@ export const getProjects = async (): Promise<ProjectWithAll[]> => {
 
 export const createProject = async (data: any): Promise<Project> => {
   const project = await prisma.project.create({ data });
+
+  // Create default roles
   const defaultRoles = ['super_admin', 'admin', 'viewer', 'guest'];
   await prisma.role.createMany({
     data: defaultRoles.map((name) => ({ name, projectId: project.id })),
     skipDuplicates: true,
   });
+
+  // Create default labels
+  const defaultLabels = [
+    { name: 'todo', color: '#f59e42', projectId: project.id },
+    { name: 'in-progress', color: '#3b82f6', projectId: project.id },
+    { name: 'review', color: '#fbbf24', projectId: project.id },
+    { name: 'done', color: '#22c55e', projectId: project.id },
+  ];
+  await prisma.label.createMany({ data: defaultLabels, skipDuplicates: true });
+
+  // Create default notification templates
+  const notificationTemplates = [
+    {
+      name: 'Task Assigned',
+      subject: 'You have been assigned a new task',
+      body: 'Hello, you have a new task: {{taskTitle}}. Please check your dashboard.',
+      type: 'todo',
+      projectId: project.id,
+    },
+    {
+      name: 'Task Completed',
+      subject: 'A task has been completed',
+      body: 'Task {{taskTitle}} has been marked as completed.',
+      type: 'todo',
+      projectId: project.id,
+    },
+    {
+      name: 'Task Overdue',
+      subject: 'A task is overdue',
+      body: 'Task {{taskTitle}} is overdue. Please take action.',
+      type: 'todo',
+      projectId: project.id,
+    },
+    {
+      name: 'Welcome',
+      subject: 'Welcome to {{projectName}}!',
+      body: 'Hi {{userName}}, welcome to {{projectName}}. We are glad to have you!',
+      type: 'user',
+      projectId: project.id,
+    },
+    {
+      name: 'Custom Alert',
+      subject: '{{alertTitle}}',
+      body: '{{alertMessage}}',
+      type: 'resource',
+      projectId: project.id,
+    },
+    {
+      name: 'Error Notification',
+      subject: 'Error: {{errorTitle}}',
+      body: 'An error occurred: {{errorMessage}}',
+      type: 'resource',
+      projectId: project.id,
+    },
+  ];
+  await prisma.notificationTemplate.createMany({
+    data: notificationTemplates,
+    skipDuplicates: true,
+  });
+
+  // Create super admin user
+  await prisma.user.create({
+    data: {
+      name: 'Super Admin',
+      email: `superadmin+${project.id}@calendation.com`,
+      avatarUrl: null,
+      projectId: project.id,
+      status: 1,
+    },
+  });
+
   return project;
 };
 

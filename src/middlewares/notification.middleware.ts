@@ -1,5 +1,8 @@
+import { publishNotificationEvent } from '../queue';
+import { generateNotificationFromTemplate } from '../services/notificationTemplate.service';
 import { PrismaClient } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
+import { NotificationResourceType } from '../enum';
 const prisma = new PrismaClient();
 
 /**
@@ -9,57 +12,78 @@ const prisma = new PrismaClient();
 export async function createNotificationOnChange(req: Request, res: Response, next: NextFunction) {
   const method = req.method.toLowerCase();
   if (['post', 'put', 'patch'].includes(method)) {
-    const { projectId } = req.body;
+    const { projectId } = req.body ?? req.params;
     if (projectId) {
       try {
         // Determine resource type using switch-case
-        let resourceType = 'resource';
+        let resourceType: NotificationResourceType = NotificationResourceType.Resource;
         switch (true) {
-          case req.originalUrl.includes('todo'):
-            resourceType = 'todo';
+          case req.url.includes('todo'):
+            resourceType = NotificationResourceType.Todo;
             break;
-          case req.originalUrl.includes('gantt'):
-            resourceType = 'gantt task';
+          case req.url.includes('gantt'):
+            resourceType = NotificationResourceType.GanttTask;
             break;
-          case req.originalUrl.includes('history'):
-            resourceType = 'history';
+          case req.url.includes('history'):
+            resourceType = NotificationResourceType.History;
             break;
-          case req.originalUrl.includes('permission'):
-            resourceType = 'permission';
+          case req.url.includes('permission'):
+            resourceType = NotificationResourceType.Permission;
             break;
-          case req.originalUrl.includes('file'):
-            resourceType = 'file';
+          case req.url.includes('file'):
+            resourceType = NotificationResourceType.File;
             break;
-          case req.originalUrl.includes('asset'):
-            resourceType = 'asset';
+          case req.url.includes('asset'):
+            resourceType = NotificationResourceType.Asset;
             break;
-          case req.originalUrl.includes('user'):
-            resourceType = 'user';
+          case req.url.includes('user'):
+            resourceType = NotificationResourceType.User;
             break;
-          case req.originalUrl.includes('location'):
-            resourceType = 'location';
+          case req.url.includes('location'):
+            resourceType = NotificationResourceType.Location;
             break;
-          case req.originalUrl.includes('webhook'):
-            resourceType = 'webhook';
+          case req.url.includes('webhook'):
+            resourceType = NotificationResourceType.Webhook;
             break;
-          case req.originalUrl.includes('linked-item'):
-            resourceType = 'linked-item';
+          case req.url.includes('linked-item'):
+            resourceType = NotificationResourceType.LinkedItem;
             break;
         }
         // Get userId if present
         const userId = req.body.userId || 'unknown';
+        // Generate notification content from template
+        let generated;
+        try {
+          generated = await generateNotificationFromTemplate(
+            resourceType,
+            {
+              ...req.body,
+              userId,
+              method: method.toUpperCase(),
+              projectId,
+            },
+            projectId,
+          );
+        } catch (err) {
+          // fallback to default if no template found
+          generated = {
+            subject: `Project ${projectId} ${resourceType} ${method.toUpperCase()} change`,
+            body: `A ${method.toUpperCase()} operation was performed on ${resourceType} by user ${userId}.\nRequest body: ${JSON.stringify(req.body)}`,
+            type: resourceType,
+          };
+        }
         const notification = await prisma.notification.create({
           data: {
             projectId,
-            title: `Project ${projectId} ${resourceType} ${method.toUpperCase()} change`,
-            message: `A ${method.toUpperCase()} operation was performed on ${resourceType} by user ${userId}.\nRequest body: ${JSON.stringify(req.body)}`,
-            type: resourceType,
+            title: generated.subject,
+            message: generated.body,
+            type: generated.type || resourceType,
             data: req.body,
+            templateId: generated.templateId || undefined,
           },
         });
         // Publish to RabbitMQ for socket event
         try {
-          const { publishNotificationEvent } = await import('../queue');
           await publishNotificationEvent({
             type: 'notification',
             projectId,

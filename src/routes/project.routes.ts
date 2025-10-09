@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import * as fileController from '../controllers/file.controller';
+import * as labelController from '../controllers/label.controller';
+import * as notificationTemplateController from '../controllers/notificationTemplate.controller';
 import * as historyController from '../controllers/history.controller';
 import * as linkedItemController from '../controllers/linkedItem.controller';
 import * as locationController from '../controllers/location.controller';
@@ -31,6 +33,11 @@ router.get('/:projectId/histories', historyController.getHistories);
 router.get('/:projectId/locations', locationController.getLocations);
 router.get('/:projectId/todos', todoController.getTodoByProjectId);
 
+router.get('/:projectId/labels', labelController.getLabelsByProjectId);
+router.get(
+  '/:projectId/notification-templates',
+  notificationTemplateController.getTemplatesByProjectId,
+);
 router.get('/:projectId/permissions', permissionController.getPermissions);
 router.get('/:projectId/permissions/users', getPermissionsByProjectUsers);
 router.get('/:projectId/permissions/linked-items', getPermissionsByProjectLinkedItems);

@@ -1,5 +1,16 @@
-import { Request, Response } from 'express';
 import * as notificationTemplateService from '../services/notificationTemplate.service';
+import { Request, Response } from 'express';
+
+export async function getTemplatesByProjectId(req: Request, res: Response) {
+  const { projectId } = req.params;
+  if (!projectId) return res.status(400).json({ error: 'Missing projectId' });
+  try {
+    const templates = await notificationTemplateService.getTemplatesByProjectId(projectId);
+    res.json(templates);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch notification templates' });
+  }
+}
 
 export const getNotificationTemplates = async (req: Request, res: Response) => {
   try {

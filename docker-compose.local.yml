@@ -3,14 +3,8 @@ services:
   db:
     image: mysql:8.0
     restart: always
-    environment:
-      MYSQL_USER: devuser
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: calendar_todo
-      MYSQL_PASSWORD: root_password
-      MYSQL_ALLOW_EMPTY_PASSWORD: false
-      MYSQL_RANDOM_ROOT_PASSWORD: false
-      TZ: Asia/Ho_Chi_Minh
+    env_file:
+      - .env.local
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - "33060:3306"
@@ -22,12 +16,11 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     restart: always
+    env_file:
+      - .env.local
     ports:
       - "5672:5672"   # RabbitMQ main port
       - "15672:15672" # RabbitMQ management UI
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest_password
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
@@ -35,6 +28,8 @@ services:
   redis:
     image: redis:7.2
     restart: always
+    env_file:
+      - .env.local
     ports:
       - "6379:6379"
     volumes:
@@ -44,22 +39,8 @@ services:
   nocobase:
     image: nocobase/nocobase:latest
     restart: always
-    environment:
-      DB_DIALECT: mysql
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_DATABASE: calendar_todo
-      DB_USER: devuser
-      DB_PASSWORD: root_password
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      APP_ENV: production
-      APP_PORT: 13030
-      APP_HOST: 0.0.0.0
-      INIT_ROOT_EMAIL: admin@nocobase.com
-      INIT_ROOT_PASSWORD: admin123
-      INIT_ROOT_NICKNAME: Admin
-      TZ: Asia/Ho_Chi_Minh
+    env_file:
+      - .env.local
     ports:
       - "13030:13030"
     depends_on:

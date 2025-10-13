@@ -41,6 +41,32 @@ services:
       - redis_data:/data
     networks:
       - calendar_net
+  nocobase:
+    image: nocobase/nocobase:latest
+    restart: always
+    environment:
+      DB_DIALECT: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: calendar_todo
+      DB_USER: devuser
+      DB_PASSWORD: root_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      APP_ENV: production
+      APP_PORT: 13030
+      APP_HOST: 0.0.0.0
+      INIT_ROOT_EMAIL: admin@nocobase.com
+      INIT_ROOT_PASSWORD: admin123
+      INIT_ROOT_NICKNAME: Admin
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "13030:13030"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - calendar_net
 volumes:
   db_data:
   rabbitmq_data:

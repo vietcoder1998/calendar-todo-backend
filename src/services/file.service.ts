@@ -69,17 +69,17 @@ export const createFile = async (fileData: FileItemType) => {
     });
 
     // If type is document, add a record to documents table
-    if ((fileData as any).type === 'document' && prisma.document) {
-      await prisma.document.create({
-        data: {
-          fileId: created.id,
-          name: created.name,
-          url: created.url,
-          createdAt: created.createdAt,
-          updatedAt: created.updatedAt,
-        },
-      });
-    }
+    // if ((fileData as any).type === 'document' && prisma.document) {
+    //   await prisma.document.create({
+    //     data: {
+    //       fileId: created.id,
+    //       name: created.name,
+    //       url: created.url,
+    //       createdAt: created.createdAt,
+    //       updatedAt: created.updatedAt,
+    //     },
+    //   });
+    // }
 
     return fromPrismaFile(created);
   } catch (err) {
